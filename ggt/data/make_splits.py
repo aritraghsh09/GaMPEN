@@ -64,7 +64,7 @@ def main(data_dir, split_type, split_slug, balance):
     # Generate splits and write to disk
     splits = make_splits(df, split_types[split_type], class_col=class_col)
     for k, v in splits.items():
-        v.to_csv(splits_dir / "{}-{}.csv".format(args.tag, k), index=False)
+        v.to_csv(splits_dir / f"{split_slug}-{k}.csv", index=False)
 
 
 if __name__ == '__main__':
