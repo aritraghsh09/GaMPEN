@@ -66,14 +66,17 @@ def main(model_path, data_dir, split_slug, split, batch_size, nrow, n_workers,
         out_grid = tensor2np(torchvision.utils.make_grid(
             out_tensor[:nrow*nrow,:,:,:], nrow=nrow, pad_value=1))
 
+        # Determine output filepath
+        outfile = model_path.replace('.pt', '.png')
+
         # Plot the results side-by-side
         plt.figure(figsize=(15,15), dpi=250)
         plt.imshow(in_grid)
-        plt.savefig(f"in_grid-{args.model_name}.png")
+        plt.savefig(f"in_grid-{outfile}")
 
         plt.figure(figsize=(15,15), dpi=250)
         plt.imshow(out_grid)
-        plt.savefig(f"out_grid-{args.model_name}.png")
+        plt.savefig(f"out_grid-{outfile}")
 
 
 if __name__ == '__main__':
