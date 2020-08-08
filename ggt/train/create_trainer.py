@@ -7,7 +7,6 @@ from ignite.metrics import MeanAbsoluteError, MeanSquaredError, Loss
 
 def create_trainer(model, optimizer, criterion, loaders, device):
     # Set up Ignite trainer and evaluator
-    logging.info(" -- initializing Ignite trainer and evaluator")
     trainer = create_supervised_trainer(model, optimizer, criterion,
         device=device)
 
