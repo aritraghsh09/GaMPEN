@@ -17,8 +17,7 @@ class FITSDataset(Dataset):
     """Dataset from FITS files."""
 
     def __init__(self, data_dir, slug=None, split=None, channels=1,
-        cutout_size=167, label_col='bt_g', normalize=True, transform=None,
-        n_workers=min(mp.cpu_count(), 4)):
+        cutout_size=167, label_col='bt_g', normalize=True, transform=None):
 
         # Set data directory
         self.data_dir = Path(data_dir)
@@ -53,8 +52,7 @@ class FITSDataset(Dataset):
                 torch.save(t, filepath)
 
         # Preload the tensors
-        with mp.Pool(n_workers) as pool:
-            self.observations = pool.map(self.load_tensor, self.filenames)
+        self.observations = map(self.load_tensor, self.filenames)
         self.observations = list(self.observations)  # force eval
 
 
