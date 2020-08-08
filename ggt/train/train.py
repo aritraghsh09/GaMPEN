@@ -40,7 +40,7 @@ def main(**kwargs):
     logger = logging.getLogger(__name__)
 
     # Set the default tensor type
-    torch.set_default_tensor_type(torch.FloatTensor)
+    # torch.set_default_tensor_type(torch.FloatTensor)
 
     # Copy and log args
     args = {k: v for k, v in kwargs.items()}

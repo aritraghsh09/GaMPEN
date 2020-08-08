@@ -77,9 +77,6 @@ class FITSDataset(Dataset):
             if self.transform:
                 X = self.transform(X)
             X = X.view(self.cutout_shape).float()
-            if X.type() != 'torch.FloatTensor':
-                print(X.type())
-                raise ValueError
 
             # Return X, y
             return X, y
