@@ -83,7 +83,7 @@ def train(**kwargs):
         data_dir=args['data_dir'],
         slug=args['split_slug'],
         normalize=args['normalize'],
-        transform=T,
+        transform=T if k is 'train' else None,
         split=k) for k in splits}
     loaders = {k: loader_factory(v) for k, v in datasets.items()}
     args['splits'] = {k: len(v.dataset) for k, v in loaders.items()}

@@ -19,13 +19,13 @@ def create_trainer(model, optimizer, criterion, loaders, device):
         device=device)
 
     # Define training hooks
-    # @trainer.on(Events.STARTED)
-    # def log_train_results(trainer):
-    #     for L, loader in loaders.items():
-    #         evaluator.run(loader)
-    #         metrics = evaluator.state.metrics
-    #         for M in metrics.keys():
-    #             mlflow.log_metric(f"{L}-{M}", metrics[M], 0)
+    @trainer.on(Events.STARTED)
+    def log_train_results(trainer):
+        for L, loader in loaders.items():
+            evaluator.run(loader)
+            metrics = evaluator.state.metrics
+            for M in metrics.keys():
+                mlflow.log_metric(f"{L}-{M}", metrics[M], 0)
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_devel_results(trainer):
