@@ -30,7 +30,7 @@ def main(model_path, data_dir, split_slug, split, batch_size, nrow, n_workers,
 
     # Build a DataLoader to pull a batch from the desired split
     dataset = FITSDataset(data_dir=data_dir, slug=split_slug,
-        normalize=normalize, split=k)
+        normalize=normalize, split=split)
     loader = get_data_loader(dataset,
         batch_size=batch_size, n_workers=n_workers)
 
