@@ -46,7 +46,7 @@ def main(model_path, data_dir, split_slug, split, batch_size, nrow, n_workers,
     # Turn off gradients
     with torch.no_grad():
         # Retrieve a batch from the dataloader
-        data = next(iter(loader))[0]
+        data = next(iter(loader))[0].to(device)
 
         # Bring the batch onto the CPU
         in_tensor = data.cpu()
