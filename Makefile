@@ -16,3 +16,7 @@ clean:
 # Lint using flake8
 lint:
 	flake8 $(PROJECT_NAME)
+
+# Clear all MLFlow logs. Does not clear artifacts
+reset-mlflow:
+	rm -r mlflow/
