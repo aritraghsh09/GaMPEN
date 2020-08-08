@@ -19,8 +19,6 @@ class FITSDataset(Dataset):
     def __init__(self, data_dir, slug=None, split=None, channels=1,
         cutout_size=167, label_col='bt_g', normalize=True, transform=None):
 
-        logging.info(f"setting up dataset ({split})")
-
         # Set data directory
         self.data_dir = Path(data_dir)
 
@@ -32,7 +30,7 @@ class FITSDataset(Dataset):
 
         # Read the catalog csv file
         if split:
-            catalog = self.data_dir / "splits/{}-{}.csv".format(slug, split)
+            catalog = self.data_dir / f"splits/{slug}-{split}.csv"
         else:
             catalog = self.data_dir / "info.csv"
 
@@ -47,7 +45,6 @@ class FITSDataset(Dataset):
         self.filenames = np.asarray(self.data_info["file_name"])
 
         # If we haven't already generated PyTorch tensor files, generate them
-        logging.info("generating PyTorch tensors from FITS files")
         for filename in tqdm(self.filenames):
             filepath = self.tensors_path / (filename + ".pt")
             if not filepath.is_file():
@@ -55,10 +52,8 @@ class FITSDataset(Dataset):
                 torch.save(t, filepath)
 
         # Preload the tensors
-        logging.info("preloading PyTorch tensors")
         self.observations = [self.load_tensor(f) for f in tqdm(self.filenames)]
 
-        logging.info("done setting up dataset")
 
     def __getitem__(self, index):
         if isinstance(index, slice):

@@ -11,3 +11,11 @@ def model_factory(modeltype):
         return GGT
     else:
         raise ValueError("Model type {} does not exist.".format(modeltype))
+
+
+def save_trained_model(model, slug):
+    output_dir = Path("output") / slug
+    output_dir.mkdir(parents=True, exist_ok=True)
+    dest = output_dir / "{slug}.pt"
+    torch.save(model.state_dict(), dest)
+    return dest

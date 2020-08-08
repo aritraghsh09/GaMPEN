@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import click
 import logging
-from pathlib import Path
-from dotenv import find_dotenv, load_dotenv
 from functools import partial
 
 import mlflow
@@ -13,7 +11,8 @@ import torch.optim as opt
 from torchvision import transforms
 
 from ggt.data import FITSDataset, get_data_loader
-from ggt.models import model_factory, model_stats
+from ggt.models import model_factory, model_stats, save_trained_model
+from ggt.train import create_trainer
 from ggt.utils import discover_devices
 
 
@@ -27,7 +26,7 @@ from ggt.utils import discover_devices
 @click.option('--cutout_size', type=int, default=167)
 @click.option('--n_workers', type=int, default=8)
 @click.option('--batch_size', type=int, default=64)
-@click.option('--epochs', type=int, default=100)
+@click.option('--epochs', type=int, default=20)
 @click.option('--lr', type=float, default=0.005)
 @click.option('--momentum', type=float, default=0.7)
 @click.option('--parallel/--no-parallel', default=False)
@@ -53,6 +52,11 @@ def main(**kwargs):
     # Load the model from a saved state if provided
     if args['model_state']:
         model.load_state_dict(torch.load(args['model_state']))
+
+    # Define the optimizer and criterion
+    optimizer = opt.SGD(model.parameters(), lr=args['lr'],
+        momentum=args['momentum'])
+    criterion = nn.MSELoss()
 
     # Create a DataLoader factory based on command-line args
     loader_factory = partial(
@@ -82,7 +86,6 @@ def main(**kwargs):
     args['splits'] = {k: len(v.dataset) for k, v in loaders.items()}
 
     # Start the training process
-    logging.info("beginning training")
     mlflow.set_experiment(args['experiment_name'])
     with mlflow.start_run():
         # Write the parameters and model stats to MLFlow
@@ -90,17 +93,19 @@ def main(**kwargs):
         for k, v in args.items():
             mlflow.log_param(k, v)
 
+        # Set up trainer
+        trainer = create_trainer(model, optimizer, criterion, loaders, device)
 
+        # Run trainer and save model state
+        trainer.run(loaders['train'], max_epochs=args['epochs'])
+        slug = f"{args['experiment_name']}-{mlflow.active_run().info.run_id}"
+        dest = save_trained_model(model, slug)
+
+        # Log artifacts
+        mlflow.log_artifacts(dest.parent)
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     logging.basicConfig(level=logging.INFO, format=log_fmt)
-
-    # not used in this stub but often useful for finding various files
-    project_dir = Path(__file__).resolve().parents[2]
-
-    # find .env automagically by walking up directories until it's found, then
-    # load up the .env entries as environment variables
-    load_dotenv(find_dotenv())
 
     main()
