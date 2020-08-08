@@ -94,7 +94,8 @@ def main(**kwargs):
             mlflow.log_param(k, v)
 
         # Set up trainer
-        trainer = create_trainer(model, optimizer, criterion, loaders, device)
+        trainer = create_trainer(model, optimizer, criterion, loaders,
+            args['device'])
 
         # Run trainer and save model state
         trainer.run(loaders['train'], max_epochs=args['epochs'])
