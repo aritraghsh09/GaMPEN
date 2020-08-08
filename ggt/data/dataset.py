@@ -74,9 +74,18 @@ class FITSDataset(Dataset):
                 X = torch.log(X + (X ** 2 + 1) ** 0.5)  # arsinh
 
             # Transform and reshape X
+            print(X.shape)
+            print(type(X))
             if self.transform:
                 X = self.transform(X)
+
+            print(X.shape)
+            print(type(X))
+
             X = X.view(self.cutout_shape).float()
+
+            print(X.shape)
+            print(type(X))
 
             # Return X, y
             return X, y
