@@ -39,6 +39,9 @@ def main(**kwargs):
     """
     logger = logging.getLogger(__name__)
 
+    # Set the default tensor type
+    torch.set_default_tensor_type(torch.FloatTensor)
+
     # Copy and log args
     args = {k: v for k, v in kwargs.items()}
 
@@ -115,8 +118,5 @@ def main(**kwargs):
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     logging.basicConfig(level=logging.WARNING, format=log_fmt)
-
-    # Set the default tensor type
-    torch.set_default_tensor_type(torch.FloatTensor)
 
     main()

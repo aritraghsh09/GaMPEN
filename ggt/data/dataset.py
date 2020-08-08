@@ -67,7 +67,7 @@ class FITSDataset(Dataset):
             X = self.observations[index]
 
             # Get image label
-            y = torch.tensor(self.labels[index]).unsqueeze(-1)
+            y = torch.tensor(self.labels[index]).unsqueeze(-1).float()
 
             # Normalize if necessary
             if self.normalize:
