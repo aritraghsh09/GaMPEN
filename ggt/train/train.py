@@ -74,7 +74,7 @@ def train(**kwargs):
         T = nn.Sequential(
             K.RandomHorizontalFlip(),
             K.RandomVerticalFlip(),
-            K.RandomRotation(45),
+            K.RandomRotation(360),
         )
 
     # Generate the DataLoaders and log the train/devel/test split sizes
