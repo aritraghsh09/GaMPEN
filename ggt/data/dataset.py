@@ -75,7 +75,8 @@ class FITSDataset(Dataset):
 
             # Transform and reshape X
             if self.transform:
-                X = self.transform(X).view(self.cutout_shape)
+                X = self.transform(X)
+            X = X.view(self.cutout_shape).float()
 
             # Return X, y
             return X, y
