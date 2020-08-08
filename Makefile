@@ -1,10 +1,10 @@
-.PHONY: clean lint requirements
+.PHONY: clean lint requirements reset-mlflow
 
 PROJECT_NAME = ggt
 PY = python
 
 # Install dependencies with pip
-requirements:
+requirements: clean
 	$(PY) -m pip install -U pip setuptools wheel
 	$(PY) -m pip install -r requirements.txt
 
@@ -12,11 +12,12 @@ requirements:
 clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
+	rm -r $(PROJECT_NAME).egg-info/
 
 # Lint using flake8
 lint:
 	flake8 $(PROJECT_NAME)
 
 # Clear all MLFlow logs. Does not clear artifacts
-reset-mlflow:
+reset-mlflow: clean
 	rm -r mlruns/
