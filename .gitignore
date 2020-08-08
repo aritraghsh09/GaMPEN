@@ -1,6 +1,6 @@
 # Data, models, and outputs
 data
-models/
+/models/
 output/
 
 # MLflow files
