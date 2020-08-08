@@ -73,9 +73,11 @@ class FITSDataset(Dataset):
             if self.normalize:
                 X = torch.log(X + (X ** 2 + 1) ** 0.5)  # arsinh
 
-            # Transform X and return X, y
+            # Transform and reshape X
             if self.transform:
-                X = self.transform(X)
+                X = self.transform(X).view(self.cutout_shape)
+
+            # Return X, y
             return X, y
         elif isinstance(index, tuple):
             raise NotImplementedError("Tuple as index")
@@ -90,10 +92,7 @@ class FITSDataset(Dataset):
     def load_fits_as_tensor(self, filename):
         # Open FITS file and convert to Torch tensor
         fits_np = fits.getdata(filename, memmap=False)
-        fits_th = torch.from_numpy(fits_np.astype(np.float32))
-
-        # Reshape
-        return fits_th.view(self.cutout_shape)
+        return torch.from_numpy(fits_np.astype(np.float32))
 
 
     def load_tensor(self, filename):
