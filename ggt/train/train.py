@@ -8,6 +8,8 @@ import mlflow
 import torch
 import torch.nn as nn
 import torch.optim as opt
+
+import kornia.augmentation as K
 from torchvision import transforms
 
 from ggt.data import FITSDataset, get_data_loader
@@ -68,11 +70,16 @@ def main(**kwargs):
     # Select the desired transforms
     T = None
     if args['transform']:
-        T = transforms.Compose([
-            transforms.RandomHorizontalFlip(),
-            transforms.RandomVerticalFlip(),
-            transforms.RandomRotation(360)
-        ])
+        # T = transforms.Compose([
+        #     transforms.RandomHorizontalFlip(),
+        #     transforms.RandomVerticalFlip(),
+        #     # transforms.RandomRotation(360)
+        # ])
+        T = nn.Sequential(
+            K.RandomHorizontalFlip(),
+            K.RandomVerticalFlip(),
+            K.RandomRotation(45),
+        )
 
     # Generate the DataLoaders and log the train/devel/test split sizes
     splits = ('train', 'devel', 'test')
@@ -107,6 +114,6 @@ def main(**kwargs):
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    logging.basicConfig(level=logging.INFO, format=log_fmt)
+    logging.basicConfig(level=logging.WARNING, format=log_fmt)
 
     main()
