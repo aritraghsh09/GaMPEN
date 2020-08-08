@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 
 import torch
+import torchvision
 
 from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory
