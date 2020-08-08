@@ -20,7 +20,7 @@ from ggt.visualization.spatial_transform import visualize_spatial_transform
 
 
 @click.command()
-@click.option('--experiment_name', type=str, default='ggt-demo')
+@click.option('--experiment_name', type=str, default='demo')
 @click.option('--model_type',
               type=click.Choice(['ggt'], case_sensitive=False),
               default='ggt')
@@ -109,11 +109,12 @@ def train(**kwargs):
         mlflow.log_artifact(model_path)
 
         # Visualize spatial transformation
-        output_dir = Path("output") / slug
-        output_dir.mkdir(parents=True, exist_ok=True)
-        visualize_spatial_transform(model, loaders['devel'], output_dir,
-                                    device=args['device'],
-                                    nrow=round(math.sqrt(args['batch_size'])))
+        if hasattr(model, 'spatial_transform'):
+            output_dir = Path("output") / slug
+            output_dir.mkdir(parents=True, exist_ok=True)
+            nrow = round(math.sqrt(args['batch_size']))
+            visualize_spatial_transform(model, loaders['devel'], output_dir,
+                                        device=args['device'], nrow=nrow)
 
         # Log output directory as an artifact
         mlflow.log_artifacts(output_dir)
