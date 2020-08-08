@@ -1,7 +1,7 @@
 # Data, models, and outputs
-data
+/data/
 /models/
-output/
+/output/
 
 # MLflow files
 mlruns/
