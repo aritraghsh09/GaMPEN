@@ -19,4 +19,4 @@ lint:
 
 # Clear all MLFlow logs. Does not clear artifacts
 reset-mlflow:
-	rm -r mlflow/
+	rm -r mlruns/
