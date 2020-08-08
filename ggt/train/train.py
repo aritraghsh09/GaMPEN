@@ -2,6 +2,7 @@
 import click
 import logging
 import math
+from pathlib import Path
 from functools import partial
 
 import mlflow
@@ -9,9 +10,7 @@ import mlflow
 import torch
 import torch.nn as nn
 import torch.optim as opt
-
 import kornia.augmentation as K
-from torchvision import transforms
 
 from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory, model_stats, save_trained_model
@@ -23,8 +22,8 @@ from ggt.visualization.spatial_transform import visualize_spatial_transform
 @click.command()
 @click.option('--experiment_name', type=str, default='ggt-demo')
 @click.option('--model_type',
-    type=click.Choice(['ggt'], case_sensitive=False),
-    default='ggt')
+              type=click.Choice(['ggt'], case_sensitive=False),
+              default='ggt')
 @click.option('--model_state', type=click.Path(exists=True), default=None)
 @click.option('--data_dir', type=click.Path(exists=True), required=True)
 @click.option('--split_slug', type=str, required=True)
@@ -38,9 +37,7 @@ from ggt.visualization.spatial_transform import visualize_spatial_transform
 @click.option('--normalize/--no-normalize', default=True)
 @click.option('--transform/--no-transform', default=True)
 def train(**kwargs):
-    """Runs the training procedure using MLFlow.
-    """
-    logger = logging.getLogger(__name__)
+    """Runs the training procedure using MLFlow."""
 
     # Copy and log args
     args = {k: v for k, v in kwargs.items()}
@@ -60,7 +57,7 @@ def train(**kwargs):
 
     # Define the optimizer and criterion
     optimizer = opt.SGD(model.parameters(), lr=args['lr'],
-        momentum=args['momentum'])
+                        momentum=args['momentum'])
     criterion = nn.MSELoss()
 
     # Create a DataLoader factory based on command-line args
@@ -85,7 +82,7 @@ def train(**kwargs):
         data_dir=args['data_dir'],
         slug=args['split_slug'],
         normalize=args['normalize'],
-        transform=T if k is 'train' else None,
+        transform=T if k == 'train' else None,
         split=k) for k in splits}
     loaders = {k: loader_factory(v) for k, v in datasets.items()}
     args['splits'] = {k: len(v.dataset) for k, v in loaders.items()}
@@ -100,7 +97,7 @@ def train(**kwargs):
 
         # Set up trainer
         trainer = create_trainer(model, optimizer, criterion, loaders,
-            args['device'])
+                                 args['device'])
 
         # Run trainer and save model state
         trainer.run(loaders['train'], max_epochs=args['epochs'])
@@ -115,10 +112,12 @@ def train(**kwargs):
         output_dir = Path("output") / slug
         output_dir.mkdir(parents=True, exist_ok=True)
         visualize_spatial_transform(model, loaders['devel'], output_dir,
-            device=device, nrow=round(math.sqrt(args['batch_size'])))
+                                    device=args['device'],
+                                    nrow=round(math.sqrt(args['batch_size'])))
 
         # Log output directory as an artifact
         mlflow.log_artifacts(output_dir)
+
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'

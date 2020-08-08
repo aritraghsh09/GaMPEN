@@ -1,7 +1,14 @@
+# ggt package
 -e .
 
+# GitHub packages
+GrouPy @ git+https://github.com/adambielski/GrouPy@e9c2e5ae8f2234359a9f68b52d9d430d9a72f4d7
+
+# PyPI packages
 alembic==1.4.2
+appdirs==1.4.4
 astropy==4.0.1.post1
+attrs==19.3.0
 azure-core==1.7.0
 azure-storage-blob==12.3.2
 certifi==2020.6.20
@@ -12,17 +19,19 @@ cloudpickle==1.5.0
 coverage==5.2.1
 cryptography==3.0
 databricks-cli==0.11.0
+distlib==0.3.1
 docker==4.2.2
 entrypoints==0.3
+filelock==3.0.12
 flake8==3.8.3
 Flask==1.1.2
 future==0.18.2
 gitdb==4.0.5
 GitPython==3.1.7
 gorilla==0.3.0
-GrouPy @ git+https://github.com/adambielski/GrouPy@e9c2e5ae8f2234359a9f68b52d9d430d9a72f4d7
 gunicorn==20.0.4
 idna==2.10
+iniconfig==1.0.1
 isodate==0.6.0
 itsdangerous==1.1.0
 Jinja2==2.11.2
@@ -31,17 +40,23 @@ Mako==1.1.3
 MarkupSafe==1.1.1
 mccabe==0.6.1
 mlflow==1.10.0
+more-itertools==8.4.0
 msrest==0.6.18
 numpy==1.19.1
 oauthlib==3.1.0
+packaging==20.4
 pandas==1.1.0
 Pillow==7.2.0
+pluggy==0.13.1
 prometheus-client==0.8.0
 prometheus-flask-exporter==0.15.4
 protobuf==3.12.4
+py==1.9.0
 pycodestyle==2.6.0
 pycparser==2.20
 pyflakes==2.2.0
+pyparsing==2.4.7
+pytest==6.0.1
 python-dateutil==2.8.1
 python-dotenv==0.14.0
 python-editor==1.0.4
@@ -55,9 +70,11 @@ smmap==3.0.4
 SQLAlchemy==1.3.13
 sqlparse==0.3.1
 tabulate==0.8.7
+toml==0.10.1
 torch==1.6.0
 torchvision==0.7.0
 tqdm==4.48.2
 urllib3==1.25.10
+virtualenv==20.0.30
 websocket-client==0.57.0
 Werkzeug==1.0.1

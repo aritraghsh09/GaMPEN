@@ -2,9 +2,7 @@ from astropy.io import fits
 import numpy as np
 import pandas as pd
 from pathlib import Path
-import random
 from tqdm import tqdm
-import multiprocessing as mp
 
 import torch
 from torch.utils.data import Dataset
@@ -19,7 +17,8 @@ class FITSDataset(Dataset):
     """
 
     def __init__(self, data_dir, slug=None, split=None, channels=1,
-        cutout_size=167, label_col='bt_g', normalize=True, transform=None):
+                 cutout_size=167, label_col='bt_g', normalize=True,
+                 transform=None):
 
         # Set data directory
         self.data_dir = Path(data_dir)
@@ -57,7 +56,6 @@ class FITSDataset(Dataset):
         # Preload the tensors
         self.observations = [self.load_tensor(f) for f in tqdm(self.filenames)]
 
-
     def __getitem__(self, index):
         if isinstance(index, slice):
             start, stop, step = index.indices(len(self))
@@ -85,16 +83,13 @@ class FITSDataset(Dataset):
         else:
             raise TypeError("Invalid argument type: {}".format(type(index)))
 
-
     def __len__(self):
         return len(self.labels)
-
 
     def load_fits_as_tensor(self, filename):
         # Open FITS file and convert to Torch tensor
         fits_np = fits.getdata(filename, memmap=False)
         return torch.from_numpy(fits_np.astype(np.float32))
-
 
     def load_tensor(self, filename):
         return torch.load(self.tensors_path / (filename + ".pt"))

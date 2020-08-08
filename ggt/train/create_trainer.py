@@ -8,7 +8,7 @@ from ignite.metrics import MeanAbsoluteError, MeanSquaredError, Loss
 def create_trainer(model, optimizer, criterion, loaders, device):
     # Set up Ignite trainer and evaluator
     trainer = create_supervised_trainer(model, optimizer, criterion,
-        device=device)
+                                        device=device)
 
     metrics = {
         'mae': MeanAbsoluteError(),
@@ -16,11 +16,11 @@ def create_trainer(model, optimizer, criterion, loaders, device):
         'loss': Loss(criterion)
     }
     evaluator = create_supervised_evaluator(model, metrics=metrics,
-        device=device)
+                                            device=device)
 
     # Define training hooks
     @trainer.on(Events.STARTED)
-    def log_train_results(trainer):
+    def log_results_start(trainer):
         for L, loader in loaders.items():
             evaluator.run(loader)
             metrics = evaluator.state.metrics
@@ -35,7 +35,7 @@ def create_trainer(model, optimizer, criterion, loaders, device):
             mlflow.log_metric(f"devel-{M}", metrics[M], trainer.state.epoch)
 
     @trainer.on(Events.COMPLETED)
-    def log_train_results(trainer):
+    def log_results_end(trainer):
         for L, loader in loaders.items():
             evaluator.run(loader)
             metrics = evaluator.state.metrics

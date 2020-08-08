@@ -6,7 +6,6 @@ import math
 from itertools import chain, zip_longest
 
 import pandas as pd
-from tqdm import tqdm
 
 
 split_types = dict(
@@ -44,7 +43,6 @@ def make_splits(x, ws, class_col=None):
 def main(data_dir, split_type, split_slug, balance):
     """Generate train/devel/test splits from the dataset provided.
     """
-    logger = logging.getLogger(__name__)
 
     # Make the splits directory
     data_dir = Path(data_dir)

@@ -5,11 +5,9 @@ import torch.nn.functional as F
 from groupy.gconv.pytorch_gconv.splitgconv2d import P4MConvZ2, P4MConvP4M
 from groupy.gconv.pytorch_gconv.pooling import plane_group_spatial_max_pooling
 
-class GGT(nn.Module):
-    """
-    Galaxy Group Transformer
-    """
 
+class GGT(nn.Module):
+    """Galaxy Group-Equivariant Transformer model."""
 
     def __init__(self):
         super(GGT, self).__init__()
@@ -69,7 +67,6 @@ class GGT(nn.Module):
             nn.Linear(512, 1)
         )
 
-
     def spatial_transform(self, x):
         xs = self.localization(x)
         xs = xs.view(-1, 96 * 34 * 34)
@@ -80,7 +77,6 @@ class GGT(nn.Module):
         x = F.grid_sample(x, grid, align_corners=True)
 
         return x
-
 
     def forward(self, x):
         x = self.spatial_transform(x)
