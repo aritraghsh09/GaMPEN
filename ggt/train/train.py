@@ -37,7 +37,6 @@ def main(**kwargs):
     """Runs the training procedure using MLFlow.
     """
     logger = logging.getLogger(__name__)
-    logger.info('making final data set from raw data')
 
     # Copy and log args
     args = {k: v for k, v in kwargs.items()}

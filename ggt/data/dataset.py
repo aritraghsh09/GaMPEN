@@ -18,7 +18,7 @@ class FITSDataset(Dataset):
 
     def __init__(self, data_dir, slug=None, split=None, channels=1,
         cutout_size=167, label_col='bt_g', normalize=True, transform=None,
-        n_workers=mp.cpu_count()+1):
+        n_workers=min(mp.cpu_count(), 4)):
 
         # Set data directory
         self.data_dir = Path(data_dir)
