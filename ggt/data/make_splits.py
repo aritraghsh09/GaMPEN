@@ -22,7 +22,7 @@ def interleave(L):
     return [x for x in chain(*zip_longest(*L)) if x is not None]
 
 
-def split(x, ws, class_col=None):
+def make_splits(x, ws, class_col=None):
     if class_col is not None:  # balanced splits
         classes = list(x[class_col].unique())
         by_class = {cls: list(x[x[class_col] == cls].index) for cls in classes}
