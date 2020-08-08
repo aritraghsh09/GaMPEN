@@ -1,7 +1,6 @@
 import torch
 from pathlib import Path
 
-
 from .ggt_model import GGT
 
 

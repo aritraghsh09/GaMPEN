@@ -25,6 +25,7 @@ from ggt.utils import discover_devices
     default='ggt')
 @click.option('--model_state', type=click.Path(exists=True), default=None)
 @click.option('--data_dir', type=click.Path(exists=True), required=True)
+@click.option('--split_slug', type=str, required=True)
 @click.option('--cutout_size', type=int, default=167)
 @click.option('--n_workers', type=int, default=8)
 @click.option('--batch_size', type=int, default=64)
@@ -38,9 +39,6 @@ def main(**kwargs):
     """Runs the training procedure using MLFlow.
     """
     logger = logging.getLogger(__name__)
-
-    # Set the default tensor type
-    # torch.set_default_tensor_type(torch.FloatTensor)
 
     # Copy and log args
     args = {k: v for k, v in kwargs.items()}
@@ -73,11 +71,6 @@ def main(**kwargs):
     # Select the desired transforms
     T = None
     if args['transform']:
-        # T = transforms.Compose([
-        #     transforms.RandomHorizontalFlip(),
-        #     transforms.RandomVerticalFlip(),
-        #     # transforms.RandomRotation(360)
-        # ])
         T = nn.Sequential(
             K.RandomHorizontalFlip(),
             K.RandomVerticalFlip(),
@@ -88,7 +81,7 @@ def main(**kwargs):
     splits = ('train', 'devel', 'test')
     datasets = {k: FITSDataset(
         data_dir=args['data_dir'],
-        slug=args['experiment_name'],
+        slug=args['split_slug'],
         normalize=args['normalize'],
         transform=T,
         split=k) for k in splits}
@@ -109,7 +102,7 @@ def main(**kwargs):
 
         # Run trainer and save model state
         trainer.run(loaders['train'], max_epochs=args['epochs'])
-        slug = f"{args['experiment_name']}-{mlflow.active_run().info.run_id}"
+        slug = f"{args['experiment_name']}-{args['split_slug']}-{mlflow.active_run().info.run_id}"
         dest = save_trained_model(model, slug)
 
         # Log artifacts
@@ -117,6 +110,6 @@ def main(**kwargs):
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    logging.basicConfig(level=logging.WARNING, format=log_fmt)
+    logging.basicConfig(level=logging.INFO, format=log_fmt)
 
     main()
