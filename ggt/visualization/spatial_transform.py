@@ -13,7 +13,9 @@ from ggt.models import model_factory
 from ggt.utils import discover_devices
 
 
-def visualize_spatial_transform(model, loader, outfile, nrow, device):
+def visualize_spatial_transform(model, loader, output_dir,
+    device='cpu', nrow=6):
+
     # Turn off gradients
     with torch.no_grad():
         # Retrieve a batch from the dataloader
@@ -34,14 +36,18 @@ def visualize_spatial_transform(model, loader, outfile, nrow, device):
         out_grid = tensor2np(torchvision.utils.make_grid(
             out_tensor[:nrow*nrow,:,:,:], nrow=nrow, pad_value=1))
 
-        # Plot the results side-by-side
+        # Show the results and save them to disk
         plt.figure(figsize=(15,15), dpi=250)
         plt.imshow(in_grid)
-        plt.savefig(f"{outfile}-in_grid.png")
+        plt.savefig(output_dir / "stn-in_grid.png")
 
         plt.figure(figsize=(15,15), dpi=250)
         plt.imshow(out_grid)
-        plt.savefig(f"{outfile}-out_grid.png")
+        plt.savefig(output_dir / "stn-out_grid.png")
+
+    # Return the output directory containing the images
+    return output_dir
+
 
 
 @click.command()
@@ -79,10 +85,12 @@ def main(model_path, data_dir, split_slug, split, batch_size, nrow, n_workers,
         batch_size=batch_size, n_workers=n_workers)
 
     # Determine output filepath
-    outfile = model_path.replace('.pt', '')
+    basename = Path(model_path).stem
+    output_dir = Path("output") / basename
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     # Generate the visualizations
-    visualize_spatial_transform(model, loader, outfile, nrow, device)
+    visualize_spatial_transform(model, loader, output_dir, nrow, device)
 
 
 if __name__ == '__main__':

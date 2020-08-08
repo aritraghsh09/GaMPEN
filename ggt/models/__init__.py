@@ -1,7 +1,7 @@
 import torch
 from pathlib import Path
 
-from .ggt_model import GGT
+from .ggt import GGT
 
 
 def model_stats(model):
@@ -17,7 +17,7 @@ def model_factory(modeltype):
 
 
 def save_trained_model(model, slug):
-    output_dir = Path("output") / slug
+    output_dir = Path("models")
     output_dir.mkdir(parents=True, exist_ok=True)
     dest = output_dir / f"{slug}.pt"
     torch.save(model.state_dict(), dest)

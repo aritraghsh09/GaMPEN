@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import click
 import logging
+import math
 from functools import partial
 
 import mlflow
@@ -16,6 +17,7 @@ from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory, model_stats, save_trained_model
 from ggt.train import create_trainer
 from ggt.utils import discover_devices
+from ggt.visualization.spatial_transform import visualize_spatial_transform
 
 
 @click.command()
@@ -27,11 +29,11 @@ from ggt.utils import discover_devices
 @click.option('--data_dir', type=click.Path(exists=True), required=True)
 @click.option('--split_slug', type=str, required=True)
 @click.option('--cutout_size', type=int, default=167)
-@click.option('--n_workers', type=int, default=8)
-@click.option('--batch_size', type=int, default=64)
-@click.option('--epochs', type=int, default=20)
+@click.option('--n_workers', type=int, default=16)
+@click.option('--batch_size', type=int, default=32)
+@click.option('--epochs', type=int, default=40)
 @click.option('--lr', type=float, default=0.005)
-@click.option('--momentum', type=float, default=0.7)
+@click.option('--momentum', type=float, default=0.9)
 @click.option('--parallel/--no-parallel', default=False)
 @click.option('--normalize/--no-normalize', default=True)
 @click.option('--transform/--no-transform', default=True)
@@ -103,10 +105,19 @@ def train(**kwargs):
         # Run trainer and save model state
         trainer.run(loaders['train'], max_epochs=args['epochs'])
         slug = f"{args['experiment_name']}-{args['split_slug']}-{mlflow.active_run().info.run_id}"
-        dest = save_trained_model(model, slug)
+        model_path = save_trained_model(model, slug)
 
-        # Log artifacts
-        mlflow.log_artifacts(dest.parent)
+        # Log model as an artifact
+        mlflow.log_artifact(model_path)
+
+        # Visualize spatial transformation
+        output_dir = Path("output") / slug
+        output_dir.mkdir(parents=True, exist_ok=True)
+        visualize_spatial_transform(model, loaders['devel'], output_dir,
+            device=device, nrow=round(math.sqrt(args['batch_size'])))
+
+        # Log output directory as an artifact
+        mlflow.log_artifacts(output_dir)
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'

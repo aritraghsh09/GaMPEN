@@ -14,7 +14,9 @@ logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(message)s')
 
 
 class FITSDataset(Dataset):
-    """Dataset from FITS files."""
+    """Dataset from FITS files. Pre-caches FITS files as PyTorch tensors to
+    improve data load speed.
+    """
 
     def __init__(self, data_dir, slug=None, split=None, channels=1,
         cutout_size=167, label_col='bt_g', normalize=True, transform=None):
@@ -66,7 +68,7 @@ class FITSDataset(Dataset):
             # Load image as tensor
             X = self.observations[index]
 
-            # Get image label
+            # Get image label (make sure to cast to float!)
             y = torch.tensor(self.labels[index]).unsqueeze(-1).float()
 
             # Normalize if necessary
