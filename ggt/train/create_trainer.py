@@ -1,6 +1,6 @@
 import mlflow
 
-from ignite.engine import Events, create_supervised_trainer,
+from ignite.engine import Events, create_supervised_trainer, \
     create_supervised_evaluator
 from ignite.metrics import MeanAbsoluteError, MeanSquaredError, Loss
 
