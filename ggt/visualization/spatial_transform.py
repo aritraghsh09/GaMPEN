@@ -35,7 +35,7 @@ def main(model_path, data_dir, split_slug, split, batch_size, nrow, n_workers,
     model = model.to(device)
 
     # Load the model from a saved state if provided
-    model.load_state_dict(torch.load(args['model_state']))
+    model.load_state_dict(torch.load(model_path))
 
     # Build a DataLoader to pull a batch from the desired split
     dataset = FITSDataset(data_dir=data_dir, slug=split_slug,
