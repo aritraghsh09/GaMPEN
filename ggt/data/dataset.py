@@ -26,6 +26,7 @@ class FITSDataset(Dataset):
         self.cutout_shape = (channels, cutout_size, cutout_size)
 
         # Set requested transforms
+        self.normalize = normalize
         self.transform = transform
 
         # Read the catalog csv file
