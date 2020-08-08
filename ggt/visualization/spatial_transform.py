@@ -6,6 +6,7 @@ from pathlib import Path
 import torch
 
 from ggt.data import FITSDataset, get_data_loader
+from ggt.models import model_factory
 from ggt.utils import discover_devices
 
 @click.command()
@@ -27,6 +28,14 @@ def main(model_path, data_dir, split_slug, split, batch_size, nrow, n_workers,
 
     # Select the target device
     device = discover_devices()
+
+    # Create the model given model_type
+    cls = model_factory('ggt')  # TODO @amritrau This can be cleaner
+    model = cls()
+    model = model.to(device)
+
+    # Load the model from a saved state if provided
+    model.load_state_dict(torch.load(args['model_state']))
 
     # Build a DataLoader to pull a batch from the desired split
     dataset = FITSDataset(data_dir=data_dir, slug=split_slug,
