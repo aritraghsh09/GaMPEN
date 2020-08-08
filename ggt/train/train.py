@@ -82,6 +82,7 @@ def main(**kwargs):
     args['splits'] = {k: len(v.dataset) for k, v in loaders.items()}
 
     # Start the training process
+    logging.info("beginning training")
     mlflow.set_experiment(args['experiment_name'])
     with mlflow.start_run():
         # Write the parameters and model stats to MLFlow
