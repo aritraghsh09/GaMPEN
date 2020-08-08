@@ -60,10 +60,8 @@ class FITSDataset(Dataset):
 
     def __getitem__(self, index):
         if isinstance(index, slice):
-            # TODO @amritrau stack X and y separately
-            # start, stop, step = index.indices(len(self))
-            # return [self[i] for i in range(start, stop, step)]
-            raise NotImplementedError("Slice as index")
+            start, stop, step = index.indices(len(self))
+            return [self[i] for i in range(start, stop, step)]
         elif isinstance(index, int):
             # Load image as tensor
             X = self.observations[index]
