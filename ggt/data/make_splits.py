@@ -21,14 +21,14 @@ def interleave(L):
     return [x for x in chain(*zip_longest(*L)) if x is not None]
 
 
-def make_splits(x, ws, class_col=None):
-    if class_col is not None:  # balanced splits
-        classes = list(x[class_col].unique())
-        by_class = {cls: list(x[x[class_col] == cls].index) for cls in classes}
-        x = x.iloc[interleave(by_class.values())]
+def make_splits(x, weights, split_col=None):
+    if split_col is not None:  # balanced splits
+        splits_list = list(x[split_col].unique())
+        by_split = {s: list(x[x[split_col] == s].index) for s in splits_list}
+        x = x.iloc[interleave(by_split.values())]
     splits = dict()
     prev_index = 0
-    for k, v in ws.items():
+    for k, v in weights.items():
         next_index = prev_index + math.ceil((len(x) * v))
         splits[k] = x[prev_index:next_index]
         prev_index = next_index
@@ -38,8 +38,6 @@ def make_splits(x, ws, class_col=None):
 @click.command()
 @click.option('--data_dir', type=click.Path(exists=True), required=True)
 @click.option('--split_type', type=click.Choice(split_types.keys()))
-@click.option('--split_slug', type=str, required=True)
-@click.option('--balance/--no-balance', default=False)
 def main(data_dir, split_type, split_slug, balance):
     """Generate train/devel/test splits from the dataset provided.
     """
@@ -53,16 +51,19 @@ def main(data_dir, split_type, split_slug, balance):
     df = pd.read_csv(data_dir / "info.csv")
     df = df.sample(frac=1, random_state=0)
 
-    # Balance if needed
-    class_col = None
-    if balance:
-        class_col = 'balance'
-        df['balance'] = pd.cut(df['bt_g'], 4)
+    for balance in [False, True]:
+        # Balance if needed
+        col = None
+        if balance:
+            col = 'balance'
+            df['balance'] = pd.cut(df['bt_g'], 4)
 
-    # Generate splits and write to disk
-    splits = make_splits(df, split_types[split_type], class_col=class_col)
-    for k, v in splits.items():
-        v.to_csv(splits_dir / f"{split_slug}-{k}.csv", index=False)
+        # Generate splits and write to disk
+        for split_type in split_types.keys():
+            splits = make_splits(df, split_types[split_type], split_col=col)
+            split_slug = f"{'un' if not balance else ''}balanced-{split_type}"
+            for k, v in splits.items():
+                v.to_csv(splits_dir / f"{split_slug}-{k}.csv", index=False)
 
 
 if __name__ == '__main__':

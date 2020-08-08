@@ -18,6 +18,6 @@ clean:
 lint:
 	flake8 $(PROJECT_NAME)
 
-# Clear all MLFlow logs. Does not clear artifacts
+# Clear all MLFlow logs. Use with care.
 reset-mlflow: clean
 	rm -rf mlruns/
