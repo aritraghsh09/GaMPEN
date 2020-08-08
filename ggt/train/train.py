@@ -35,7 +35,7 @@ from ggt.utils import discover_devices
 @click.option('--parallel/--no-parallel', default=False)
 @click.option('--normalize/--no-normalize', default=True)
 @click.option('--transform/--no-transform', default=True)
-def main(**kwargs):
+def train(**kwargs):
     """Runs the training procedure using MLFlow.
     """
     logger = logging.getLogger(__name__)
@@ -112,4 +112,4 @@ if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     logging.basicConfig(level=logging.INFO, format=log_fmt)
 
-    main()
+    train()
