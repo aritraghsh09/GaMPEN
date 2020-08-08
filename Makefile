@@ -12,7 +12,7 @@ requirements: clean
 clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
-	rm -r $(PROJECT_NAME).egg-info/
+	rm -rf $(PROJECT_NAME).egg-info/
 
 # Lint using flake8
 lint:
@@ -20,4 +20,4 @@ lint:
 
 # Clear all MLFlow logs. Does not clear artifacts
 reset-mlflow: clean
-	rm -r mlruns/
+	rm -rf mlruns/
