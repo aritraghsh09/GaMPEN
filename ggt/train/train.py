@@ -94,7 +94,7 @@ def train(**kwargs):
     mlflow.set_experiment(args['experiment_name'])
     with mlflow.start_run():
         # Write the parameters and model stats to MLFlow
-        args = {**args, **model_stats(model)}
+        args = {**args, **model_stats(model)}  # py3.9: d1 |= d2
         for k, v in args.items():
             mlflow.log_param(k, v)
 
@@ -104,7 +104,8 @@ def train(**kwargs):
 
         # Run trainer and save model state
         trainer.run(loaders['train'], max_epochs=args['epochs'])
-        slug = f"{args['experiment_name']}-{args['split_slug']}-{mlflow.active_run().info.run_id}"
+        slug = (f"{args['experiment_name']}-{args['split_slug']}-"
+                f"{mlflow.active_run().info.run_id}")
         model_path = save_trained_model(model, slug)
 
         # Log model as an artifact
