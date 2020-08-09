@@ -60,6 +60,7 @@ pytest==6.0.1
 python-dateutil==2.8.1
 python-dotenv==0.14.0
 python-editor==1.0.4
+pytorch-ranger==0.1.1
 pytz==2020.1
 PyYAML==5.3.1
 querystring-parser==1.2.4
@@ -72,6 +73,7 @@ sqlparse==0.3.1
 tabulate==0.8.7
 toml==0.10.1
 torch==1.6.0
+torch-optimizer==0.0.1a14
 torchvision==0.7.0
 tqdm==4.48.2
 urllib3==1.25.10

@@ -9,7 +9,7 @@ import mlflow
 
 import torch
 import torch.nn as nn
-import torch.optim as opt
+import torch_optimizer as opt
 import kornia.augmentation as K
 
 from ggt.data import FITSDataset, get_data_loader
@@ -56,8 +56,10 @@ def train(**kwargs):
         model.load_state_dict(torch.load(args['model_state']))
 
     # Define the optimizer and criterion
-    optimizer = opt.SGD(model.parameters(), lr=args['lr'],
-                        momentum=args['momentum'])
+    # optimizer = opt.SGD(model.parameters(), lr=args['lr'],
+    #                     momentum=args['momentum'])
+    optimizer = opt.Yogi(model.parameters(), lr=args['lr'], betas=(0.9, 0.999),
+                         eps=1e-3, initial_accumulator=1e-6, weight_decay=0)
     criterion = nn.MSELoss()
 
     # Create a DataLoader factory based on command-line args
