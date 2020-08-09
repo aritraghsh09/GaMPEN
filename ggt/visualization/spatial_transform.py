@@ -25,7 +25,12 @@ def visualize_spatial_transform(model, loader, output_dir,
         in_tensor = data.cpu()
 
         # Execute the predicted spatial transformation
-        out_tensor = model.spatial_transform(data).cpu()
+        if hasattr(model, 'spatial_transform'):
+            out_tensor = model.spatial_transform(data).cpu()
+        elif hasattr(model.module, 'spatial_transform'):
+            out_tensor = model.spatial_transform(data).cpu()
+        else:
+            raise ValueError("Model does not have a spatial_transform method")
 
         # Helper function to convert a torch tensor to NumPy for plotting
         def tensor_to_numpy(t):

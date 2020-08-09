@@ -111,7 +111,8 @@ def train(**kwargs):
         mlflow.log_artifact(model_path)
 
         # Visualize spatial transformation
-        if hasattr(model, 'spatial_transform'):
+        if hasattr(model, 'spatial_transform') or \
+                hasattr(model.module, 'spatial_transform'):
             output_dir = Path("output") / slug
             output_dir.mkdir(parents=True, exist_ok=True)
             nrow = round(math.sqrt(args['batch_size']))
