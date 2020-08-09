@@ -18,7 +18,7 @@ class FITSDataset(Dataset):
 
     def __init__(self, data_dir, slug=None, split=None, channels=1,
                  cutout_size=167, label_col='bt_g', normalize=True,
-                 transform=None):
+                 transform=None, expand_factor=1):
 
         # Set data directory
         self.data_dir = Path(data_dir)
@@ -29,6 +29,9 @@ class FITSDataset(Dataset):
         # Set requested transforms
         self.normalize = normalize
         self.transform = transform
+
+        # Set data expansion factor (must be an int and >= 1)
+        self.expand_factor = expand_factor
 
         # Read the catalog csv file
         if split:
@@ -61,11 +64,12 @@ class FITSDataset(Dataset):
             start, stop, step = index.indices(len(self))
             return [self[i] for i in range(start, stop, step)]
         elif isinstance(index, int):
-            # Load image as tensor
-            X = self.observations[index]
+            # Load image as tensor ("wrap around")
+            X = self.observations[index % len(self.observations)]
 
-            # Get image label (make sure to cast to float!)
-            y = torch.tensor(self.labels[index]).unsqueeze(-1).float()
+            # Get image label ("wrap around"; make sure to cast to float!)
+            y = torch.tensor(self.labels[index % len(self.labels)])
+            y = y.unsqueeze(-1).float()
 
             # Normalize if necessary
             if self.normalize:
@@ -84,7 +88,7 @@ class FITSDataset(Dataset):
             raise TypeError("Invalid argument type: {}".format(type(index)))
 
     def __len__(self):
-        return len(self.labels)
+        return len(self.labels) * self.expand_factor
 
     def load_fits_as_tensor(self, filename):
         # Open FITS file and convert to Torch tensor

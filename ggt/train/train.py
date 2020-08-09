@@ -27,6 +27,7 @@ from ggt.visualization.spatial_transform import visualize_spatial_transform
 @click.option('--model_state', type=click.Path(exists=True), default=None)
 @click.option('--data_dir', type=click.Path(exists=True), required=True)
 @click.option('--split_slug', type=str, required=True)
+@click.option('--expand_data', type=int, default=32)
 @click.option('--cutout_size', type=int, default=167)
 @click.option('--n_workers', type=int, default=16)
 @click.option('--batch_size', type=int, default=32)
@@ -85,6 +86,7 @@ def train(**kwargs):
         slug=args['split_slug'],
         normalize=args['normalize'],
         transform=T if k == 'train' else None,
+        expand_factor=args['expand_data']
         split=k) for k in splits}
     loaders = {k: loader_factory(v) for k, v in datasets.items()}
     args['splits'] = {k: len(v.dataset) for k, v in loaders.items()}
