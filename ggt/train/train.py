@@ -88,7 +88,7 @@ def train(**kwargs):
         slug=args['split_slug'],
         normalize=args['normalize'],
         transform=T if k == 'train' else None,
-        expand_factor=args['expand_data'],
+        expand_factor=args['expand_data'] if k == 'train' else 1,
         split=k) for k in splits}
     loaders = {k: loader_factory(v) for k, v in datasets.items()}
     args['splits'] = {k: len(v.dataset) for k, v in loaders.items()}
