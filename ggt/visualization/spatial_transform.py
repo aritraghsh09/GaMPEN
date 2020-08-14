@@ -10,7 +10,7 @@ import torchvision
 
 from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory
-from ggt.utils import discover_devices
+from ggt.utils import discover_devices, tensor_to_numpy
 
 
 def visualize_spatial_transform(model, loader, output_dir,
@@ -31,10 +31,6 @@ def visualize_spatial_transform(model, loader, output_dir,
             out_tensor = model.spatial_transform(data).cpu()
         else:
             raise ValueError("Model does not have a spatial_transform method")
-
-        # Helper function to convert a torch tensor to NumPy for plotting
-        def tensor_to_numpy(t):
-            return np.clip(t.numpy().transpose((1, 2, 0)), 0, 1)
 
         # Make grids
         in_grid = tensor_to_numpy(torchvision.utils.make_grid(
