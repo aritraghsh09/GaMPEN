@@ -72,6 +72,8 @@ class GGT(nn.Module):
         xs = self.localization(x)
         xs = xs.view(-1, 96 * 34 * 34)
         sr = self.fc_loc(xs)
+        print(sr)
+        print(sr.shape)
         theta = sr[0] * torch.tensor([
             torch.cos(sr[1]), -torch.sin(sr[1]), 0,
             torch.sin(sr[1]), torch.cos(sr[1]), 0])
