@@ -74,9 +74,9 @@ class GGT(nn.Module):
         sr = self.fc_loc(xs)
         print(sr)
         print(sr.shape)
-        theta = sr[0] * torch.tensor([
-            torch.cos(sr[1]), -torch.sin(sr[1]), 0,
-            torch.sin(sr[1]), torch.cos(sr[1]), 0])
+        theta = sr[:,0] * torch.tensor([
+            torch.cos(sr[:,1]), -torch.sin(sr[:,1]), 0,
+            torch.sin(sr[:,1]), torch.cos(sr[:,1]), 0])
         theta = theta.view(-1, 2, 3)
 
         grid = F.affine_grid(theta, x.size(), align_corners=True)
