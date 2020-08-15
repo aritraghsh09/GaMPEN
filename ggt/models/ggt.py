@@ -13,22 +13,18 @@ class GGT(nn.Module):
         super(GGT, self).__init__()
 
         # Spatial transformer localization-network
-        self.localization1 = nn.Sequential(
-            P4MConvZ2(1, 64, kernel_size=11, stride=4, padding=2),
-            nn.ReLU(inplace=True),
-        )
-        self.localization2 = nn.Sequential(
-            P4MConvP4M(64, 32, kernel_size=5, padding=2),
-            nn.ReLU(inplace=True)
-        )
-        self.localization3 = nn.Sequential(
-            P4MConvP4M(32, 16, kernel_size=5, padding=2),
-            nn.ReLU(inplace=True)
+        self.localization = nn.Sequential(
+            nn.Conv2d(1, 64, kernel_size=11),
+            nn.MaxPool2d(3, stride=2),
+            nn.ReLU(True),
+            nn.Conv2d(64, 96, kernel_size=9),
+            nn.MaxPool2d(3, stride=2),
+            nn.ReLU(True)
         )
 
         # Fully-connected regression network (predicts 3 * 2 affine matrix)
         self.fc_loc = nn.Sequential(
-            nn.Linear(2048, 32),
+            nn.Linear(96 * 34 * 34, 32),
             nn.ReLU(True),
             nn.Linear(32, 3 * 2)
         )
@@ -49,26 +45,23 @@ class GGT(nn.Module):
             nn.ReLU(inplace=True)
         )
 
+        # Adaptive pooling
+        self.pool = nn.AdaptiveAvgPool2d((6, 6))
+
         # Fully-connected regression
         self.regress = nn.Sequential(
             nn.Dropout(0.5),
-            nn.Linear(192 * 8 * 9 * 9, 512),
+            nn.Linear(192 * 6 * 6, 1024),
             nn.ReLU(inplace=True),
             nn.Dropout(0.5),
-            nn.Linear(512, 128),
+            nn.Linear(1024, 512),
             nn.ReLU(inplace=True),
-            nn.Linear(128, 1),
-            nn.Softmax()
+            nn.Linear(512, 1)
         )
 
     def spatial_transform(self, x):
-        xs = self.localization1(x)
-        xs = plane_group_spatial_max_pooling(xs, ksize=3, stride=2)
-        xs = self.localization2(xs)
-        xs = plane_group_spatial_max_pooling(xs, ksize=3, stride=2)
-        xs = self.localization3(xs)
-        xs = plane_group_spatial_max_pooling(xs, ksize=3, stride=2)
-        xs = xs.view(-1, 2048)
+        xs = self.localization(x)
+        xs = xs.view(-1, 96 * 34 * 34)
         theta = self.fc_loc(xs)
         theta = theta.view(-1, 2, 3)
 
@@ -83,7 +76,10 @@ class GGT(nn.Module):
         x = plane_group_spatial_max_pooling(x, ksize=3, stride=2)
         x = self.featurize2(x)
         x = plane_group_spatial_max_pooling(x, ksize=3, stride=2)
+        x = self.featurize3(x)
+        x = plane_group_spatial_max_pooling(x, ksize=3, stride=2)
         x = x.view(x.size()[0], x.size()[1], x.size()[2], -1)
+        x = self.pool(x)
         x = torch.flatten(x, 1)
         x = self.regress(x)
 
