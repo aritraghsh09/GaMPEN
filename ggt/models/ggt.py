@@ -63,17 +63,11 @@ class GGT(nn.Module):
 
     def spatial_transform(self, x):
         xs = self.localization1(x)
-        # print("A", xs.shape)
         xs = plane_group_spatial_max_pooling(xs, ksize=3, stride=2)
-        # print("B", xs.shape)
         xs = self.localization2(xs)
-        # print("C", xs.shape)
         xs = plane_group_spatial_max_pooling(xs, ksize=3, stride=2)
-        # print("D", xs.shape)
         xs = self.localization3(xs)
-        # print("E", xs.shape)
         xs = plane_group_spatial_max_pooling(xs, ksize=3, stride=2)
-        # print("F", xs.shape)
         xs = xs.view(-1, 2048)
         theta = self.fc_loc(xs)
         theta = theta.view(-1, 2, 3)
@@ -88,13 +82,9 @@ class GGT(nn.Module):
         x = self.featurize1(x)
         x = plane_group_spatial_max_pooling(x, ksize=3, stride=2)
         x = self.featurize2(x)
-        print("AAA", x.shape)
         x = plane_group_spatial_max_pooling(x, ksize=3, stride=2)
-        print("BBB", x.shape)
         x = x.view(x.size()[0], x.size()[1], x.size()[2], -1)
-        print("CCC", x.shape)
         x = torch.flatten(x, 1)
-        print("DDD", x.shape)
         x = self.regress(x)
 
         return x
