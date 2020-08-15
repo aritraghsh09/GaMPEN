@@ -38,8 +38,7 @@ def make_splits(x, weights, split_col=None):
 @click.command()
 @click.option('--data_dir', type=click.Path(exists=True), required=True)
 def main(data_dir):
-    """Generate train/devel/test splits from the dataset provided.
-    """
+    """Generate train/devel/test splits from the dataset provided."""
 
     # Make the splits directory
     data_dir = Path(data_dir)

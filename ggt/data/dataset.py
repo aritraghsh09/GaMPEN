@@ -13,8 +13,7 @@ logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(message)s')
 
 class FITSDataset(Dataset):
     """Dataset from FITS files. Pre-caches FITS files as PyTorch tensors to
-    improve data load speed.
-    """
+    improve data load speed."""
 
     def __init__(self, data_dir, slug=None, split=None, channels=1,
                  cutout_size=167, label_col='bt_g', normalize=True,
@@ -53,13 +52,14 @@ class FITSDataset(Dataset):
         for filename in tqdm(self.filenames):
             filepath = self.tensors_path / (filename + ".pt")
             if not filepath.is_file():
-                t = self.load_fits_as_tensor(self.cutouts_path / filename)
+                t = load_fits_as_tensor(self.cutouts_path / filename)
                 torch.save(t, filepath)
 
         # Preload the tensors
         self.observations = [self.load_tensor(f) for f in tqdm(self.filenames)]
 
     def __getitem__(self, index):
+        """Magic method to index into the dataset."""
         if isinstance(index, slice):
             start, stop, step = index.indices(len(self))
             return [self[i] for i in range(start, stop, step)]
@@ -88,12 +88,15 @@ class FITSDataset(Dataset):
             raise TypeError("Invalid argument type: {}".format(type(index)))
 
     def __len__(self):
+        """Return the effective length of the dataset."""
         return len(self.labels) * self.expand_factor
 
-    def load_fits_as_tensor(self, filename):
-        # Open FITS file and convert to Torch tensor
+    def load_tensor(self, filename):
+        """Load a Torch tensor from disk."""
+        return torch.load(self.tensors_path / (filename + ".pt"))
+
+    @staticmethod
+    def load_fits_as_tensor(filename):
+        """Open a FITS file and convert it to a Torch tensor."""
         fits_np = fits.getdata(filename, memmap=False)
         return torch.from_numpy(fits_np.astype(np.float32))
-
-    def load_tensor(self, filename):
-        return torch.load(self.tensors_path / (filename + ".pt"))
