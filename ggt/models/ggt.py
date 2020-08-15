@@ -71,10 +71,10 @@ class GGT(nn.Module):
     def spatial_transform(self, x):
         xs = self.localization(x)
         xs = xs.view(-1, 96 * 34 * 34)
-        scale, rot = self.fc_loc(xs)
-        theta = scale * torch.tensor([
-            torch.cos(rot), -torch.sin(rot), 0,
-            torch.sin(rot), torch.cos(rot), 0])
+        sr = self.fc_loc(xs)
+        theta = sr * torch.tensor([
+            torch.cos(sr[1]), -torch.sin(sr[1]), 0,
+            torch.sin(sr[1]), torch.cos(sr[1]), 0])
         theta = theta.view(-1, 2, 3)
 
         grid = F.affine_grid(theta, x.size(), align_corners=True)
