@@ -26,12 +26,13 @@ class GGT(nn.Module):
         self.fc_loc = nn.Sequential(
             nn.Linear(96 * 34 * 34, 32),
             nn.ReLU(True),
-            nn.Linear(32, 3 * 2)
+            nn.Linear(32, 2)
         )
 
         # Initialize the weights/bias with identity transformation
         self.fc_loc[2].weight.data.zero_()
-        ident = [1, 0, 0, 0, 1, 0]
+        # ident = [1, 0, 0, 0, 1, 0]
+        ident = [1, 0]  # scale, rotation
         self.fc_loc[2].bias.data.copy_(torch.tensor(ident, dtype=torch.float))
 
         # Featurizer blocks -- these need to be separate so that we can
@@ -44,6 +45,14 @@ class GGT(nn.Module):
             P4MConvP4M(64, 192, kernel_size=5, padding=2),
             nn.ReLU(inplace=True)
         )
+        self.featurize3 = nn.Sequential(
+            P4MConvP4M(192, 384, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            P4MConvP4M(384, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            P4MConvP4M(256, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+        )
 
         # Adaptive pooling
         self.pool = nn.AdaptiveAvgPool2d((6, 6))
@@ -51,7 +60,7 @@ class GGT(nn.Module):
         # Fully-connected regression
         self.regress = nn.Sequential(
             nn.Dropout(0.5),
-            nn.Linear(192 * 6 * 6, 1024),
+            nn.Linear(256 * 6 * 6, 1024),
             nn.ReLU(inplace=True),
             nn.Dropout(0.5),
             nn.Linear(1024, 512),
@@ -62,7 +71,10 @@ class GGT(nn.Module):
     def spatial_transform(self, x):
         xs = self.localization(x)
         xs = xs.view(-1, 96 * 34 * 34)
-        theta = self.fc_loc(xs)
+        scale, rot = self.fc_loc(xs)
+        theta = scale * torch.tensor([
+            torch.cos(rot), -torch.sin(rot), 0,
+            torch.sin(rot), torch.cos(rot), 0])
         theta = theta.view(-1, 2, 3)
 
         grid = F.affine_grid(theta, x.size(), align_corners=True)
