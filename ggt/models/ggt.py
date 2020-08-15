@@ -15,6 +15,8 @@ class GGT(nn.Module):
         # Spatial transformer localization-network
         self.localization = nn.Sequential(
             P4MConvZ2(1, 64, kernel_size=11, stride=4, padding=2),
+            nn.ReLU(inplace=True),
+            P4MConvP4M(64, 32, kernel_size=5, padding=2),
             nn.ReLU(inplace=True)
         )
 
