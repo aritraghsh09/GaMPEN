@@ -7,6 +7,8 @@ from tqdm import tqdm
 import torch
 from torch.utils.data import Dataset
 
+from ggt.utils import arsinh_normalize
+
 import logging
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(message)s')
 
@@ -100,8 +102,3 @@ class FITSDataset(Dataset):
         """Open a FITS file and convert it to a Torch tensor."""
         fits_np = fits.getdata(filename, memmap=False)
         return torch.from_numpy(fits_np.astype(np.float32))
-
-    @staticmethod
-    def arsinh_normalize(X):
-        """Normalize a Torch tensor with arsinh."""
-        return torch.log(X + (X ** 2 + 1) ** 0.5)
