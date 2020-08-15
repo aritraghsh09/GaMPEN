@@ -13,10 +13,16 @@ class GGT(nn.Module):
         super(GGT, self).__init__()
 
         # Spatial transformer localization-network
-        self.localization = nn.Sequential(
+        self.localization1 = nn.Sequential(
             P4MConvZ2(1, 64, kernel_size=11, stride=4, padding=2),
             nn.ReLU(inplace=True),
+        )
+        self.localization2 = nn.Sequential(
             P4MConvP4M(64, 32, kernel_size=5, padding=2),
+            nn.ReLU(inplace=True)
+        )
+        self.localization3 = nn.Sequential(
+            P4MConvP4M(32, 16, kernel_size=5, padding=2),
             nn.ReLU(inplace=True)
         )
 
@@ -56,10 +62,18 @@ class GGT(nn.Module):
         )
 
     def spatial_transform(self, x):
-        xs = self.localization(x)
+        xs = self.localization1(x)
         print("A", xs.shape)
         xs = plane_group_spatial_max_pooling(xs, ksize=3, stride=2)
         print("B", xs.shape)
+        xs = self.localization2(xs)
+        print("C", xs.shape)
+        xs = plane_group_spatial_max_pooling(xs, ksize=3, stride=2)
+        print("D", xs.shape)
+        xs = self.localization3(xs)
+        print("E", xs.shape)
+        xs = plane_group_spatial_max_pooling(xs, ksize=3, stride=2)
+        print("F", xs.shape)
         xs = xs.view(-1, 96 * 8 * 8)
         theta = self.fc_loc(xs)
         theta = theta.view(-1, 2, 3)
