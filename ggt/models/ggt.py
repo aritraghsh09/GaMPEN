@@ -10,7 +10,7 @@ class GGT(nn.Module):
     """Galaxy Group-Equivariant Transformer model."""
 
     def __init__(self):
-        super(MiniGGT, self).__init__()
+        super(GGT, self).__init__()
 
         # Spatial transformer localization-network
         self.localization = nn.Sequential(
