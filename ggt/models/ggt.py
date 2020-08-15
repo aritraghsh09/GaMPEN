@@ -88,9 +88,13 @@ class GGT(nn.Module):
         x = self.featurize1(x)
         x = plane_group_spatial_max_pooling(x, ksize=3, stride=2)
         x = self.featurize2(x)
+        print("AAA", x.shape)
         x = plane_group_spatial_max_pooling(x, ksize=3, stride=2)
+        print("BBB", x.shape)
         x = x.view(x.size()[0], x.size()[1], x.size()[2], -1)
+        print("CCC", x.shape)
         x = torch.flatten(x, 1)
+        print("DDD", x.shape)
         x = self.regress(x)
 
         return x
