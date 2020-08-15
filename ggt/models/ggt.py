@@ -28,7 +28,7 @@ class GGT(nn.Module):
 
         # Fully-connected regression network (predicts 3 * 2 affine matrix)
         self.fc_loc = nn.Sequential(
-            nn.Linear(96 * 8 * 8, 32),
+            nn.Linear(2048, 32),
             nn.ReLU(True),
             nn.Linear(32, 3 * 2)
         )
@@ -63,18 +63,18 @@ class GGT(nn.Module):
 
     def spatial_transform(self, x):
         xs = self.localization1(x)
-        print("A", xs.shape)
+        # print("A", xs.shape)
         xs = plane_group_spatial_max_pooling(xs, ksize=3, stride=2)
-        print("B", xs.shape)
+        # print("B", xs.shape)
         xs = self.localization2(xs)
-        print("C", xs.shape)
+        # print("C", xs.shape)
         xs = plane_group_spatial_max_pooling(xs, ksize=3, stride=2)
-        print("D", xs.shape)
+        # print("D", xs.shape)
         xs = self.localization3(xs)
-        print("E", xs.shape)
+        # print("E", xs.shape)
         xs = plane_group_spatial_max_pooling(xs, ksize=3, stride=2)
-        print("F", xs.shape)
-        xs = xs.view(-1, 96 * 8 * 8)
+        # print("F", xs.shape)
+        xs = xs.view(-1, 2048)
         theta = self.fc_loc(xs)
         theta = theta.view(-1, 2, 3)
 
