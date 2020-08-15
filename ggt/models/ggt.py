@@ -52,12 +52,12 @@ class GGT(nn.Module):
         # Fully-connected regression
         self.regress = nn.Sequential(
             nn.Dropout(0.5),
-            nn.Linear(192 * 6 * 6, 512),
+            nn.Linear(192 * 8 * 9 * 9, 512),
             nn.ReLU(inplace=True),
             nn.Dropout(0.5),
-            nn.Linear(512, 256),
+            nn.Linear(512, 128),
             nn.ReLU(inplace=True),
-            nn.Linear(256, 1),
+            nn.Linear(128, 1),
             nn.Softmax()
         )
 
