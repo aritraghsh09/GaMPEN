@@ -55,6 +55,7 @@ class GGT(nn.Module):
 
     def spatial_transform(self, x):
         xs = self.localization(x)
+        xs = plane_group_spatial_max_pooling(xs, ksize=3, stride=2)
         xs = xs.view(-1, 96 * 8 * 8)
         theta = self.fc_loc(xs)
         theta = theta.view(-1, 2, 3)
