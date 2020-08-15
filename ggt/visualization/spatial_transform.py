@@ -3,7 +3,6 @@ import click
 import logging
 from pathlib import Path
 
-import numpy as np
 import matplotlib.pyplot as plt
 import torch
 import torchvision
@@ -41,7 +40,6 @@ def visualize_spatial_transform(model, loader, output_dir,
         # If requested, return the grids
         if return_grids:
             return in_grid, out_grid
-
 
         # Show the results and save them to disk
         plt.figure(figsize=(15, 15), dpi=250)
