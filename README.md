@@ -26,11 +26,10 @@ To train a GGT model, you need to prepare the dataset and running the provided t
 ### Data preparation
 1. From the root directory of this repository, run
 ```bash
-mkdir -p data/sdss/cutouts
+make sdss
 ```
-2. Download `info.csv` and place it at `data/sdss/info.csv`.
-3. Place all the relevant FITS files under `data/sdss/cutouts/`. The names of these FITS files should correspond with those in `data/sdss/info.csv`.
-4. Generate train/devel/test splits with
+2. Place all the relevant FITS files under `data/sdss/cutouts/`.
+3. Generate train/devel/test splits with
 ```bash
 python ggt/data/make_splits.py --data_dir=data/sdss/
 ```
