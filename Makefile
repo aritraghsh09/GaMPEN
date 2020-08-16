@@ -18,6 +18,15 @@ clean:
 lint:
 	flake8 $(PROJECT_NAME)
 
-# Clear all MLFlow logs. Use with care.
+# Run tests
+check: lint
+	pytest
+
+# Make SDSS data directory structure
+sdss:
+	mkdir -p data/sdss/cutouts
+	# TODO Download info.csv
+
+# Clear all MLFlow logs (use with care!)
 reset-mlflow: clean
 	rm -rf mlruns/

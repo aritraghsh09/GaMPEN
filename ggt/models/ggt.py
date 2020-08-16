@@ -31,8 +31,7 @@ class GGT(nn.Module):
 
         # Initialize the weights/bias with identity transformation
         self.fc_loc[2].weight.data.zero_()
-        # ident = [1, 0, 0, 0, 1, 0]
-        ident = [1, 0]  # scale, rotation
+        ident = [1, 0, 0, 0, 1, 0]
         self.fc_loc[2].bias.data.copy_(torch.tensor(ident, dtype=torch.float))
 
         # Featurizer blocks -- these need to be separate so that we can
@@ -71,12 +70,7 @@ class GGT(nn.Module):
     def spatial_transform(self, x):
         xs = self.localization(x)
         xs = xs.view(-1, 96 * 34 * 34)
-        sr = self.fc_loc(xs)
-        print(sr)
-        print(sr.shape)
-        theta = sr[:,0] * torch.tensor([
-            torch.cos(sr[:,1]), -torch.sin(sr[:,1]), 0,
-            torch.sin(sr[:,1]), torch.cos(sr[:,1]), 0])
+        theta = self.fc_loc(xs)
         theta = theta.view(-1, 2, 3)
 
         grid = F.affine_grid(theta, x.size(), align_corners=True)

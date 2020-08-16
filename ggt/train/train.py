@@ -28,6 +28,7 @@ from ggt.visualization.spatial_transform import visualize_spatial_transform
 @click.option('--model_state', type=click.Path(exists=True), default=None)
 @click.option('--data_dir', type=click.Path(exists=True), required=True)
 @click.option('--split_slug', type=str, required=True)
+@click.option('--target_metric', type=str, default='bt_g')
 @click.option('--expand_data', type=int, default=16)
 @click.option('--cutout_size', type=int, default=167)
 @click.option('--n_workers', type=int, default=16)
@@ -60,9 +61,6 @@ def train(**kwargs):
     # Define the optimizer and criterion
     optimizer = opt.SGD(model.parameters(), lr=args['lr'],
                         momentum=args['momentum'])
-    # optimizer = opt.Yogi(model.parameters(), lr=args['lr'], betas=(0.9, 0.999),
-    #                      eps=1e-3, initial_accumulator=1e-6, weight_decay=0)
-    # optimizer = opt.Adam(model.parameters(), lr=args['lr'])
     criterion = nn.MSELoss()
 
     # Create a DataLoader factory based on command-line args
@@ -87,6 +85,7 @@ def train(**kwargs):
         data_dir=args['data_dir'],
         slug=args['split_slug'],
         normalize=args['normalize'],
+        label_col=args['target_metric'],
         transform=T if k == 'train' else None,
         expand_factor=args['expand_data'] if k == 'train' else 1,
         split=k) for k in splits}

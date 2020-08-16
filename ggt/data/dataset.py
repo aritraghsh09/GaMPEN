@@ -54,7 +54,8 @@ class FITSDataset(Dataset):
         for filename in tqdm(self.filenames):
             filepath = self.tensors_path / (filename + ".pt")
             if not filepath.is_file():
-                t = FITSDataset.load_fits_as_tensor(self.cutouts_path / filename)
+                load_path = self.cutouts_path / filename
+                t = FITSDataset.load_fits_as_tensor(load_path)
                 torch.save(t, filepath)
 
         # Preload the tensors
