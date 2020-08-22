@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import click
-import logging
 import glob
+from pathlib import Path
+import logging
+logging.basicConfig(level=logging.INFO)
 
 import torch
 import torch.nn.functional as F
@@ -31,8 +33,9 @@ def main(model_path, image_dir, model_image_dim=167):
     model.load_state_dict(torch.load(model_path))
 
     # Collect all images, then iterate
-    logging.info("Cropping images...")
-    for path in tqdm(glob.glob(image_dir)):
+    images = glob.glob(Path(image_dir) / "*.fits")
+    logging.info(f"Cropping {len(images)} images...")
+    for path in tqdm(images):
         # Resize and normalize the image
         X = FITSDataset.load_fits_as_tensor(path)[None, :, :]
         X = F.interpolate(X[None, :, :, :], size=model_image_dim).squeeze(0)
