@@ -1,6 +1,6 @@
 ggt
 ===
-This repository contains the source code for the Galaxy Group-Equivariant Transformer.
+This repository contains the source code for the Galaxy Group-Equivariant Transformer and its associated modules.
 
 ## Installation
 Training and inference for GGT require a Python 3.6+ and a CUDA-friendly GPU.
@@ -64,3 +64,14 @@ This launches the MLFlow UI on `localhost:5000`. If you are training on a remote
 ssh -i <keyfile> <user>@<remote.com> -NL 5000:localhost:5000
 ```
 No output will be shown if the connection was successful. Open a browser and navigate to `localhost:5000` to monitor your model.
+
+## Modules
+### Auto-cropping
+The spatial transformer subnetwork that GGT learns can be extracted and used as an auto-cropping module to automatically focus on the region of interest of an image. After training a GGT model (or downloading a pretrained model), run the auto-cropping module with
+```bash
+python -m ggt.modules.autocrop \
+  --model_path=models/<your_model>.pt \
+  --image_dir=path/to/fits/cutouts/
+```
+
+The auto-cropping module automatically resizes and normalizes the provided FITS images to match GGT's required image format. Then, the auto-cropping module feeds the prepared image through the provided model's spatial transformer subnetwork to automatically crop the image. Results are written in `.png` form back to the provided image directory.
