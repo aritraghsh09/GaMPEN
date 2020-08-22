@@ -15,6 +15,7 @@ git clone https://github.com/amritrau/ggt.git
 make requirements
 ```
 This installs all the required dependencies including PyTorch and Astropy.
+
 4. To confirm that the installation was successful, run
 ```bash
 make check
