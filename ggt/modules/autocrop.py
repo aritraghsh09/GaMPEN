@@ -44,9 +44,10 @@ def main(model_path, image_dir, model_image_dim=167):
         with torch.no_grad():
             Xt = model.spatial_transform(X)
 
-        # Save the image to disk
-        outfile = f"{path.replace('.fits', '')}.png"
-        save_image(Xt, outfile)
+        # Save the old and new images to disk
+        outfile = lambda x: f"{path.replace('.fits', x)}.png"
+        save_image(X, outfile('-orig'))
+        save_image(Xt, outfile('-crop'))
 
 
 if __name__ == '__main__':
