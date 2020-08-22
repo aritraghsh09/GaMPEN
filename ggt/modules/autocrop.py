@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import click
+import logging
 import glob
 from pathlib import Path
-import logging
-logging.basicConfig(level=logging.INFO)
 
 import torch
 import torch.nn.functional as F
@@ -48,3 +47,10 @@ def main(model_path, image_dir, model_image_dim=167):
         # Save the image to disk
         outfile = f"{path.replace('.fits', '')}.png"
         save_image(Xt, outfile)
+
+
+if __name__ == '__main__':
+    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    logging.basicConfig(level=logging.INFO, format=log_fmt)
+
+    main()
