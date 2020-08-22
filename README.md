@@ -74,4 +74,7 @@ python -m ggt.modules.autocrop \
   --image_dir=path/to/fits/cutouts/
 ```
 
-The auto-cropping module automatically resizes and normalizes the provided FITS images to match GGT's required image format. Then, the auto-cropping module feeds the prepared image through the provided model's spatial transformer subnetwork to automatically crop the image. Results are written in `.png` form back to the provided image directory.
+The auto-cropping module automatically resizes and normalizes the provided FITS images to match GGT's required image format. Then, the auto-cropping module feeds the prepared image through the provided model's spatial transformer subnetwork to automatically crop the image. Results are written in `.png` form back to the provided image directory. An example with a Hyper Suprime-Cam image is shown below.
+
+
+![Auto-cropping](/docs/assets/stn_figure.png)
