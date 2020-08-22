@@ -10,12 +10,10 @@ Training and inference for GGT require a Python 3.6+ and a CUDA-friendly GPU.
 ```bash
 git clone https://github.com/amritrau/ggt.git
 ```
-3. From the root directory of the `ggt` repository, run
+3. Install all the required dependencies. From the root directory of the `ggt` repository, run
 ```bash
 make requirements
 ```
-This installs all the required dependencies including PyTorch and Astropy.
-
 4. To confirm that the installation was successful, run
 ```bash
 make check
