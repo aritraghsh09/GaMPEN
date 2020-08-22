@@ -32,7 +32,7 @@ def main(model_path, image_dir, model_image_dim=167):
     model.load_state_dict(torch.load(model_path))
 
     # Collect all images, then iterate
-    images = glob.glob(Path(image_dir) / "*.fits")
+    images = glob.glob(str(Path(image_dir) / "*.fits"))
     logging.info(f"Cropping {len(images)} images...")
     for path in tqdm(images):
         # Resize and normalize the image
