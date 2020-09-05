@@ -1,6 +1,6 @@
-ggt
+Galaxy Group-Equivariant Transformer
 ===
-This repository contains the source code for the Galaxy Group-Equivariant Transformer.
+This repository contains the source code for the Galaxy Group-Equivariant Transformer and its associated modules.
 
 ## Installation
 Training and inference for GGT require a Python 3.6+ and a CUDA-friendly GPU.
@@ -10,11 +10,10 @@ Training and inference for GGT require a Python 3.6+ and a CUDA-friendly GPU.
 ```bash
 git clone https://github.com/amritrau/ggt.git
 ```
-3. From the root directory of the `ggt` repository, run
+3. Install all the required dependencies. From the root directory of the `ggt` repository, run
 ```bash
 make requirements
 ```
-This installs all the required dependencies including PyTorch and Astropy.
 4. To confirm that the installation was successful, run
 ```bash
 make check
@@ -24,13 +23,14 @@ make check
 To train a GGT model, you need to prepare the dataset and running the provided trainer. During and after training, you can launch the MLFlow UI to view the training logs and artifacts.
 
 ### Data preparation
+In this section, we will prepare and load the SDSS sample of Simard, et al. To load another dataset, see [Loading other datasets](#loading-other-datasets).
+
 1. From the root directory of this repository, run
 ```bash
-mkdir -p data/sdss/cutouts
+make sdss
 ```
-2. Download `info.csv` and place it at `data/sdss/info.csv`.
-3. Place all the relevant FITS files under `data/sdss/cutouts/`. The names of these FITS files should correspond with those in `data/sdss/info.csv`.
-4. Generate train/devel/test splits with
+2. Place all the relevant FITS files under `data/sdss/cutouts/`.
+3. Generate train/devel/test splits with
 ```bash
 python ggt/data/make_splits.py --data_dir=data/sdss/
 ```
@@ -65,3 +65,30 @@ This launches the MLFlow UI on `localhost:5000`. If you are training on a remote
 ssh -i <keyfile> <user>@<remote.com> -NL 5000:localhost:5000
 ```
 No output will be shown if the connection was successful. Open a browser and navigate to `localhost:5000` to monitor your model.
+
+## Loading other datasets
+1. From the root directory of this repository, run
+```bash
+mkdir -p data/(dataset-name)/cutouts
+```
+2. Place FITS files in `data/(dataset-name)/cutouts`.
+3. Provide a file titled `info.csv` at `data/(dataset-name)`. This file should have (at least) a column titled `file_name` (corresponding to the basenames of the files in `data/(dataset-name)/cutouts`) and a column titled `bt_g` containing bulge-to-total ratios. See [here](http://amritrau.github.io/assets/data/info.csv) for an example CSV (7.3M).
+4. Generate train/devel/test splits with
+```bash
+python ggt/data/make_splits.py --data_dir=data/(dataset-name)/
+```
+5. Follow the instructions under [Running the trainer](#running-the-trainer), replacing `data/sdss/` with `data/(dataset-name)/`.
+
+## Modules
+### Auto-cropping
+The spatial transformer subnetwork that GGT learns can be extracted and used as an auto-cropping module to automatically focus on the region of interest of an image. After training a GGT model (or downloading a pretrained model), run the auto-cropping module with
+```bash
+python -m ggt.modules.autocrop \
+  --model_path=models/<your_model>.pt \
+  --image_dir=path/to/fits/cutouts/
+```
+
+The auto-cropping module automatically resizes and normalizes the provided FITS images to match GGT's required image format. Then, the auto-cropping module feeds the prepared image through the provided model's spatial transformer subnetwork to automatically crop the image. Results are written in `.png` form back to the provided image directory. An example with a Hyper Suprime-Cam image is shown below.
+
+
+![Auto-cropping](/docs/assets/stn_figure.png)

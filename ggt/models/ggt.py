@@ -26,7 +26,7 @@ class GGT(nn.Module):
         self.fc_loc = nn.Sequential(
             nn.Linear(96 * 34 * 34, 32),
             nn.ReLU(True),
-            nn.Linear(32, 2)
+            nn.Linear(32, 3 * 2)
         )
 
         # Initialize the weights/bias with identity transformation

@@ -25,7 +25,7 @@ check: lint
 # Make SDSS data directory structure
 sdss:
 	mkdir -p data/sdss/cutouts
-	# TODO Download info.csv
+	curl http://amritrau.github.io/assets/data/info.csv > data/sdss/info.csv
 
 # Clear all MLFlow logs (use with care!)
 reset-mlflow: clean
