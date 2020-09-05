@@ -66,6 +66,15 @@ ssh -i <keyfile> <user>@<remote.com> -NL 5000:localhost:5000
 ```
 No output will be shown if the connection was successful. Open a browser and navigate to `localhost:5000` to monitor your model.
 
+## Other datasets
+To load your own dataset,
+1. From the root directory of this repository, run
+```
+mkdir -p data/(dataset-name)/cutouts
+```
+2. Place FITS files in `data/(dataset-name)/cutouts`.
+3. Provide a file titled `info.csv` at `data/(dataset-name)`. This file should have (at least) a column titled `file_name` (corresponding to the basenames of the files in `data/(dataset-name)/cutouts`) and a column titled `bt_g` containing bulge-to-total ratios. See [here](http://amritrau.github.io/assets/data/info.csv) for an example CSV (7.3M).
+
 ## Modules
 ### Auto-cropping
 The spatial transformer subnetwork that GGT learns can be extracted and used as an auto-cropping module to automatically focus on the region of interest of an image. After training a GGT model (or downloading a pretrained model), run the auto-cropping module with
@@ -79,12 +88,3 @@ The auto-cropping module automatically resizes and normalizes the provided FITS 
 
 
 ![Auto-cropping](/docs/assets/stn_figure.png)
-
-## Other datasets
-To load your own dataset,
-1. From the root directory of this repository, run
-```
-mkdir -p data/(dataset-name)/cutouts
-```
-2. Place FITS files in `data/(dataset-name)/cutouts`.
-3. Provide a file titled `info.csv` at `data/(dataset-name)`. This file should have (at least) a column titled `file_name` (corresponding to the basenames of the files in `data/(dataset-name)/cutouts`) and a column titled `bt_g` containing bulge-to-total ratios. See [here](http://amritrau.github.io/assets/data/info.csv) for an example CSV (7.3M).
