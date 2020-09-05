@@ -1,4 +1,4 @@
-ggt
+Galaxy Group-Equivariant Transformer
 ===
 This repository contains the source code for the Galaxy Group-Equivariant Transformer and its associated modules.
 
