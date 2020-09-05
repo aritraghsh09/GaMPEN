@@ -23,7 +23,7 @@ make check
 To train a GGT model, you need to prepare the dataset and running the provided trainer. During and after training, you can launch the MLFlow UI to view the training logs and artifacts.
 
 ### Data preparation
-In this section, we will prepare and load the SDSS sample of Simard, et al. To load another dataset, see [Other datasets](#other-datasets).
+In this section, we will prepare and load the SDSS sample of Simard, et al. To load another dataset, see [Loading other datasets](#loading-other-datasets).
 
 1. From the root directory of this repository, run
 ```bash
@@ -66,14 +66,14 @@ ssh -i <keyfile> <user>@<remote.com> -NL 5000:localhost:5000
 ```
 No output will be shown if the connection was successful. Open a browser and navigate to `localhost:5000` to monitor your model.
 
-## Other datasets
-To load your own dataset,
+## Loading other datasets
 1. From the root directory of this repository, run
 ```
 mkdir -p data/(dataset-name)/cutouts
 ```
 2. Place FITS files in `data/(dataset-name)/cutouts`.
 3. Provide a file titled `info.csv` at `data/(dataset-name)`. This file should have (at least) a column titled `file_name` (corresponding to the basenames of the files in `data/(dataset-name)/cutouts`) and a column titled `bt_g` containing bulge-to-total ratios. See [here](http://amritrau.github.io/assets/data/info.csv) for an example CSV (7.3M).
+4. Follow the instructions in the [Quickstart](#quickstart), replacing all instances of `data/sdss/...` with `data/(dataset-name)`.
 
 ## Modules
 ### Auto-cropping
