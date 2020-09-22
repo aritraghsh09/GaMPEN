@@ -79,6 +79,10 @@ class FITSDataset(Dataset):
                 X = arsinh_normalize(X)  # arsinh
 
             # Transform and reshape X
+            # Since the transformation network
+            # is passed on as the transform
+            # argument, it can simply be called
+            # on the tensor. 
             if self.transform:
                 X = self.transform(X)
             X = X.view(self.cutout_shape).float()

@@ -54,6 +54,12 @@ def main(data_dir):
         col = None
         if balance:
             col = 'balance'
+            # pd.cut cuts the supplied column for bt_g
+            # into 4 bins and returns the group each 
+            # value is in. This is written as as the 
+            # "balance" into the CSVs. The range that
+            # each value is in is what is written to the
+            # balance column.
             df['balance'] = pd.cut(df['bt_g'], 4)
 
         # Generate splits and write to disk
