@@ -105,6 +105,7 @@ def train(**kwargs):
     datasets = {k: FITSDataset(
         data_dir=args['data_dir'],
         slug=args['split_slug'],
+        cutout_size=args['cutout_size'],
         normalize=args['normalize'],
         label_col=args['target_metric'],
         transform=T if k == 'train' else None,

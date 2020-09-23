@@ -49,6 +49,10 @@ python ggt/train/train.py \
   --normalize \
   --transform
 ```
+
+```bash
+python ggt/train/train.py --experiment_name='hsc_small_1' --data_dir='data/hsc_small/' --split_slug='balanced-xl' --expand_data=1 --batch_size=64 --epochs=10 --lr=0.005 --normalize --transform --cutout_size=239
+```
 To list additional options, run
 ```bash
 python ggt/train/train.py --help
