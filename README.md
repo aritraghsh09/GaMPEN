@@ -51,7 +51,7 @@ python ggt/train/train.py \
 ```
 
 ```bash
-python ggt/train/train.py --experiment_name='hsc_small_1' --data_dir='data/hsc_small/' --split_slug='balanced-xl' --expand_data=1 --batch_size=64 --epochs=10 --lr=0.005 --normalize --transform --cutout_size=239
+python ggt/train/train.py --experiment_name='hsc_small_1' --data_dir='data/hsc_small/' --split_slug='balanced-xl' --expand_data=1 --batch_size=64 --epochs=10 --lr=0.005 --normalize --transform --cutout_size=167
 ```
 To list additional options, run
 ```bash
@@ -69,6 +69,20 @@ This launches the MLFlow UI on `localhost:5000`. If you are training on a remote
 ssh -i <keyfile> <user>@<remote.com> -NL 5000:localhost:5000
 ```
 No output will be shown if the connection was successful. Open a browser and navigate to `localhost:5000` to monitor your model.
+
+**Grace Specific Instructions**
+
+Run
+```bash
+mlflow ui --host 0.0.0.0 
+```
+on an interactive Grace Node and run the SSH forwarding request on your local machine.
+```bash
+ssh -N -L 5000:<hostname>:5000 <net-id>@grace.hpc.yale.edu
+```
+
+Replace hostname above with the proper node you are running on. For eg. `c01n01`
+
 
 ## Loading other datasets
 1. From the root directory of this repository, run
