@@ -1,9 +1,15 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 
 from groupy.gconv.pytorch_gconv.splitgconv2d import P4MConvZ2, P4MConvP4M
 from groupy.gconv.pytorch_gconv.pooling import plane_group_spatial_max_pooling
+
+
+def get_output_shape(model, image_dim):
+    """ Get Output Shape of a torch model/layer"""
+    return model(torch.rand(*(image_dim))).data.shape
 
 
 class GGT(nn.Module):
@@ -11,6 +17,13 @@ class GGT(nn.Module):
 
     def __init__(self):
         super(GGT, self).__init__()
+
+        self.cutout_size = 239
+        self.channels = 1
+        self.expected_input_shape = (
+            1, self.channels, self.cutout_size,
+            self.cutout_size
+        )
 
         # Spatial transformer localization-network
         self.localization = nn.Sequential(
@@ -22,12 +35,20 @@ class GGT(nn.Module):
             nn.ReLU(True)
         )
 
+        # Calculating the output size of the localization-network
+        self.ln_out_shape = get_output_shape(
+            self.localization,
+            self.expected_input_shape
+        )
+
+        # Calculating the input size of the upcoming FC layer
+        self.fc_in_size = np.prod(self.ln_out_shape[-3:])
+
         # Fully-connected regression network (predicts 3 * 2 affine matrix)
         self.fc_loc = nn.Sequential(
-            # nn.Linear(96 * 34 * 34, 32),
-            nn.Linear(96 * 52 * 52, 32),
-            nn.ReLU(True),
-            nn.Linear(32, 3 * 2)
+           nn.Linear(self.fc_in_size, 32),
+           nn.ReLU(True),
+           nn.Linear(32, 3 * 2)
         )
 
         # Initialize the weights/bias with identity transformation
@@ -70,9 +91,7 @@ class GGT(nn.Module):
 
     def spatial_transform(self, x):
         xs = self.localization(x)
-        # print(xs.shape)
-        # xs = xs.view(-1, 96 * 34 * 34)
-        xs = xs.view(-1, 96 * 52 * 52)
+        xs = xs.view(-1, self.fc_in_size)
         theta = self.fc_loc(xs)
         theta = theta.view(-1, 2, 3)
 
