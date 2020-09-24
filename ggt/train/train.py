@@ -30,34 +30,34 @@ from ggt.visualization.spatial_transform import visualize_spatial_transform
 # This specifies how the data is split into train/devel/test sets
 # Details are specified in the make_splits.py
 # balanced/unbalanced refer to whether selecting equla number
-# from each class. xs, sm, lg all these refer to what 
+# from each class. xs, sm, lg all these refer to what
 # percentage is picked for train/devel/test. Ideally
 # this should just be named slug.
 @click.option('--split_slug', type=str, required=True)
 @click.option('--target_metric', type=str, default='bt_g')
-# By what factor will the training data-set will be 
+# By what factor will the training data-set will be
 # expanded.
 @click.option('--expand_data', type=int, default=16)
 @click.option('--cutout_size', type=int, default=167)
-# The n_workers argument control how many workers 
-# are used during the data loading process. 
+# The n_workers argument control how many workers
+# are used during the data loading process.
 @click.option('--n_workers', type=int, default=16)
 @click.option('--batch_size', type=int, default=32)
 @click.option('--epochs', type=int, default=40)
 @click.option('--lr', type=float, default=0.005)
 @click.option('--momentum', type=float, default=0.9)
-# The parallel argument controls whether or not multiple 
-# GPUs will be used during the training process. 
+# The parallel argument controls whether or not multiple
+# GPUs will be used during the training process.
 @click.option('--parallel/--no-parallel', default=False)
 # Whether all training/testing etc. images will be noramlized
-# using the arcsinh function. 
+# using the arcsinh function.
 @click.option('--normalize/--no-normalize', default=True)
-# Whether the training images will be passed through a 
-# a series of random transformations 
+# Whether the training images will be passed through a
+# a series of random transformations
 @click.option('--transform/--no-transform', default=True)
 def train(**kwargs):
     # The **kwargs just allows for the passing of variable length
-    # keyword arguments.  
+    # keyword arguments.
     """Runs the training procedure using MLFlow."""
 
     # Copy and log args
@@ -69,7 +69,7 @@ def train(**kwargs):
     # Create the model given model_type
     # Data Parallel is a handy Torch tool
     # that splits the input data across multiple
-    # GPUs and does forward passes along those GPUs. 
+    # GPUs and does forward passes along those GPUs.
     cls = model_factory(args['model_type'])
     model = cls()
     model = nn.DataParallel(model) if args['parallel'] else model
@@ -111,8 +111,8 @@ def train(**kwargs):
         transform=T if k == 'train' else None,
         expand_factor=args['expand_data'] if k == 'train' else 1,
         split=k) for k in splits}
-    # WHY IS CUTOUT SIZE AND CHANNELS NOT BEING PASSED 
-    # TO FITSDataSet here? 
+    # WHY IS CUTOUT SIZE AND CHANNELS NOT BEING PASSED
+    # TO FITSDataSet here?
     loaders = {k: loader_factory(v) for k, v in datasets.items()}
     args['splits'] = {k: len(v.dataset) for k, v in loaders.items()}
 

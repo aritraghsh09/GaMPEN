@@ -82,7 +82,7 @@ class FITSDataset(Dataset):
             # Since the transformation network
             # is passed on as the transform
             # argument, it can simply be called
-            # on the tensor. 
+            # on the tensor.
             if self.transform:
                 X = self.transform(X)
             X = X.view(self.cutout_shape).float()

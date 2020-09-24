@@ -56,8 +56,8 @@ def main(data_dir):
         if balance:
             col = 'balance'
             # pd.cut cuts the supplied column for bt_g
-            # into 4 bins and returns the group each 
-            # value is in. This is written as as the 
+            # into 4 bins and returns the group each
+            # value is in. This is written as as the
             # "balance" into the CSVs. The range that
             # each value is in is what is written to the
             # balance column.
