@@ -24,7 +24,8 @@ class GGT(nn.Module):
 
         # Fully-connected regression network (predicts 3 * 2 affine matrix)
         self.fc_loc = nn.Sequential(
-            nn.Linear(96 * 34 * 34, 32),
+            # nn.Linear(96 * 34 * 34, 32),
+            nn.Linear(96 * 52 * 52, 32),
             nn.ReLU(True),
             nn.Linear(32, 3 * 2)
         )
@@ -69,7 +70,9 @@ class GGT(nn.Module):
 
     def spatial_transform(self, x):
         xs = self.localization(x)
-        xs = xs.view(-1, 96 * 34 * 34)
+        # print(xs.shape)
+        # xs = xs.view(-1, 96 * 34 * 34)
+        xs = xs.view(-1, 96 * 52 * 52)
         theta = self.fc_loc(xs)
         theta = theta.view(-1, 2, 3)
 
