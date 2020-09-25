@@ -38,7 +38,8 @@ def make_splits(x, weights, split_col=None):
 
 @click.command()
 @click.option('--data_dir', type=click.Path(exists=True), required=True)
-def main(data_dir):
+@click.option('--target_metric', type=str, default='bt_g')
+def main(data_dir, target_metric):
     """Generate train/devel/test splits from the dataset provided."""
 
     # Make the splits directory
@@ -61,7 +62,7 @@ def main(data_dir):
             # "balance" into the CSVs. The range that
             # each value is in is what is written to the
             # balance column.
-            df['balance'] = pd.cut(df['bt_g'], 4)
+            df['balance'] = pd.cut(df[target_metric], 4)
 
         # Generate splits and write to disk
         for split_type in split_types.keys():
