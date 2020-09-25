@@ -39,6 +39,7 @@ from ggt.visualization.spatial_transform import visualize_spatial_transform
 # expanded.
 @click.option('--expand_data', type=int, default=16)
 @click.option('--cutout_size', type=int, default=167)
+@click.option('--channels', type=int, default=1)
 # The n_workers argument control how many workers
 # are used during the data loading process.
 @click.option('--n_workers', type=int, default=16)
@@ -71,6 +72,11 @@ def train(**kwargs):
     # that splits the input data across multiple
     # GPUs and does forward passes along those GPUs.
     cls = model_factory(args['model_type'])
+    # cls = model_factory(
+    #    args['model_type'],
+    #    args['cutout_size'],
+    #    args['channels']
+    # )
     model = cls()
     model = nn.DataParallel(model) if args['parallel'] else model
     model = model.to(args['device'])
@@ -106,6 +112,7 @@ def train(**kwargs):
         data_dir=args['data_dir'],
         slug=args['split_slug'],
         cutout_size=args['cutout_size'],
+        channels=args['channels'],
         normalize=args['normalize'],
         label_col=args['target_metric'],
         transform=T if k == 'train' else None,
