@@ -72,12 +72,7 @@ def train(**kwargs):
     # that splits the input data across multiple
     # GPUs and does forward passes along those GPUs.
     cls = model_factory(args['model_type'])
-    # cls = model_factory(
-    #    args['model_type'],
-    #    args['cutout_size'],
-    #    args['channels']
-    # )
-    model = cls()
+    model = cls(args['cutout_size'], args['channels'])
     model = nn.DataParallel(model) if args['parallel'] else model
     model = model.to(args['device'])
 
@@ -118,8 +113,6 @@ def train(**kwargs):
         transform=T if k == 'train' else None,
         expand_factor=args['expand_data'] if k == 'train' else 1,
         split=k) for k in splits}
-    # WHY IS CUTOUT SIZE AND CHANNELS NOT BEING PASSED
-    # TO FITSDataSet here?
     loaders = {k: loader_factory(v) for k, v in datasets.items()}
     args['splits'] = {k: len(v.dataset) for k, v in loaders.items()}
 

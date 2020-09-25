@@ -15,11 +15,11 @@ def get_output_shape(model, image_dim):
 class GGT(nn.Module):
     """Galaxy Group-Equivariant Transformer model."""
 
-    def __init__(self):
+    def __init__(self, cutout_size, channels):
         super(GGT, self).__init__()
 
-        self.cutout_size = 239
-        self.channels = 1
+        self.cutout_size = cutout_size
+        self.channels = channels
         self.expected_input_shape = (
             1, self.channels, self.cutout_size,
             self.cutout_size
