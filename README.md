@@ -49,9 +49,9 @@ python ggt/train/train.py \
   --normalize \
   --transform
 ```
-
+To run experiments on the HSC small dataset use the code below:-
 ```bash
-python ggt/train/train.py --experiment_name='hsc_small_1' --data_dir='data/hsc_small/' --split_slug='balanced-xl' --expand_data=1 --batch_size=64 --epochs=10 --lr=0.005 --normalize --transform --cutout_size=167
+python ggt/train/train.py --experiment_name='hsc_small_1' --data_dir='data/hsc_small/' --split_slug='balanced-dev' --expand_data=1 --batch_size=64 --epochs=10 --lr=0.005 --normalize --transform --cutout_size=239
 ```
 To list additional options, run
 ```bash
