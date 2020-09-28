@@ -8,27 +8,26 @@ import torch
 import torch.nn.functional as F
 from torchvision.utils import save_image
 
-from astropy.io import fits
 from tqdm import tqdm
-import numpy as np
-import matplotlib.pyplot as plt
 
 from ggt.data import FITSDataset
 from ggt.models import model_factory
-from ggt.utils import tensor_to_numpy, arsinh_normalize
+from ggt.utils import arsinh_normalize
 
 
 @click.command()
 @click.option('--model_path', type=click.Path(exists=True), required=True)
 @click.option('--image_dir', type=click.Path(exists=True), required=True)
-def main(model_path, image_dir, model_image_dim=167):
+@click.option('--cutout_size', type=int, default=167)
+@click.option('--channels', type=int, default=1)
+def main(model_path, image_dir, cutout_size, channels):
     """Using the spatial transformer layer of the model defined in `model_path`,
     write cropped versions of each image in `image_dir` back to disk."""
 
     # Load the model
     logging.info("Loading model...")
     cls = model_factory('ggt')
-    model = cls()
+    model = cls(cutout_size, channels)
     model.load_state_dict(torch.load(model_path))
 
     # Collect all images, then iterate
@@ -37,7 +36,7 @@ def main(model_path, image_dir, model_image_dim=167):
     for path in tqdm(images):
         # Resize and normalize the image
         X = FITSDataset.load_fits_as_tensor(path)[None, :, :]
-        X = F.interpolate(X[None, :, :, :], size=model_image_dim).squeeze(0)
+        X = F.interpolate(X[None, :, :, :], size=cutout_size).squeeze(0)
         X = arsinh_normalize(X).unsqueeze(0)
 
         # Transform the image
