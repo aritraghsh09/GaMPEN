@@ -1,8 +1,8 @@
 
 # -*- coding: utf-8 -*-
-import click
 import logging
 import glob
+import numpy as np
 from pathlib import Path
 
 import torch
@@ -15,12 +15,10 @@ from ggt.data import FITSDataset
 from ggt.models import model_factory
 from ggt.utils import arsinh_normalize
 
+## THE FUNCTION BELOW NEEDS TO BE MODIFIED USING A DATA LOADER
+## AND CUDA TO SPEED UP THE PROCESS OF MAKING PREDICTIONS.
+## See Imagenet example and Amirt's train.py file
 
-@click.command()
-@click.option('--model_path', type=click.Path(exists=True), required=True)
-@click.option('--image_dir', type=click.Path(exists=True), required=True)
-@click.option('--cutout_size', type=int, default=167)
-@click.option('--channels', type=int, default=1)
 def predict(model_path, image_dir, cutout_size, channels):
     """Using the model defined in model path, return the output values for the given
     set of images"""
@@ -37,6 +35,7 @@ def predict(model_path, image_dir, cutout_size, channels):
     
     output_values = []
 
+
     for path in tqdm(images):
         # Resize and normalize the image
         X = FITSDataset.load_fits_as_tensor(path)[None, :, :]
@@ -47,5 +46,5 @@ def predict(model_path, image_dir, cutout_size, channels):
         with torch.no_grad():
             output_values.append(model(X))
 
-    print(output_values)
+    return np.array(output_values)
 
