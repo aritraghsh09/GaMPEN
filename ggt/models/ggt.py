@@ -6,11 +6,7 @@ import numpy as np
 from groupy.gconv.pytorch_gconv.splitgconv2d import P4MConvZ2, P4MConvP4M
 from groupy.gconv.pytorch_gconv.pooling import plane_group_spatial_max_pooling
 
-
-def get_output_shape(model, image_dim):
-    """ Get Output Shape of a torch model/layer"""
-    return model(torch.rand(*(image_dim))).data.shape
-
+from ggt.utils.model_utils import get_output_shape
 
 class GGT(nn.Module):
     """Galaxy Group-Equivariant Transformer model."""
