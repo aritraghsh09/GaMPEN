@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
 
 from groupy.gconv.pytorch_gconv.splitgconv2d import P4MConvZ2, P4MConvP4M
 from groupy.gconv.pytorch_gconv.pooling import plane_group_spatial_max_pooling
@@ -38,7 +37,7 @@ class GGT(nn.Module):
         )
 
         # Calculating the input size of the upcoming FC layer
-        self.fc_in_size = np.prod(self.ln_out_shape[-3:])
+        self.fc_in_size = torch.prod(torch.tensor(self.ln_out_shape[-3:]))
 
         # Fully-connected regression network (predicts 3 * 2 affine matrix)
         self.fc_loc = nn.Sequential(
