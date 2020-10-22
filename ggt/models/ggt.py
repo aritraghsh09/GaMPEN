@@ -36,21 +36,13 @@ class GGT(nn.Module):
             nn.ReLU(True)
         )
 
-<<<<<<< HEAD
-        # Calculating the output size of the localization-network
-=======
         # Calculate the output size of the localization network
->>>>>>> master
         self.ln_out_shape = get_output_shape(
             self.localization,
             self.expected_input_shape
         )
 
-<<<<<<< HEAD
-        # Calculating the input size of the upcoming FC layer
-=======
         # Calculate the input size of the upcoming FC layer
->>>>>>> master
         self.fc_in_size = torch.prod(torch.tensor(self.ln_out_shape[-3:]))
 
         # Fully-connected regression network (predicts 3 * 2 affine matrix)
