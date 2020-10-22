@@ -61,8 +61,6 @@ loaded images will be normalized using the arcsinh function''')
 help='''If True, the training images are passed through a 
 series of random transformations''')
 def train(**kwargs):
-    # The **kwargs just allows for the passing of variable length
-    # keyword arguments.
     """Runs the training procedure using MLFlow."""
 
     # Copy and log args
@@ -72,9 +70,6 @@ def train(**kwargs):
     args['device'] = discover_devices()
 
     # Create the model given model_type
-    # Data Parallel is a handy Torch tool
-    # that splits the input data across multiple
-    # GPUs and does forward passes along those GPUs.
     cls = model_factory(args['model_type'])
     model = cls(args['cutout_size'], args['channels'])
     model = nn.DataParallel(model) if args['parallel'] else model
