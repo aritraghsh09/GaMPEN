@@ -22,6 +22,12 @@ from ggt.visualization.spatial_transform import visualize_spatial_transform
 
 @click.command()
 @click.option('--experiment_name', type=str, default='demo')
+@click.option('--run_id', type=str, default=None, 
+help='''The run id. Practically this only needs to be used 
+if you are resuming a previosuly run experiment''')
+@click.option('--run_name', type=str, default=None,
+help='''A run is supposed to be a sub-class of an experiment.
+So this variable should be specified accordingly''')
 @click.option('--model_type',
               type=click.Choice(['ggt'], case_sensitive=False),
               default='ggt')
@@ -31,12 +37,17 @@ from ggt.visualization.spatial_transform import visualize_spatial_transform
 @click.option('--target_metric', type=str, default='bt_g')
 @click.option('--expand_data', type=int, default=16)
 @click.option('--cutout_size', type=int, default=167)
-@click.option('--n_workers', type=int, default=16)
+@click.option('--channels', type=int, default=1)
+@click.option('--n_workers', type=int, default=16,
+help='''The number of workers to be used during the
+data loading process.''')
 @click.option('--batch_size', type=int, default=32)
 @click.option('--epochs', type=int, default=40)
 @click.option('--lr', type=float, default=0.005)
 @click.option('--momentum', type=float, default=0.9)
-@click.option('--parallel/--no-parallel', default=False)
+@click.option('--parallel/--no-parallel', default=False,
+help='''The parallel argument controls whether or not 
+to use multiple GPUs when they are available''')
 @click.option('--normalize/--no-normalize', default=True)
 @click.option('--transform/--no-transform', default=True)
 def train(**kwargs):
@@ -50,7 +61,7 @@ def train(**kwargs):
 
     # Create the model given model_type
     cls = model_factory(args['model_type'])
-    model = cls()
+    model = cls(args['cutout_size'], args['channels'])
     model = nn.DataParallel(model) if args['parallel'] else model
     model = model.to(args['device'])
 
@@ -84,6 +95,8 @@ def train(**kwargs):
     datasets = {k: FITSDataset(
         data_dir=args['data_dir'],
         slug=args['split_slug'],
+        cutout_size=args['cutout_size'],
+        channels=args['channels'],
         normalize=args['normalize'],
         label_col=args['target_metric'],
         transform=T if k == 'train' else None,
@@ -94,7 +107,7 @@ def train(**kwargs):
 
     # Start the training process
     mlflow.set_experiment(args['experiment_name'])
-    with mlflow.start_run():
+    with mlflow.start_run(run_id=args['run_id'],run_name=args['run_name']):
         # Write the parameters and model stats to MLFlow
         args = {**args, **model_stats(model)}  # py3.9: d1 |= d2
         for k, v in args.items():

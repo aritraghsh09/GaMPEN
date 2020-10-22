@@ -27,7 +27,7 @@ def visualize_spatial_transform(model, loader, output_dir,
         if hasattr(model, 'spatial_transform'):
             out_tensor = model.spatial_transform(data).cpu()
         elif hasattr(model.module, 'spatial_transform'):
-            out_tensor = model.spatial_transform(data).cpu()
+            out_tensor = model.module.spatial_transform(data).cpu()
         else:
             raise ValueError("Model does not have a spatial_transform method")
 

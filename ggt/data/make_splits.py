@@ -13,7 +13,8 @@ split_types = dict(
     sm=dict(train=0.045, devel=0.005, test=0.950),
     md=dict(train=0.090, devel=0.010, test=0.900),
     lg=dict(train=0.200, devel=0.050, test=0.750),
-    xl=dict(train=0.450, devel=0.050, test=0.500)
+    xl=dict(train=0.450, devel=0.050, test=0.500),
+    dev=dict(train=0.70, devel=0.15, test=0.15),
 )
 
 
@@ -37,7 +38,8 @@ def make_splits(x, weights, split_col=None):
 
 @click.command()
 @click.option('--data_dir', type=click.Path(exists=True), required=True)
-def main(data_dir):
+@click.option('--target_metric', type=str, default='bt_g')
+def main(data_dir, target_metric):
     """Generate train/devel/test splits from the dataset provided."""
 
     # Make the splits directory
@@ -54,7 +56,7 @@ def main(data_dir):
         col = None
         if balance:
             col = 'balance'
-            df['balance'] = pd.cut(df['bt_g'], 4)
+            df['balance'] = pd.cut(df[target_metric], 4)
 
         # Generate splits and write to disk
         for split_type in split_types.keys():

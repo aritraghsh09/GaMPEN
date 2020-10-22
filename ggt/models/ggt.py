@@ -5,12 +5,19 @@ import torch.nn.functional as F
 from groupy.gconv.pytorch_gconv.splitgconv2d import P4MConvZ2, P4MConvP4M
 from groupy.gconv.pytorch_gconv.pooling import plane_group_spatial_max_pooling
 
+from ggt.utils.model_utils import get_output_shape
 
 class GGT(nn.Module):
     """Galaxy Group-Equivariant Transformer model."""
 
-    def __init__(self):
+    def __init__(self, cutout_size, channels):
         super(GGT, self).__init__()
+        self.cutout_size = cutout_size
+        self.channels = channels
+        self.expected_input_shape = (
+            1, self.channels, self.cutout_size,
+            self.cutout_size
+        )
 
         # Spatial transformer localization-network
         self.localization = nn.Sequential(
@@ -22,11 +29,20 @@ class GGT(nn.Module):
             nn.ReLU(True)
         )
 
+        # Calculate the output size of the localization network
+        self.ln_out_shape = get_output_shape(
+            self.localization,
+            self.expected_input_shape
+        )
+
+        # Calculate the input size of the upcoming FC layer
+        self.fc_in_size = torch.prod(torch.tensor(self.ln_out_shape[-3:]))
+
         # Fully-connected regression network (predicts 3 * 2 affine matrix)
         self.fc_loc = nn.Sequential(
-            nn.Linear(96 * 34 * 34, 32),
-            nn.ReLU(True),
-            nn.Linear(32, 3 * 2)
+           nn.Linear(self.fc_in_size, 32),
+           nn.ReLU(True),
+           nn.Linear(32, 3 * 2)
         )
 
         # Initialize the weights/bias with identity transformation
@@ -69,7 +85,7 @@ class GGT(nn.Module):
 
     def spatial_transform(self, x):
         xs = self.localization(x)
-        xs = xs.view(-1, 96 * 34 * 34)
+        xs = xs.view(-1, self.fc_in_size)
         theta = self.fc_loc(xs)
         theta = theta.view(-1, 2, 3)
 
