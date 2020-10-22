@@ -33,20 +33,12 @@ So this variable should be specified accordingly''')
               default='ggt')
 @click.option('--model_state', type=click.Path(exists=True), default=None)
 @click.option('--data_dir', type=click.Path(exists=True), required=True)
-# This specifies how the data is split into train/devel/test sets
-# Details are specified in the make_splits.py
-# balanced/unbalanced refer to whether selecting equla number
-# from each class. xs, sm, lg all these refer to what
-# percentage is picked for train/devel/test. Ideally
-# this should just be named slug.
 @click.option('--split_slug', type=str, required=True,
 help='''This specifies how the data is split into train/
 devel/test sets. Balanced/Unbalanced refer to whether selecting 
 equal number of images from each class. xs, sm, lg, dev all refer 
 to what fraction is picked for train/devel/test.''')
 @click.option('--target_metric', type=str, default='bt_g')
-# By what factor will the training data-set will be
-# expanded.
 @click.option('--expand_data', type=int, default=16,
 help = '''This controls the factor by which the training
 data is augmented''')
@@ -62,13 +54,9 @@ data loading process.''')
 @click.option('--parallel/--no-parallel', default=False,
 help='''The parallel argument controls whether or not 
 to use multiple GPUs when they are available''')
-# Whether all training/testing etc. images will be noramlized
-# using the arcsinh function.
 @click.option('--normalize/--no-normalize', default=True,
 help='''The normalize argument controls whether or not, the
 loaded images will be normalized using the arcsinh function''')
-# Whether the training images will be passed through a
-# a series of random transformations
 @click.option('--transform/--no-transform', default=True,
 help='''If True, the training images are passed through a 
 series of random transformations''')

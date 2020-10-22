@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import click
 import logging
 import numpy as np
 from pathlib import Path
@@ -38,6 +39,7 @@ def predict(model_path, dataset, cutout_size, channels, parallel=False, \
 
     output_values = []
 
+    logging.info("Performing predictions...")
     for data in tqdm(loader):
         img = data[0]
         with torch.no_grad():
@@ -45,10 +47,29 @@ def predict(model_path, dataset, cutout_size, channels, parallel=False, \
 
     return np.array(torch.cat(output_values).cpu())
 
-
+@click.command()
+@click.option('--model_path', type=click.Path(exists=True), required=True)
+@click.option('--cat_out_path', type=click.Path(writable=True), required=True)
+@click.option('--data_dir', type=click.Path(exists=True), required=True)
+@click.option('--cutout_size', type=int, default=167)
+@click.option('--channels', type=int, default=1)
+@click.option('--slug', type=str, required=True,
+help='''This specifies which slug (balanced/unbalanced 
+xs, sm, lg, dev) is used to perform predictions on.''')
+@click.option('--split', type=str, required=True, default='test')
+@click.option('--normalize/--no-normalize', default=True,
+help='''The normalize argument controls whether or not, the
+loaded images will be normalized using the arcsinh function''')
+@click.option('--batch_size', type=int, default=256)
+@click.option('--n_workers', type=int, default=16,
+help='''The number of workers to be used during the
+data loading process.''')
+@click.option('--parallel/--no-parallel', default=False,
+help='''The parallel argument controls whether or not 
+to use multiple GPUs when they are available''')
+@click.option('--label_col', type=str, default='bt_g')
 def main(model_path, cat_out_path, data_dir, cutout_size, channels,\
-    parallel=False, slug='balanced-dev', split='test', normalize=True,\
-    batch_size=256, n_workers = 1, label_col='bt_g'):
+    parallel, slug, split, normalize, batch_size, n_workers, label_col):
     
     # Load the data and create a dataloader
     logging.info("Loading Images to Device")
