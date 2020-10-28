@@ -76,7 +76,7 @@ def main(model_path, cat_out_path, data_dir, cutout_size, channels,\
     dataset = FITSDataset(data_dir, slug=slug, normalize=normalize, split=split,\
         cutout_size=cutout_size, channels = channels, label_col = label_col)
 
-    # Making Predictions
+    # Make predictions
     preds = predict(model_path, dataset, cutout_size, channels, parallel=parallel,\
         batch_size=batch_size, n_workers = n_workers) 
 
