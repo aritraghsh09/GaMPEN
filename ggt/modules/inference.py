@@ -79,7 +79,7 @@ def main(model_path, cat_out_path, data_dir, cutout_size, channels,\
     preds = predict(model_path, dataset, cutout_size, channels, parallel=parallel,\
         batch_size=batch_size, n_workers = n_workers) 
 
-    # Outputting a CSV Prediction Catalogue
+    # Write a CSV of predictions
     catalog = pd.read_csv(Path(data_dir) / "splits/{}-{}.csv".format(slug, split))
     catalog['preds'] = preds
     catalog.to_csv(output_path, index=False)
