@@ -49,7 +49,7 @@ def predict(model_path, dataset, cutout_size, channels, parallel=False, \
 
 @click.command()
 @click.option('--model_path', type=click.Path(exists=True), required=True)
-@click.option('--cat_out_path', type=click.Path(writable=True), required=True)
+@click.option('--output_path', type=click.Path(writable=True), required=True)
 @click.option('--data_dir', type=click.Path(exists=True), required=True)
 @click.option('--cutout_size', type=int, default=167)
 @click.option('--channels', type=int, default=1)
