@@ -64,7 +64,7 @@ This launches the MLFlow UI on `localhost:5000`. If you are training on a remote
 ```bash
 ssh -i <keyfile> <user>@<remote.com> -NL 5000:localhost:5000
 ```
-No output will be shown if the connection was successful. Open a browser and navigate to `localhost:5000` to monitor your model.
+No output will be shown if the connection was successful. Open a browser and navigate to `localhost:5000` to monitor your model. (For site-specific instructions, see this repository's [wiki](https://github.com/amritrau/ggt/wiki).)
 
 
 ## Loading other datasets
