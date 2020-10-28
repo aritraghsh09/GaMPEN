@@ -33,7 +33,7 @@ def predict(model_path, dataset, cutout_size, channels, parallel=False, \
     model = model.to(device)
     model.load_state_dict(torch.load(model_path))
 
-    #Creating a Data Loader
+    # Create a data loader
     loader = get_data_loader(dataset, batch_size=batch_size, n_workers=n_workers,\
         shuffle=False)
 
