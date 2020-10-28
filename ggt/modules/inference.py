@@ -37,15 +37,14 @@ def predict(model_path, dataset, cutout_size, channels, parallel=False, \
     loader = get_data_loader(dataset, batch_size=batch_size, n_workers=n_workers,\
         shuffle=False)
 
-    output_values = []
-
     logging.info("Performing predictions...")
-    for data in tqdm(loader):
-        img = data[0]
-        with torch.no_grad():
-            output_values.append(model(img.to(device)))
-
-    return np.array(torch.cat(output_values).cpu())
+    yh = []
+    model.eval()
+    with torch.no_grad():
+        for data in tqdm(loader):
+            X, _ = data
+            yh.append(model(X.to(device)))
+    return torch.cat(yh).cpu().numpy()
 
 @click.command()
 @click.option('--model_path', type=click.Path(exists=True), required=True)
