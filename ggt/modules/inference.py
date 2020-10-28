@@ -71,7 +71,7 @@ to use multiple GPUs when they are available''')
 def main(model_path, cat_out_path, data_dir, cutout_size, channels,\
     parallel, slug, split, normalize, batch_size, n_workers, label_col):
     
-    # Load the data and create a dataloader
+    # Load the data and create a data loader
     logging.info("Loading Images to Device")
     dataset = FITSDataset(data_dir, slug=slug, normalize=normalize, split=split,\
         cutout_size=cutout_size, channels = channels, label_col = label_col)
