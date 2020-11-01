@@ -33,9 +33,15 @@ So this variable should be specified accordingly''')
               default='ggt')
 @click.option('--model_state', type=click.Path(exists=True), default=None)
 @click.option('--data_dir', type=click.Path(exists=True), required=True)
-@click.option('--split_slug', type=str, required=True)
+@click.option('--split_slug', type=str, required=True,
+help='''This specifies how the data is split into train/
+devel/test sets. Balanced/Unbalanced refer to whether selecting 
+equal number of images from each class. xs, sm, lg, dev all refer 
+to what fraction is picked for train/devel/test.''')
 @click.option('--target_metric', type=str, default='bt_g')
-@click.option('--expand_data', type=int, default=16)
+@click.option('--expand_data', type=int, default=16,
+help = '''This controls the factor by which the training
+data is augmented''')
 @click.option('--cutout_size', type=int, default=167)
 @click.option('--channels', type=int, default=1)
 @click.option('--n_workers', type=int, default=16,
@@ -48,8 +54,12 @@ data loading process.''')
 @click.option('--parallel/--no-parallel', default=False,
 help='''The parallel argument controls whether or not 
 to use multiple GPUs when they are available''')
-@click.option('--normalize/--no-normalize', default=True)
-@click.option('--transform/--no-transform', default=True)
+@click.option('--normalize/--no-normalize', default=True,
+help='''The normalize argument controls whether or not, the
+loaded images will be normalized using the arcsinh function''')
+@click.option('--transform/--no-transform', default=True,
+help='''If True, the training images are passed through a 
+series of random transformations''')
 def train(**kwargs):
     """Runs the training procedure using MLFlow."""
 
