@@ -63,6 +63,8 @@ series of random transformations''')
 @click.option('--repeat_dims/--no-repeat_dims', default=False,
 help='''In case of multi-channel data, whether to repeat a two 
 dimensional image as many times as the number of channels''')
+@click.option('--nesterov/--no-nesterov', default=False,
+help='''Whether to use Nesterov momentum or not''')
 def train(**kwargs):
     """Runs the training procedure using MLFlow."""
 
@@ -84,7 +86,8 @@ def train(**kwargs):
 
     # Define the optimizer and criterion
     optimizer = opt.SGD(model.parameters(), lr=args['lr'],
-                        momentum=args['momentum'])
+                        momentum=args['momentum'],
+                        nesterov=args['nesterov'])
     criterion = nn.MSELoss()
 
     # Create a DataLoader factory based on command-line args
