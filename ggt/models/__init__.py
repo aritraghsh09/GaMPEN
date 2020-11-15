@@ -10,7 +10,7 @@ def model_stats(model):
 
 
 def model_factory(modeltype):
-    if modeltype.lower() == 'ggt':
+    if modeltype.lower() == "ggt":
         return GGT
     else:
         raise ValueError("Model type {} does not exist.".format(modeltype))

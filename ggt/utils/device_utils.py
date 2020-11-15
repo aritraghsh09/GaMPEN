@@ -1,6 +1,7 @@
 import torch
 import logging
 
+
 def discover_devices():
     """Check for available devices."""
     if torch.cuda.is_available():
