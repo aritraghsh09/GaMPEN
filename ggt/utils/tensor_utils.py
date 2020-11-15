@@ -14,7 +14,7 @@ def arsinh_normalize(X):
 
 def load_tensor(filename, tensors_path):
     """Load a Torch tensor from disk."""
-    return torch.load(tensors_path / (filename + ".pt"))
+    return torch.load(tensors_path / (filename + ".pt")).numpy()
 
 
 def chunk_seq(seq, size=2048):

@@ -67,9 +67,11 @@ class FITSDataset(Dataset):
         logging.info(f"Preloading tensors in chunks of {chunk_size}...")
         load_fn = partial(load_tensor, tensors_path=self.tensors_path)
         self.observations = []  # append to self.observations
-        for chunk in chunk_seq(self.filenames):
+        for chunk in chunk_seq(self.filenames, chunk_size):
             with mp.Pool(mp.cpu_count() // 2) as p:
                 self.observations += list(tqdm(p.imap(load_fn, chunk), total=len(chunk)))
+        
+        self.observations = [torch.from_numpy(x) for x in self.observations]
 
     def __getitem__(self, index):
         """Magic method to index into the dataset."""
