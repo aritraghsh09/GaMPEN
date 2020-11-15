@@ -62,14 +62,12 @@ class FITSDataset(Dataset):
                 t = FITSDataset.load_fits_as_tensor(load_path)
                 torch.save(t, filepath)
 
-        # Preload the tensors in chunks to avoid torch mp bug
-        chunk_size = 10000
-        logging.info(f"Preloading tensors in chunks of {chunk_size}...")
+        # Preload the tensors
+        n = len(self.filenames)
+        logging.info(f"Preloading {n} tensors...")
         load_fn = partial(load_tensor, tensors_path=self.tensors_path)
-        self.observations = []  # append to self.observations
-        for chunk in chunk_seq(self.filenames, chunk_size):
-            with mp.Pool(mp.cpu_count() // 2) as p:
-                self.observations += list(tqdm(p.imap(load_fn, chunk), total=len(chunk)))
+        with mp.Pool(mp.cpu_count()) as p:
+            self.observations = list(tqdm(p.imap(load_fn, self.filenames), total=n))
         
         self.observations = [torch.from_numpy(x) for x in self.observations]
 

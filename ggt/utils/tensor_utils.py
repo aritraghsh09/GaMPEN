@@ -12,12 +12,6 @@ def arsinh_normalize(X):
     return torch.log(X + (X ** 2 + 1) ** 0.5)
 
 
-def load_tensor(filename, tensors_path):
+def load_tensor(filename, tensors_path, as_numpy=True):
     """Load a Torch tensor from disk."""
     return torch.load(tensors_path / (filename + ".pt")).numpy()
-
-
-def chunk_seq(seq, size=2048):
-    """Break a sequence into chunks of a given size. 
-    From https://stackoverflow.com/questions/434287."""
-    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
