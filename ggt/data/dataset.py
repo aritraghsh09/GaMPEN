@@ -63,7 +63,7 @@ class FITSDataset(Dataset):
                 torch.save(t, filepath)
 
         # Preload the tensors in chunks to avoid torch mp bug
-        chunk_size = 
+        chunk_size = 10000
         logging.info(f"Preloading tensors in chunks of {chunk_size}...")
         load_fn = partial(load_tensor, tensors_path=self.tensors_path)
         self.observations = []  # append to self.observations
