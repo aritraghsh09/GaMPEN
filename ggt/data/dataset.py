@@ -8,12 +8,12 @@ from tqdm import tqdm
 import torch
 from torch.utils.data import Dataset
 import torch.multiprocessing as mp
-mp.set_sharing_strategy('file_system')
 
 from ggt.utils import arsinh_normalize, load_tensor
 
 import logging
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(message)s')
+mp.set_sharing_strategy('file_system')
 
 
 class FITSDataset(Dataset):
@@ -54,7 +54,7 @@ class FITSDataset(Dataset):
         self.filenames = np.asarray(self.data_info["file_name"])
 
         # If we haven't already generated PyTorch tensor files, generate them
-        logging.info(f"Generating PyTorch tensors from FITS files...")
+        logging.info("Generating PyTorch tensors from FITS files...")
         for filename in tqdm(self.filenames):
             filepath = self.tensors_path / (filename + ".pt")
             if not filepath.is_file():
@@ -67,8 +67,7 @@ class FITSDataset(Dataset):
         logging.info(f"Preloading {n} tensors...")
         load_fn = partial(load_tensor, tensors_path=self.tensors_path)
         with mp.Pool(mp.cpu_count()) as p:
-            self.observations = list(tqdm(p.imap(load_fn, self.filenames), total=n))
-        
+            self.observations = tqdm(p.imap(load_fn, self.filenames), total=n)
         self.observations = [torch.from_numpy(x) for x in self.observations]
 
     def __getitem__(self, index):
