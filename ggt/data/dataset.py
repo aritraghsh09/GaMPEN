@@ -8,6 +8,7 @@ from tqdm import tqdm
 
 import torch
 from torch.utils.data import Dataset
+torch.multiprocessing.set_sharing_strategy('file_system')
 
 from ggt.utils import arsinh_normalize, load_tensor
 
