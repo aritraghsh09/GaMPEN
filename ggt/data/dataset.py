@@ -1,13 +1,15 @@
 from astropy.io import fits
 import numpy as np
 import pandas as pd
+from functools import partial
+import multiprocessing as mp
 from pathlib import Path
 from tqdm import tqdm
 
 import torch
 from torch.utils.data import Dataset
 
-from ggt.utils import arsinh_normalize
+from ggt.utils import arsinh_normalize, load_tensor
 
 import logging
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(message)s')
@@ -59,7 +61,9 @@ class FITSDataset(Dataset):
                 torch.save(t, filepath)
 
         # Preload the tensors
-        self.observations = [self.load_tensor(f) for f in tqdm(self.filenames)]
+        load_fn = partial(load_tensor, tensors_path=self.tensors_path)
+        with mp.Pool(mp.cpu_count()) as p:
+            self.observations = list(tqdm(p.imap(load_fn, self.filenames), total=len(self.filenames)))
 
     def __getitem__(self, index):
         """Magic method to index into the dataset."""
@@ -93,10 +97,6 @@ class FITSDataset(Dataset):
     def __len__(self):
         """Return the effective length of the dataset."""
         return len(self.labels) * self.expand_factor
-
-    def load_tensor(self, filename):
-        """Load a Torch tensor from disk."""
-        return torch.load(self.tensors_path / (filename + ".pt"))
 
     @staticmethod
     def load_fits_as_tensor(filename):

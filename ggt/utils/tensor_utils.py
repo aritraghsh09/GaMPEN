@@ -10,3 +10,8 @@ def tensor_to_numpy(x):
 def arsinh_normalize(X):
     """Normalize a Torch tensor with arsinh."""
     return torch.log(X + (X ** 2 + 1) ** 0.5)
+
+
+def load_tensor(tensors_path, filename):
+    """Load a Torch tensor from disk."""
+    return torch.load(tensors_path / (filename + ".pt"))
