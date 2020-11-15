@@ -67,7 +67,9 @@ class FITSDataset(Dataset):
         logging.info(f"Preloading {n} tensors...")
         load_fn = partial(load_tensor, tensors_path=self.tensors_path)
         with mp.Pool(mp.cpu_count()) as p:
-            self.observations = tqdm(p.imap(load_fn, self.filenames), total=n)
+            # Loading to NumPy and then converting to Pytorch tensors is a hack
+            # to allow for multiprocessing
+            self.observations = list(tqdm(p.imap(load_fn, self.filenames), total=n))
         self.observations = [torch.from_numpy(x) for x in self.observations]
 
     def __getitem__(self, index):
