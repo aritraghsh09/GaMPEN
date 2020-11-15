@@ -10,16 +10,26 @@ from torch.utils.data import Dataset
 from ggt.utils import arsinh_normalize
 
 import logging
-logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(message)s')
+
+logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")
 
 
 class FITSDataset(Dataset):
     """Dataset from FITS files. Pre-caches FITS files as PyTorch tensors to
     improve data load speed."""
 
-    def __init__(self, data_dir, slug=None, split=None, channels=1,
-                 cutout_size=167, label_col='bt_g', normalize=True,
-                 transform=None, expand_factor=1):
+    def __init__(
+        self,
+        data_dir,
+        slug=None,
+        split=None,
+        channels=1,
+        cutout_size=167,
+        label_col="bt_g",
+        normalize=True,
+        transform=None,
+        expand_factor=1,
+    ):
 
         # Set data directory
         self.data_dir = Path(data_dir)
