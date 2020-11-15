@@ -37,8 +37,8 @@ def make_splits(x, weights, split_col=None):
 
 
 @click.command()
-@click.option('--data_dir', type=click.Path(exists=True), required=True)
-@click.option('--target_metric', type=str, default='bt_g')
+@click.option("--data_dir", type=click.Path(exists=True), required=True)
+@click.option("--target_metric", type=str, default="bt_g")
 def main(data_dir, target_metric):
     """Generate train/devel/test splits from the dataset provided."""
 
@@ -55,8 +55,8 @@ def main(data_dir, target_metric):
         # Balance if needed
         col = None
         if balance:
-            col = 'balance'
-            df['balance'] = pd.cut(df[target_metric], 4)
+            col = "balance"
+            df["balance"] = pd.cut(df[target_metric], 4)
 
         # Generate splits and write to disk
         for split_type in split_types.keys():
@@ -66,8 +66,8 @@ def main(data_dir, target_metric):
                 v.to_csv(splits_dir / f"{split_slug}-{k}.csv", index=False)
 
 
-if __name__ == '__main__':
-    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+if __name__ == "__main__":
+    log_fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(level=logging.INFO, format=log_fmt)
 
     main()
