@@ -10,7 +10,7 @@ from torch.utils.data import Dataset
 import torch.multiprocessing as mp
 mp.set_sharing_strategy('file_system')
 
-from ggt.utils import arsinh_normalize, load_tensor, chunk_seq
+from ggt.utils import arsinh_normalize, load_tensor
 
 import logging
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(message)s')
