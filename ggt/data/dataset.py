@@ -44,7 +44,7 @@ class FITSDataset(Dataset):
             catalog = self.data_dir / "info.csv"
 
         # Define paths
-        self.data_info = pd.read_csv(catalog).tail(40000)
+        self.data_info = pd.read_csv(catalog)
         self.cutouts_path = self.data_dir / "cutouts"
         self.tensors_path = self.data_dir / "tensors"
         self.tensors_path.mkdir(parents=True, exist_ok=True)
