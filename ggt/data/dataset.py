@@ -44,7 +44,7 @@ class FITSDataset(Dataset):
             catalog = self.data_dir / "info.csv"
 
         # Define paths
-        self.data_info = pd.read_csv(catalog)
+        self.data_info = pd.read_csv(catalog).tail(40000)
         self.cutouts_path = self.data_dir / "cutouts"
         self.tensors_path = self.data_dir / "tensors"
         self.tensors_path.mkdir(parents=True, exist_ok=True)
@@ -63,7 +63,8 @@ class FITSDataset(Dataset):
                 torch.save(t, filepath)
 
         # Preload the tensors in chunks to avoid torch mp bug
-        logging.info(f"Preloading tensors...")
+        chunk_size = 
+        logging.info(f"Preloading tensors in chunks of {chunk_size}...")
         load_fn = partial(load_tensor, tensors_path=self.tensors_path)
         self.observations = []  # append to self.observations
         for chunk in chunk_seq(self.filenames):
