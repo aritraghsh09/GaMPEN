@@ -12,8 +12,9 @@ import torch.multiprocessing as mp
 from ggt.utils import arsinh_normalize, load_tensor
 
 import logging
-logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(message)s')
-mp.set_sharing_strategy('file_system')
+
+logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")
+mp.set_sharing_strategy("file_system")
 
 
 class FITSDataset(Dataset):
@@ -78,7 +79,9 @@ class FITSDataset(Dataset):
         with mp.Pool(mp.cpu_count()) as p:
             # Load to NumPy, then convert to PyTorch (hack to solve system
             # issue with multiprocessing + PyTorch tensors)
-            self.observations = list(tqdm(p.imap(load_fn, self.filenames), total=n))
+            self.observations = list(
+                tqdm(p.imap(load_fn, self.filenames), total=n)
+            )
         self.observations = [torch.from_numpy(x) for x in self.observations]
 
     def __getitem__(self, index):
