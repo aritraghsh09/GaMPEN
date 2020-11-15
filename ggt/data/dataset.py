@@ -2,13 +2,13 @@ from astropy.io import fits
 import numpy as np
 import pandas as pd
 from functools import partial
-import multiprocessing as mp
 from pathlib import Path
 from tqdm import tqdm
 
 import torch
 from torch.utils.data import Dataset
-torch.multiprocessing.set_sharing_strategy('file_system')
+import torch.multiprocessing as mp
+mp.set_sharing_strategy('file_system')
 
 from ggt.utils import arsinh_normalize, load_tensor
 
