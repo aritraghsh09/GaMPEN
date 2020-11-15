@@ -54,6 +54,7 @@ class FITSDataset(Dataset):
         self.filenames = np.asarray(self.data_info["file_name"])
 
         # If we haven't already generated PyTorch tensor files, generate them
+        logging.info(f"Generating PyTorch tensors from FITS files...")
         for filename in tqdm(self.filenames):
             filepath = self.tensors_path / (filename + ".pt")
             if not filepath.is_file():
@@ -62,8 +63,9 @@ class FITSDataset(Dataset):
                 torch.save(t, filepath)
 
         # Preload the tensors
+        logging.info(f"Preloading tensors...")
         load_fn = partial(load_tensor, tensors_path=self.tensors_path)
-        with mp.Pool(mp.cpu_count()) as p:
+        with mp.Pool(mp.cpu_count() // 2) as p:
             self.observations = list(tqdm(p.imap(load_fn, self.filenames), total=len(self.filenames)))
 
     def __getitem__(self, index):
