@@ -10,7 +10,7 @@ from torch.utils.data import Dataset
 import torch.multiprocessing as mp
 mp.set_sharing_strategy('file_system')
 
-from ggt.utils import arsinh_normalize, load_tensor
+from ggt.utils import arsinh_normalize, load_tensor, chunk_seq
 
 import logging
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(message)s')
@@ -62,11 +62,13 @@ class FITSDataset(Dataset):
                 t = FITSDataset.load_fits_as_tensor(load_path)
                 torch.save(t, filepath)
 
-        # Preload the tensors
+        # Preload the tensors in chunks to avoid torch mp bug
         logging.info(f"Preloading tensors...")
         load_fn = partial(load_tensor, tensors_path=self.tensors_path)
-        with mp.Pool(mp.cpu_count() // 2) as p:
-            self.observations = list(tqdm(p.imap(load_fn, self.filenames), total=len(self.filenames)))
+        self.observations = []  # append to self.observations
+        for chunk in chunk_seq(self.filenames):
+            with mp.Pool(mp.cpu_count() // 2) as p:
+                self.observations += list(tqdm(p.imap(load_fn, chunk), total=len(chunk)))
 
     def __getitem__(self, index):
         """Magic method to index into the dataset."""
