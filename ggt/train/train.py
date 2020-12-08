@@ -10,6 +10,7 @@ import mlflow
 import torch
 import torch.nn as nn
 import torch.optim as opt
+
 # import torch_optimizer as opt
 import kornia.augmentation as K
 
@@ -72,17 +73,17 @@ def train(**kwargs):
     args = {k: v for k, v in kwargs.items()}
 
     # Discover devices
-    args['device'] = discover_devices()
+    args["device"] = discover_devices()
 
     # Create the model given model_type
-    cls = model_factory(args['model_type'])
-    model = cls(args['cutout_size'], args['channels'])
-    model = nn.DataParallel(model) if args['parallel'] else model
-    model = model.to(args['device'])
+    cls = model_factory(args["model_type"])
+    model = cls(args["cutout_size"], args["channels"])
+    model = nn.DataParallel(model) if args["parallel"] else model
+    model = model.to(args["device"])
 
     # Load the model from a saved state if provided
-    if args['model_state']:
-        model.load_state_dict(torch.load(args['model_state']))
+    if args["model_state"]:
+        model.load_state_dict(torch.load(args["model_state"]))
 
     # Define the optimizer and criterion
     optimizer = opt.SGD(model.parameters(), lr=args['lr'],
@@ -93,13 +94,13 @@ def train(**kwargs):
     # Create a DataLoader factory based on command-line args
     loader_factory = partial(
         get_data_loader,
-        batch_size=args['batch_size'],
-        n_workers=args['n_workers']
+        batch_size=args["batch_size"],
+        n_workers=args["n_workers"],
     )
 
     # Select the desired transforms
     T = None
-    if args['transform']:
+    if args["transform"]:
         T = nn.Sequential(
             K.RandomHorizontalFlip(),
             K.RandomVerticalFlip(),
@@ -120,24 +121,27 @@ def train(**kwargs):
         expand_factor=args['expand_data'] if k == 'train' else 1,
         split=k) for k in splits}
     loaders = {k: loader_factory(v) for k, v in datasets.items()}
-    args['splits'] = {k: len(v.dataset) for k, v in loaders.items()}
+    args["splits"] = {k: len(v.dataset) for k, v in loaders.items()}
 
     # Start the training process
-    mlflow.set_experiment(args['experiment_name'])
-    with mlflow.start_run(run_id=args['run_id'],run_name=args['run_name']):
+    mlflow.set_experiment(args["experiment_name"])
+    with mlflow.start_run(run_id=args["run_id"], run_name=args["run_name"]):
         # Write the parameters and model stats to MLFlow
         args = {**args, **model_stats(model)}  # py3.9: d1 |= d2
         for k, v in args.items():
             mlflow.log_param(k, v)
 
         # Set up trainer
-        trainer = create_trainer(model, optimizer, criterion, loaders,
-                                 args['device'])
+        trainer = create_trainer(
+            model, optimizer, criterion, loaders, args["device"]
+        )
 
         # Run trainer and save model state
-        trainer.run(loaders['train'], max_epochs=args['epochs'])
-        slug = (f"{args['experiment_name']}-{args['split_slug']}-"
-                f"{mlflow.active_run().info.run_id}")
+        trainer.run(loaders["train"], max_epochs=args["epochs"])
+        slug = (
+            f"{args['experiment_name']}-{args['split_slug']}-"
+            f"{mlflow.active_run().info.run_id}"
+        )
         model_path = save_trained_model(model, slug)
 
         # Log model as an artifact
@@ -158,8 +162,8 @@ def train(**kwargs):
                 mlflow.log_artifacts(output_dir)
 
 
-if __name__ == '__main__':
-    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+if __name__ == "__main__":
+    log_fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(level=logging.INFO, format=log_fmt)
 
     train()

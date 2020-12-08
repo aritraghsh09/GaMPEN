@@ -18,6 +18,10 @@ clean:
 lint:
 	flake8 $(PROJECT_NAME)
 
+# Automatically fix code style
+style:
+	black . --line-length=79
+
 # Run tests
 check: lint
 	pytest

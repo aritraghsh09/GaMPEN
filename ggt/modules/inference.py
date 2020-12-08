@@ -30,8 +30,9 @@ def predict(model_path, dataset, cutout_size, channels, parallel=False, \
     model.load_state_dict(torch.load(model_path))
 
     # Create a data loader
-    loader = get_data_loader(dataset, batch_size=batch_size,
-                             n_workers=n_workers, shuffle=False)
+    loader = get_data_loader(
+        dataset, batch_size=batch_size, n_workers=n_workers, shuffle=False
+    )
 
     logging.info("Performing predictions...")
     yh = []
@@ -85,14 +86,15 @@ def main(model_path, output_path, data_dir, cutout_size, channels,\
         batch_size=batch_size, n_workers = n_workers, model_type=model_type) 
 
     # Write a CSV of predictions
-    catalog = pd.read_csv(Path(data_dir) / "splits/{}-{}.csv".format(slug,
-                                                                     split))
-    catalog['preds'] = preds
+    catalog = pd.read_csv(
+        Path(data_dir) / "splits/{}-{}.csv".format(slug, split)
+    )
+    catalog["preds"] = preds
     catalog.to_csv(output_path, index=False)
 
 
-if __name__ == '__main__':
-    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+if __name__ == "__main__":
+    log_fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(level=logging.INFO, format=log_fmt)
 
     main()

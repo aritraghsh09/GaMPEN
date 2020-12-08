@@ -20,7 +20,7 @@ make check
 ```
 
 ## Quickstart
-To train a GGT model, you need to prepare the dataset and running the provided trainer. During and after training, you can launch the MLFlow UI to view the training logs and artifacts.
+To train a GGT model, you need to prepare the dataset and run the provided trainer. During and after training, you can [launch the MLFlow UI](#launching-the-mlflow-ui) to view the training logs and artifacts.
 
 ### Data preparation
 In this section, we will prepare and load the SDSS sample of Simard, et al. To load another dataset, see [Loading other datasets](#loading-other-datasets).

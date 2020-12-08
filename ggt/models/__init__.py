@@ -10,7 +10,7 @@ def model_stats(model):
 
 
 def model_factory(modeltype):
-    if modeltype.lower() == 'ggt':
+    if modeltype.lower() == "ggt":
         return GGT
     elif modeltype.lower() == 'vgg16':
         return vgg16

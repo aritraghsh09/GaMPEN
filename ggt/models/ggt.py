@@ -7,6 +7,7 @@ from groupy.gconv.pytorch_gconv.pooling import plane_group_spatial_max_pooling
 
 from ggt.utils.model_utils import get_output_shape
 
+
 class GGT(nn.Module):
     """Galaxy Group-Equivariant Transformer model."""
 
@@ -15,8 +16,10 @@ class GGT(nn.Module):
         self.cutout_size = cutout_size
         self.channels = channels
         self.expected_input_shape = (
-            1, self.channels, self.cutout_size,
-            self.cutout_size
+            1,
+            self.channels,
+            self.cutout_size,
+            self.cutout_size,
         )
         self.n_out = n_out
 
@@ -27,13 +30,12 @@ class GGT(nn.Module):
             nn.ReLU(True),
             nn.Conv2d(64, 96, kernel_size=9),
             nn.MaxPool2d(3, stride=2),
-            nn.ReLU(True)
+            nn.ReLU(True),
         )
 
         # Calculate the output size of the localization network
         self.ln_out_shape = get_output_shape(
-            self.localization,
-            self.expected_input_shape
+            self.localization, self.expected_input_shape
         )
 
         # Calculate the input size of the upcoming FC layer
@@ -41,9 +43,7 @@ class GGT(nn.Module):
 
         # Fully-connected regression network (predicts 3 * 2 affine matrix)
         self.fc_loc = nn.Sequential(
-           nn.Linear(self.fc_in_size, 32),
-           nn.ReLU(True),
-           nn.Linear(32, 3 * 2)
+            nn.Linear(self.fc_in_size, 32), nn.ReLU(True), nn.Linear(32, 3 * 2)
         )
 
         # Initialize the weights/bias with identity transformation
@@ -55,11 +55,11 @@ class GGT(nn.Module):
         # intersperse plane_group_spatial_max_pooling operations in `forward`
         self.featurize1 = nn.Sequential(
             P4MConvZ2(1, 64, kernel_size=11, stride=4, padding=2),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
         )
         self.featurize2 = nn.Sequential(
             P4MConvP4M(64, 192, kernel_size=5, padding=2),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
         )
         self.featurize3 = nn.Sequential(
             P4MConvP4M(192, 384, kernel_size=3, padding=1),
@@ -81,7 +81,7 @@ class GGT(nn.Module):
             nn.Dropout(0.5),
             nn.Linear(1024, 512),
             nn.ReLU(inplace=True),
-            nn.Linear(512, 1)
+            nn.Linear(512, 1),
         )
 
     def spatial_transform(self, x):
