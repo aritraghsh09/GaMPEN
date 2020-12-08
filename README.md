@@ -20,7 +20,7 @@ make check
 ```
 
 ## Quickstart
-To train a GGT model, you need to prepare the dataset and running the provided trainer. During and after training, you can launch the MLFlow UI to view the training logs and artifacts.
+To train a GGT model, you need to prepare the dataset and run the provided trainer. During and after training, you can [launch the MLFlow UI](#launching-the-mlflow-ui) to view the training logs and artifacts.
 
 ### Data preparation
 In this section, we will prepare and load the SDSS sample of Simard, et al. To load another dataset, see [Loading other datasets](#loading-other-datasets).
@@ -64,7 +64,7 @@ This launches the MLFlow UI on `localhost:5000`. If you are training on a remote
 ```bash
 ssh -i <keyfile> <user>@<remote.com> -NL 5000:localhost:5000
 ```
-No output will be shown if the connection was successful. Open a browser and navigate to `localhost:5000` to monitor your model.
+No output will be shown if the connection was successful. Open a browser and navigate to `localhost:5000` to monitor your model. (For site-specific instructions, see this repository's [wiki](https://github.com/amritrau/ggt/wiki).)
 
 
 ## Loading other datasets

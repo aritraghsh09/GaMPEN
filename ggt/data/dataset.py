@@ -1,25 +1,38 @@
 from astropy.io import fits
 import numpy as np
 import pandas as pd
+from functools import partial
 from pathlib import Path
 from tqdm import tqdm
 
 import torch
 from torch.utils.data import Dataset
+import torch.multiprocessing as mp
 
-from ggt.utils import arsinh_normalize
+from ggt.utils import arsinh_normalize, load_tensor
 
 import logging
-logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(message)s')
+
+logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(message)s")
+mp.set_sharing_strategy("file_system")
 
 
 class FITSDataset(Dataset):
     """Dataset from FITS files. Pre-caches FITS files as PyTorch tensors to
     improve data load speed."""
 
-    def __init__(self, data_dir, slug=None, split=None, channels=1,
-                 cutout_size=167, label_col='bt_g', normalize=True,
-                 transform=None, expand_factor=1):
+    def __init__(
+        self,
+        data_dir,
+        slug=None,
+        split=None,
+        channels=1,
+        cutout_size=167,
+        label_col="bt_g",
+        normalize=True,
+        transform=None,
+        expand_factor=1,
+    ):
 
         # Set data directory
         self.data_dir = Path(data_dir)
@@ -51,6 +64,7 @@ class FITSDataset(Dataset):
         self.filenames = np.asarray(self.data_info["file_name"])
 
         # If we haven't already generated PyTorch tensor files, generate them
+        logging.info("Generating PyTorch tensors from FITS files...")
         for filename in tqdm(self.filenames):
             filepath = self.tensors_path / (filename + ".pt")
             if not filepath.is_file():
@@ -59,7 +73,16 @@ class FITSDataset(Dataset):
                 torch.save(t, filepath)
 
         # Preload the tensors
-        self.observations = [self.load_tensor(f) for f in tqdm(self.filenames)]
+        n = len(self.filenames)
+        logging.info(f"Preloading {n} tensors...")
+        load_fn = partial(load_tensor, tensors_path=self.tensors_path)
+        with mp.Pool(mp.cpu_count()) as p:
+            # Load to NumPy, then convert to PyTorch (hack to solve system
+            # issue with multiprocessing + PyTorch tensors)
+            self.observations = list(
+                tqdm(p.imap(load_fn, self.filenames), total=n)
+            )
+        self.observations = [torch.from_numpy(x) for x in self.observations]
 
     def __getitem__(self, index):
         """Magic method to index into the dataset."""
@@ -79,10 +102,6 @@ class FITSDataset(Dataset):
                 X = arsinh_normalize(X)  # arsinh
 
             # Transform and reshape X
-            # Since the transformation network
-            # is passed on as the transform
-            # argument, it can simply be called
-            # on the tensor.
             if self.transform:
                 X = self.transform(X)
             X = X.view(self.cutout_shape).float()
@@ -97,10 +116,6 @@ class FITSDataset(Dataset):
     def __len__(self):
         """Return the effective length of the dataset."""
         return len(self.labels) * self.expand_factor
-
-    def load_tensor(self, filename):
-        """Load a Torch tensor from disk."""
-        return torch.load(self.tensors_path / (filename + ".pt"))
 
     @staticmethod
     def load_fits_as_tensor(filename):

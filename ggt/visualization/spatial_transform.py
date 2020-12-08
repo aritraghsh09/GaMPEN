@@ -12,8 +12,9 @@ from ggt.models import model_factory
 from ggt.utils import discover_devices, tensor_to_numpy
 
 
-def visualize_spatial_transform(model, loader, output_dir,
-                                device='cpu', nrow=6, return_grids=False):
+def visualize_spatial_transform(
+    model, loader, output_dir, device="cpu", nrow=6, return_grids=False
+):
 
     # Turn off gradients
     with torch.no_grad():
@@ -24,18 +25,24 @@ def visualize_spatial_transform(model, loader, output_dir,
         in_tensor = data.cpu()
 
         # Execute the predicted spatial transformation
-        if hasattr(model, 'spatial_transform'):
+        if hasattr(model, "spatial_transform"):
             out_tensor = model.spatial_transform(data).cpu()
-        elif hasattr(model.module, 'spatial_transform'):
+        elif hasattr(model.module, "spatial_transform"):
             out_tensor = model.module.spatial_transform(data).cpu()
         else:
             raise ValueError("Model does not have a spatial_transform method")
 
         # Make grids
-        in_grid = tensor_to_numpy(torchvision.utils.make_grid(
-            in_tensor[:nrow*nrow, :, :, :], nrow=nrow, pad_value=1))
-        out_grid = tensor_to_numpy(torchvision.utils.make_grid(
-            out_tensor[:nrow*nrow, :, :, :], nrow=nrow, pad_value=1))
+        in_grid = tensor_to_numpy(
+            torchvision.utils.make_grid(
+                in_tensor[: nrow * nrow, :, :, :], nrow=nrow, pad_value=1
+            )
+        )
+        out_grid = tensor_to_numpy(
+            torchvision.utils.make_grid(
+                out_tensor[: nrow * nrow, :, :, :], nrow=nrow, pad_value=1
+            )
+        )
 
         # If requested, return the grids
         if return_grids:
@@ -55,17 +62,26 @@ def visualize_spatial_transform(model, loader, output_dir,
 
 
 @click.command()
-@click.option('--model_path', type=click.Path(exists=True), required=True)
-@click.option('--data_dir', type=click.Path(exists=True), required=True)
-@click.option('--split_slug', type=str, required=True)
-@click.option('--split',
-              type=click.Choice(['train', 'devel', 'test']), default='devel')
-@click.option('--batch_size', type=int, default=36)
-@click.option('--nrow', type=int, default=6)
-@click.option('--n_workers', type=int, default=8)
-@click.option('--normalize/--no-normalize', default=True)
-def main(model_path, data_dir, split_slug, split, batch_size, nrow, n_workers,
-         normalize):
+@click.option("--model_path", type=click.Path(exists=True), required=True)
+@click.option("--data_dir", type=click.Path(exists=True), required=True)
+@click.option("--split_slug", type=str, required=True)
+@click.option(
+    "--split", type=click.Choice(["train", "devel", "test"]), default="devel"
+)
+@click.option("--batch_size", type=int, default=36)
+@click.option("--nrow", type=int, default=6)
+@click.option("--n_workers", type=int, default=8)
+@click.option("--normalize/--no-normalize", default=True)
+def main(
+    model_path,
+    data_dir,
+    split_slug,
+    split,
+    batch_size,
+    nrow,
+    n_workers,
+    normalize,
+):
     """Visualize the transformation performed by the spatial transformer
     module.
     """
@@ -74,7 +90,7 @@ def main(model_path, data_dir, split_slug, split, batch_size, nrow, n_workers,
     device = discover_devices()
 
     # Create the model given model_type
-    cls = model_factory('ggt')  # TODO @amritrau This can be cleaner
+    cls = model_factory("ggt")  # TODO @amritrau This can be cleaner
     model = cls()
     model = model.to(device)
 
@@ -82,10 +98,12 @@ def main(model_path, data_dir, split_slug, split, batch_size, nrow, n_workers,
     model.load_state_dict(torch.load(model_path))
 
     # Build a DataLoader to pull a batch from the desired split
-    dataset = FITSDataset(data_dir=data_dir, slug=split_slug,
-                          normalize=normalize, split=split)
-    loader = get_data_loader(dataset, batch_size=batch_size,
-                             n_workers=n_workers)
+    dataset = FITSDataset(
+        data_dir=data_dir, slug=split_slug, normalize=normalize, split=split
+    )
+    loader = get_data_loader(
+        dataset, batch_size=batch_size, n_workers=n_workers
+    )
 
     # Determine output filepath
     basename = Path(model_path).stem
@@ -96,8 +114,8 @@ def main(model_path, data_dir, split_slug, split, batch_size, nrow, n_workers,
     visualize_spatial_transform(model, loader, output_dir, nrow, device)
 
 
-if __name__ == '__main__':
-    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+if __name__ == "__main__":
+    log_fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(level=logging.INFO, format=log_fmt)
 
     main()

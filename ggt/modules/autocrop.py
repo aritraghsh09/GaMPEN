@@ -16,17 +16,17 @@ from ggt.utils import arsinh_normalize
 
 
 @click.command()
-@click.option('--model_path', type=click.Path(exists=True), required=True)
-@click.option('--image_dir', type=click.Path(exists=True), required=True)
-@click.option('--cutout_size', type=int, default=167)
-@click.option('--channels', type=int, default=1)
+@click.option("--model_path", type=click.Path(exists=True), required=True)
+@click.option("--image_dir", type=click.Path(exists=True), required=True)
+@click.option("--cutout_size", type=int, default=167)
+@click.option("--channels", type=int, default=1)
 def main(model_path, image_dir, cutout_size, channels):
     """Using the spatial transformer layer of the model defined in `model_path`,
     write cropped versions of each image in `image_dir` back to disk."""
 
     # Load the model
     logging.info("Loading model...")
-    cls = model_factory('ggt')
+    cls = model_factory("ggt")
     model = cls(cutout_size, channels)
     model.load_state_dict(torch.load(model_path))
 
@@ -44,13 +44,15 @@ def main(model_path, image_dir, cutout_size, channels):
             Xt = model.spatial_transform(X)
 
         # Save the old and new images to disk
-        outfile = lambda x: f"{path.replace('.fits', x)}.png"
-        save_image(X, outfile('-orig'))
-        save_image(Xt, outfile('-crop'))
+        def get_outfile(pattern):
+            return f"{path.replace('.fits', pattern)}.png"
+
+        save_image(X, get_outfile("-orig"))
+        save_image(Xt, get_outfile("-crop"))
 
 
-if __name__ == '__main__':
-    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+if __name__ == "__main__":
+    log_fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(level=logging.INFO, format=log_fmt)
 
     main()
