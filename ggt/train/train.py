@@ -27,7 +27,7 @@ from ggt.visualization.spatial_transform import visualize_spatial_transform
     "--run_id",
     type=str,
     default=None,
-    help="""The run id. Practically this only needs to be used 
+    help="""The run id. Practically this only needs to be used
 if you are resuming a previosuly run experiment""",
 )
 @click.option(
@@ -50,8 +50,8 @@ So this variable should be specified accordingly""",
     type=str,
     required=True,
     help="""This specifies how the data is split into train/
-devel/test sets. Balanced/Unbalanced refer to whether selecting 
-equal number of images from each class. xs, sm, lg, dev all refer 
+devel/test sets. Balanced/Unbalanced refer to whether selecting
+equal number of images from each class. xs, sm, lg, dev all refer
 to what fraction is picked for train/devel/test.""",
 )
 @click.option("--target_metric", type=str, default="bt_g")
@@ -59,7 +59,7 @@ to what fraction is picked for train/devel/test.""",
     "--expand_data",
     type=int,
     default=16,
-    help = """This controls the factor by which the training
+    help="""This controls the factor by which the training
 data is augmented""",
 )
 @click.option("--cutout_size", type=int, default=167)
@@ -78,7 +78,7 @@ data loading process.""",
 @click.option(
     "--parallel/--no-parallel",
     default=False,
-    help="""The parallel argument controls whether or not 
+    help="""The parallel argument controls whether or not
 to use multiple GPUs when they are available""",
 )
 @click.option(
@@ -90,13 +90,13 @@ loaded images will be normalized using the arcsinh function""",
 @click.option(
     "--transform/--no-transform",
     default=True,
-    help="""If True, the training images are passed through a 
+    help="""If True, the training images are passed through a
 series of random transformations""",
 )
 @click.option(
     "--repeat_dims/--no-repeat_dims",
     default=False,
-    help="""In case of multi-channel data, whether to repeat a two 
+    help="""In case of multi-channel data, whether to repeat a two
 dimensional image as many times as the number of channels""",
 )
 @click.option(
@@ -161,8 +161,8 @@ def train(**kwargs):
             label_col=args["target_metric"],
             transform=T if k == "train" else None,
             expand_factor=args["expand_data"] if k == "train" else 1,
-            split=k
-        ) 
+            split=k,
+        )
         for k in splits
     }
     loaders = {k: loader_factory(v) for k, v in datasets.items()}
@@ -184,7 +184,7 @@ def train(**kwargs):
         # Run trainer and save model state
         trainer.run(loaders["train"], max_epochs=args["epochs"])
         slug = (
-            f"{args["experiment_name"]}-{args["split_slug"]}-"
+            f"{args['experiment_name']}-{args['split_slug']}-"
             f"{mlflow.active_run().info.run_id}"
         )
         model_path = save_trained_model(model, slug)
@@ -201,9 +201,9 @@ def train(**kwargs):
                 output_dir.mkdir(parents=True, exist_ok=True)
                 nrow = round(math.sqrt(args["batch_size"]))
                 visualize_spatial_transform(
-                    model, loaders["devel"], 
+                    model, loaders["devel"],
                     output_dir,
-                    device=args["device"], 
+                    device=args["device"],
                     nrow=nrow,
                 )
 

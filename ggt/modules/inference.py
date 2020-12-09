@@ -20,10 +20,10 @@ def predict(
     channels,
     parallel=False,
     batch_size=256,
-    n_workers = 1,
+    n_workers=1,
     model_type="ggt",
 ):
-    """Using the model defined in model path, return the output values for 
+    """Using the model defined in model path, return the output values for
     the given set of images"""
 
     # Discover devices
@@ -96,7 +96,7 @@ def predict(
 @click.option(
     "--repeat_dims/--no-repeat_dims",
     default=False,
-    help="""In case of multi-channel data, whether to repeat a two 
+    help="""In case of multi-channel data, whether to repeat a two
               dimensional image as many times as the number of channels""",
 )
 def main(
@@ -117,15 +117,15 @@ def main(
 ):
     
     # Load the data and create a data loader
-    logging.info("Loading images to device")
+    logging.info("Loading images to device...")
     dataset = FITSDataset(
         data_dir,
         slug=slug,
         normalize=normalize,
         split=split,
         cutout_size=cutout_size,
-        channels = channels,
-        label_col = label_col,
+        channels=channels,
+        label_col=label_col,
         repeat_dims=repeat_dims,
     )
 
@@ -137,7 +137,7 @@ def main(
         channels,
         parallel=parallel,
         batch_size=batch_size,
-        n_workers = n_workers,
+        n_workers=n_workers,
         model_type=model_type,
     )
 
