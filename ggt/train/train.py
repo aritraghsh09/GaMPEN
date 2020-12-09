@@ -23,49 +23,87 @@ from ggt.visualization.spatial_transform import visualize_spatial_transform
 
 @click.command()
 @click.option('--experiment_name', type=str, default='demo')
-@click.option('--run_id', type=str, default=None, 
-help='''The run id. Practically this only needs to be used 
-if you are resuming a previosuly run experiment''')
-@click.option('--run_name', type=str, default=None,
-help='''A run is supposed to be a sub-class of an experiment.
-So this variable should be specified accordingly''')
-@click.option('--model_type',
-              type=click.Choice(['ggt','vgg16'], case_sensitive=False),
-              default='ggt')
+@click.option(
+    '--run_id', 
+    type=str, 
+    default=None, 
+    help='''The run id. Practically this only needs to be used 
+if you are resuming a previosuly run experiment''',
+)
+@click.option(
+    '--run_name', 
+    type=str, 
+    default=None,
+    help='''A run is supposed to be a sub-class of an experiment.
+So this variable should be specified accordingly''',
+)
+@click.option(
+    '--model_type',
+    type=click.Choice(['ggt','vgg16'], 
+    case_sensitive=False),
+    default='ggt',
+)
 @click.option('--model_state', type=click.Path(exists=True), default=None)
 @click.option('--data_dir', type=click.Path(exists=True), required=True)
-@click.option('--split_slug', type=str, required=True,
-help='''This specifies how the data is split into train/
+@click.option(
+    '--split_slug', 
+    type=str, 
+    required=True,
+    help='''This specifies how the data is split into train/
 devel/test sets. Balanced/Unbalanced refer to whether selecting 
 equal number of images from each class. xs, sm, lg, dev all refer 
-to what fraction is picked for train/devel/test.''')
+to what fraction is picked for train/devel/test.''',
+)
 @click.option('--target_metric', type=str, default='bt_g')
-@click.option('--expand_data', type=int, default=16,
-help = '''This controls the factor by which the training
-data is augmented''')
+@click.option(
+    '--expand_data', 
+    type=int, 
+    default=16,
+    help = '''This controls the factor by which the training
+data is augmented''',
+)
 @click.option('--cutout_size', type=int, default=167)
 @click.option('--channels', type=int, default=1)
-@click.option('--n_workers', type=int, default=16,
-help='''The number of workers to be used during the
-data loading process.''')
+@click.option(
+    '--n_workers', 
+    type=int, 
+    default=16,
+    help='''The number of workers to be used during the
+data loading process.''',
+)
 @click.option('--batch_size', type=int, default=32)
 @click.option('--epochs', type=int, default=40)
 @click.option('--lr', type=float, default=0.005)
 @click.option('--momentum', type=float, default=0.9)
-@click.option('--parallel/--no-parallel', default=False,
-help='''The parallel argument controls whether or not 
-to use multiple GPUs when they are available''')
-@click.option('--normalize/--no-normalize', default=True,
-help='''The normalize argument controls whether or not, the
-loaded images will be normalized using the arcsinh function''')
-@click.option('--transform/--no-transform', default=True,
-help='''If True, the training images are passed through a 
-series of random transformations''')
-@click.option('--repeat_dims/--no-repeat_dims', default=False,
-help='''In case of multi-channel data, whether to repeat a two 
-dimensional image as many times as the number of channels''')
-@click.option('--nesterov/--no-nesterov', default=False,
-help='''Whether to use Nesterov momentum or not''')
+@click.option(
+    '--parallel/--no-parallel', 
+    default=False,
+    help='''The parallel argument controls whether or not 
+to use multiple GPUs when they are available''',
+)
+@click.option(
+    '--normalize/--no-normalize', 
+    default=True,
+    help='''The normalize argument controls whether or not, the
+loaded images will be normalized using the arcsinh function''',
+)
+@click.option(
+    '--transform/--no-transform', 
+    default=True,
+    help='''If True, the training images are passed through a 
+series of random transformations''',
+)
+@click.option(
+    '--repeat_dims/--no-repeat_dims', 
+    default=False,
+    help='''In case of multi-channel data, whether to repeat a two 
+dimensional image as many times as the number of channels''',
+)
+@click.option(
+    '--nesterov/--no-nesterov', 
+    default=False,
+    help='''Whether to use Nesterov momentum or not''',
+)
 def train(**kwargs):
     """Runs the training procedure using MLFlow."""
 
@@ -109,17 +147,21 @@ def train(**kwargs):
 
     # Generate the DataLoaders and log the train/devel/test split sizes
     splits = ('train', 'devel', 'test')
-    datasets = {k: FITSDataset(
-        data_dir=args['data_dir'],
-        slug=args['split_slug'],
-        cutout_size=args['cutout_size'],
-        channels=args['channels'],
-        normalize=args['normalize'],
-        repeat_dims = args['repeat_dims'],
-        label_col=args['target_metric'],
-        transform=T if k == 'train' else None,
-        expand_factor=args['expand_data'] if k == 'train' else 1,
-        split=k) for k in splits}
+    datasets = {
+        k: FITSDataset(
+            data_dir=args['data_dir'],
+            slug=args['split_slug'],
+            cutout_size=args['cutout_size'],
+            channels=args['channels'],
+            normalize=args['normalize'],
+            repeat_dims = args['repeat_dims'],
+            label_col=args['target_metric'],
+            transform=T if k == 'train' else None,
+            expand_factor=args['expand_data'] if k == 'train' else 1,
+            split=k
+        ) 
+        for k in splits
+    }
     loaders = {k: loader_factory(v) for k, v in datasets.items()}
     args["splits"] = {k: len(v.dataset) for k, v in loaders.items()}
 
@@ -149,14 +191,18 @@ def train(**kwargs):
 
         # Visualize spatial transformation
         if args['model_type'] != 'vgg16':
-            if hasattr(model, 'spatial_transform') or \
-                    hasattr(model.module, 'spatial_transform'):
+            if hasattr(model, 'spatial_transform') or hasattr(
+                model.module, 'spatial_transform'
+            ):
                 output_dir = Path("output") / slug
                 output_dir.mkdir(parents=True, exist_ok=True)
                 nrow = round(math.sqrt(args['batch_size']))
-                visualize_spatial_transform(model, loaders['devel'], 
-                                            output_dir,device=args['device'], 
-                                            nrow=nrow)
+                visualize_spatial_transform(
+                    model, loaders['devel'], 
+                    output_dir,
+                    device=args['device'], 
+                    nrow=nrow,
+                )
 
                 # Log output directory as an artifact
                 mlflow.log_artifacts(output_dir)
