@@ -22,16 +22,16 @@ class FITSDataset(Dataset):
     improve data load speed."""
 
     def __init__(
-        self, 
-        data_dir, 
-        slug=None, 
-        split=None, 
+        self,
+        data_dir,
+        slug=None,
+        split=None,
         channels=1,
-        cutout_size=167, 
-        label_col='bt_g', 
+        cutout_size=167,
+        label_col="bt_g",
         normalize=True,
-        transform=None, 
-        expand_factor=1, 
+        transform=None,
+        expand_factor=1,
         repeat_dims=False,
     ):
 
