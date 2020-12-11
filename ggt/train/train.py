@@ -43,6 +43,7 @@ So this variable should be specified accordingly""",
     case_sensitive=False),
     default="ggt",
 )
+
 @click.option("--model_state", type=click.Path(exists=True), default=None)
 @click.option("--data_dir", type=click.Path(exists=True), required=True)
 @click.option(
@@ -54,7 +55,11 @@ devel/test sets. Balanced/Unbalanced refer to whether selecting
 equal number of images from each class. xs, sm, lg, dev all refer
 to what fraction is picked for train/devel/test.""",
 )
-@click.option("--target_metric", type=str, default="bt_g")
+@click.option(
+    "--target_metrics",
+    type=str,
+    default="bt_g",
+    help="""Enter the target metrics separated by commas""")
 @click.option(
     "--expand_data",
     type=int,
@@ -113,9 +118,16 @@ def train(**kwargs):
     # Discover devices
     args["device"] = discover_devices()
 
+    #creating traget metrics array
+    target_metric_arr = args["target_metrics"].split(",")    
+
     # Create the model given model_type
     cls = model_factory(args["model_type"])
-    model = cls(args["cutout_size"], args["channels"])
+    model = cls(
+        args["cutout_size"], 
+        args["channels"],
+        n_out = len(target_metric_arr),
+    )
     model = nn.DataParallel(model) if args["parallel"] else model
     model = model.to(args["device"])
 
@@ -158,7 +170,7 @@ def train(**kwargs):
             channels=args["channels"],
             normalize=args["normalize"],
             repeat_dims = args["repeat_dims"],
-            label_col=args["target_metric"],
+            label_col=target_metric_arr,
             transform=T if k == "train" else None,
             expand_factor=args["expand_data"] if k == "train" else 1,
             split=k,

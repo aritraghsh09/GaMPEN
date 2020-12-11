@@ -92,7 +92,12 @@ def predict(
     help="""The parallel argument controls whether or not
               to use multiple GPUs when they are available""",
 )
-@click.option("--label_col", type=str, default="bt_g")
+@click.option(
+    "--label_cols",
+    type=str,
+    default="bt_g",
+    help="""Enter the label column(s) separated by commas""",
+)
 @click.option(
     "--repeat_dims/--no-repeat_dims",
     default=False,
@@ -111,10 +116,13 @@ def main(
     normalize,
     batch_size,
     n_workers,
-    label_col,
+    label_cols,
     model_type,
     repeat_dims,
 ):
+
+    #Create label cols array
+    label_cols_arr = label_cols.split(",") 
     
     # Load the data and create a data loader
     logging.info("Loading images to device...")
@@ -125,7 +133,7 @@ def main(
         split=split,
         cutout_size=cutout_size,
         channels=channels,
-        label_col=label_col,
+        label_col=label_cols_arr,
         repeat_dims=repeat_dims,
     )
 
