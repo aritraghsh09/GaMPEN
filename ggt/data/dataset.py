@@ -32,6 +32,7 @@ class FITSDataset(Dataset):
         normalize=True,
         transform=None,
         expand_factor=1,
+        repeat_dims=False,
     ):
 
         # Set data directory
@@ -43,6 +44,7 @@ class FITSDataset(Dataset):
         # Set requested transforms
         self.normalize = normalize
         self.transform = transform
+        self.repeat_dims = repeat_dims
 
         # Set data expansion factor (must be an int and >= 1)
         self.expand_factor = expand_factor
@@ -104,6 +106,15 @@ class FITSDataset(Dataset):
             # Transform and reshape X
             if self.transform:
                 X = self.transform(X)
+
+            #Repeat dimensions along the channels axis
+            if self.repeat_dims:
+                if not self.transform:
+                    X = X.unsqueeze(0)
+                    X = X.repeat(self.cutout_shape[0],1,1) 
+                else:
+                    X = X.repeat(1,self.cutout_shape[0],1,1)
+
             X = X.view(self.cutout_shape).float()
 
             # Return X, y

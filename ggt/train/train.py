@@ -39,7 +39,8 @@ So this variable should be specified accordingly""",
 )
 @click.option(
     "--model_type",
-    type=click.Choice(["ggt"], case_sensitive=False),
+    type=click.Choice(["ggt","vgg16"],
+    case_sensitive=False),
     default="ggt",
 )
 @click.option("--model_state", type=click.Path(exists=True), default=None)
@@ -92,6 +93,17 @@ loaded images will be normalized using the arcsinh function""",
     help="""If True, the training images are passed through a
 series of random transformations""",
 )
+@click.option(
+    "--repeat_dims/--no-repeat_dims",
+    default=False,
+    help="""In case of multi-channel data, whether to repeat a two
+dimensional image as many times as the number of channels""",
+)
+@click.option(
+    "--nesterov/--no-nesterov",
+    default=False,
+    help="""Whether to use Nesterov momentum or not""",
+)
 def train(**kwargs):
     """Runs the training procedure using MLFlow."""
 
@@ -113,7 +125,10 @@ def train(**kwargs):
 
     # Define the optimizer and criterion
     optimizer = opt.SGD(
-        model.parameters(), lr=args["lr"], momentum=args["momentum"]
+        model.parameters(), 
+        lr=args["lr"],
+        momentum=args["momentum"],
+        nesterov=args["nesterov"],
     )
     criterion = nn.MSELoss()
 
@@ -142,6 +157,7 @@ def train(**kwargs):
             cutout_size=args["cutout_size"],
             channels=args["channels"],
             normalize=args["normalize"],
+            repeat_dims = args["repeat_dims"],
             label_col=args["target_metric"],
             transform=T if k == "train" else None,
             expand_factor=args["expand_data"] if k == "train" else 1,
@@ -177,22 +193,22 @@ def train(**kwargs):
         mlflow.log_artifact(model_path)
 
         # Visualize spatial transformation
-        if hasattr(model, "spatial_transform") or hasattr(
-            model.module, "spatial_transform"
-        ):
-            output_dir = Path("output") / slug
-            output_dir.mkdir(parents=True, exist_ok=True)
-            nrow = round(math.sqrt(args["batch_size"]))
-            visualize_spatial_transform(
-                model,
-                loaders["devel"],
-                output_dir,
-                device=args["device"],
-                nrow=nrow,
-            )
+        if args["model_type"] != "vgg16":
+            if hasattr(model, "spatial_transform") or hasattr(
+                model.module, "spatial_transform"
+            ):
+                output_dir = Path("output") / slug
+                output_dir.mkdir(parents=True, exist_ok=True)
+                nrow = round(math.sqrt(args["batch_size"]))
+                visualize_spatial_transform(
+                    model, loaders["devel"],
+                    output_dir,
+                    device=args["device"],
+                    nrow=nrow,
+                )
 
-        # Log output directory as an artifact
-        mlflow.log_artifacts(output_dir)
+                # Log output directory as an artifact
+                mlflow.log_artifacts(output_dir)
 
 
 if __name__ == "__main__":

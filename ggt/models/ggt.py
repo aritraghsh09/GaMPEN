@@ -16,8 +16,10 @@ class GGT(nn.Module):
         self.cutout_size = cutout_size
         self.channels = channels
         self.expected_input_shape = (
-            1, self.channels, self.cutout_size,
-            self.cutout_size
+            1,
+            self.channels,
+            self.cutout_size,
+            self.cutout_size,
         )
         self.n_out = n_out
 
