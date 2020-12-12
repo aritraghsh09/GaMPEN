@@ -97,7 +97,7 @@ class FITSDataset(Dataset):
 
             # Get image label ("wrap around"; make sure to cast to float!)
             y = torch.tensor(self.labels[index % len(self.labels)])
-            y = y.unsqueeze(-1).float()
+            y = y.float()
 
             # Normalize if necessary
             if self.normalize:
