@@ -81,7 +81,7 @@ class GGT(nn.Module):
             nn.Dropout(0.5),
             nn.Linear(1024, 512),
             nn.ReLU(inplace=True),
-            nn.Linear(512, 1),
+            nn.Linear(512, self.n_out),
         )
 
     def spatial_transform(self, x):
@@ -105,7 +105,7 @@ class GGT(nn.Module):
         x = plane_group_spatial_max_pooling(x, ksize=3, stride=2)
         x = x.view(x.size()[0], x.size()[1], x.size()[2], -1)
         x = self.pool(x)
-        x = torch.flatten(x, self.n_out)
+        x = torch.flatten(x, 1)
         x = self.regress(x)
 
         return x
