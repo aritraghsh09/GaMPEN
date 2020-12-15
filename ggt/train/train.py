@@ -39,8 +39,7 @@ So this variable should be specified accordingly""",
 )
 @click.option(
     "--model_type",
-    type=click.Choice(["ggt","vgg16"],
-    case_sensitive=False),
+    type=click.Choice(["ggt", "vgg16"], case_sensitive=False),
     default="ggt",
 )
 @click.option("--model_state", type=click.Path(exists=True), default=None)
@@ -125,7 +124,7 @@ def train(**kwargs):
 
     # Define the optimizer and criterion
     optimizer = opt.SGD(
-        model.parameters(), 
+        model.parameters(),
         lr=args["lr"],
         momentum=args["momentum"],
         nesterov=args["nesterov"],
@@ -157,7 +156,7 @@ def train(**kwargs):
             cutout_size=args["cutout_size"],
             channels=args["channels"],
             normalize=args["normalize"],
-            repeat_dims = args["repeat_dims"],
+            repeat_dims=args["repeat_dims"],
             label_col=args["target_metric"],
             transform=T if k == "train" else None,
             expand_factor=args["expand_data"] if k == "train" else 1,
@@ -201,7 +200,8 @@ def train(**kwargs):
                 output_dir.mkdir(parents=True, exist_ok=True)
                 nrow = round(math.sqrt(args["batch_size"]))
                 visualize_spatial_transform(
-                    model, loaders["devel"],
+                    model,
+                    loaders["devel"],
                     output_dir,
                     device=args["device"],
                     nrow=nrow,

@@ -13,6 +13,7 @@ from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory
 from ggt.utils import discover_devices
 
+
 def predict(
     model_path,
     dataset,
@@ -55,8 +56,7 @@ def predict(
 @click.command()
 @click.option(
     "--model_type",
-    type=click.Choice(["ggt","vgg16"],
-    case_sensitive=False),
+    type=click.Choice(["ggt", "vgg16"], case_sensitive=False),
     default="ggt",
 )
 @click.option("--model_path", type=click.Path(exists=True), required=True)
@@ -115,7 +115,7 @@ def main(
     model_type,
     repeat_dims,
 ):
-    
+
     # Load the data and create a data loader
     logging.info("Loading images to device...")
     dataset = FITSDataset(

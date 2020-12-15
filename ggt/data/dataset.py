@@ -107,13 +107,13 @@ class FITSDataset(Dataset):
             if self.transform:
                 X = self.transform(X)
 
-            #Repeat dimensions along the channels axis
+            # Repeat dimensions along the channels axis
             if self.repeat_dims:
                 if not self.transform:
                     X = X.unsqueeze(0)
-                    X = X.repeat(self.cutout_shape[0],1,1) 
+                    X = X.repeat(self.cutout_shape[0], 1, 1)
                 else:
-                    X = X.repeat(1,self.cutout_shape[0],1,1)
+                    X = X.repeat(1, self.cutout_shape[0], 1, 1)
 
             X = X.view(self.cutout_shape).float()
 
