@@ -9,7 +9,7 @@ import torch
 from torch.utils.data import Dataset
 import torch.multiprocessing as mp
 
-from ggt.utils import arsinh_normalize, load_tensor
+from ggt.utils import arsinh_normalize, load_tensor, standardize_labels
 
 import logging
 
@@ -33,6 +33,7 @@ class FITSDataset(Dataset):
         transform=None,
         expand_factor=1,
         repeat_dims=False,
+        label_scaling=None,
     ):
 
         # Set data directory
@@ -64,6 +65,17 @@ class FITSDataset(Dataset):
         # Retrieve labels & filenames
         self.labels = np.asarray(self.data_info[label_col])
         self.filenames = np.asarray(self.data_info["file_name"])
+
+        # Standardizing the labels
+        if label_scaling is not None:
+            self.labels = standardize_labels(
+                self.labels,
+                self.data_dir,
+                split,
+                slug,
+                label_col,
+                scaling=label_scaling,
+            )
 
         # If we haven't already generated PyTorch tensor files, generate them
         logging.info("Generating PyTorch tensors from FITS files...")
@@ -107,13 +119,13 @@ class FITSDataset(Dataset):
             if self.transform:
                 X = self.transform(X)
 
-            #Repeat dimensions along the channels axis
+            # Repeat dimensions along the channels axis
             if self.repeat_dims:
                 if not self.transform:
                     X = X.unsqueeze(0)
-                    X = X.repeat(self.cutout_shape[0],1,1) 
+                    X = X.repeat(self.cutout_shape[0], 1, 1)
                 else:
-                    X = X.repeat(1,self.cutout_shape[0],1,1)
+                    X = X.repeat(1, self.cutout_shape[0], 1, 1)
 
             X = X.view(self.cutout_shape).float()
 

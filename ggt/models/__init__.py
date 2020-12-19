@@ -4,6 +4,7 @@ from pathlib import Path
 from .ggt import GGT
 from .vgg import vgg16
 
+
 def model_stats(model):
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     return dict(trainable_params=n_params)
@@ -12,7 +13,7 @@ def model_stats(model):
 def model_factory(modeltype):
     if modeltype.lower() == "ggt":
         return GGT
-    elif modeltype.lower() == 'vgg16':
+    elif modeltype.lower() == "vgg16":
         return vgg16
     else:
         raise ValueError("Model type {} does not exist.".format(modeltype))

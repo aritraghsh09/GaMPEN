@@ -39,11 +39,9 @@ So this variable should be specified accordingly""",
 )
 @click.option(
     "--model_type",
-    type=click.Choice(["ggt","vgg16"],
-    case_sensitive=False),
+    type=click.Choice(["ggt", "vgg16"], case_sensitive=False),
     default="ggt",
 )
-
 @click.option("--model_state", type=click.Path(exists=True), default=None)
 @click.option("--data_dir", type=click.Path(exists=True), required=True)
 @click.option(
@@ -59,7 +57,8 @@ to what fraction is picked for train/devel/test.""",
     "--target_metrics",
     type=str,
     default="bt_g",
-    help="""Enter the target metrics separated by commas""")
+    help="""Enter the target metrics separated by commas""",
+)
 @click.option(
     "--expand_data",
     type=int,
@@ -93,6 +92,16 @@ to use multiple GPUs when they are available""",
 loaded images will be normalized using the arcsinh function""",
 )
 @click.option(
+    "--label_scaling",
+    type=str,
+    default=None,
+    help="""The label scaling option controls whether to
+standardize the labels or not. Set this to std for sklearn's
+StandardScaling() and minmax for sklearn's MinMaxScaler().
+This is especially important when predicting multiple
+outputs""",
+)
+@click.option(
     "--transform/--no-transform",
     default=True,
     help="""If True, the training images are passed through a
@@ -118,15 +127,13 @@ def train(**kwargs):
     # Discover devices
     args["device"] = discover_devices()
 
-    #creating traget metrics array
-    target_metric_arr = args["target_metrics"].split(",")    
+    # creating traget metrics array
+    target_metric_arr = args["target_metrics"].split(",")
 
     # Create the model given model_type
     cls = model_factory(args["model_type"])
     model = cls(
-        args["cutout_size"], 
-        args["channels"],
-        n_out = len(target_metric_arr),
+        args["cutout_size"], args["channels"], n_out=len(target_metric_arr),
     )
     model = nn.DataParallel(model) if args["parallel"] else model
     model = model.to(args["device"])
@@ -137,7 +144,7 @@ def train(**kwargs):
 
     # Define the optimizer and criterion
     optimizer = opt.SGD(
-        model.parameters(), 
+        model.parameters(),
         lr=args["lr"],
         momentum=args["momentum"],
         nesterov=args["nesterov"],
@@ -169,11 +176,12 @@ def train(**kwargs):
             cutout_size=args["cutout_size"],
             channels=args["channels"],
             normalize=args["normalize"],
-            repeat_dims = args["repeat_dims"],
+            repeat_dims=args["repeat_dims"],
             label_col=target_metric_arr,
             transform=T if k == "train" else None,
             expand_factor=args["expand_data"] if k == "train" else 1,
             split=k,
+            label_scaling=args["label_scaling"],
         )
         for k in splits
     }
@@ -213,7 +221,8 @@ def train(**kwargs):
                 output_dir.mkdir(parents=True, exist_ok=True)
                 nrow = round(math.sqrt(args["batch_size"]))
                 visualize_spatial_transform(
-                    model, loaders["devel"],
+                    model,
+                    loaders["devel"],
                     output_dir,
                     device=args["device"],
                     nrow=nrow,
