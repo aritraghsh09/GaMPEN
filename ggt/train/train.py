@@ -133,7 +133,9 @@ def train(**kwargs):
     # Create the model given model_type
     cls = model_factory(args["model_type"])
     model = cls(
-        args["cutout_size"], args["channels"], n_out=len(target_metric_arr),
+        args["cutout_size"],
+        args["channels"],
+        n_out=len(target_metric_arr),
     )
     model = nn.DataParallel(model) if args["parallel"] else model
     model = model.to(args["device"])
@@ -180,8 +182,8 @@ def train(**kwargs):
             label_col=target_metric_arr,
             transform=T if k == "train" else None,
             expand_factor=args["expand_data"] if k == "train" else 1,
-            split=k,
             label_scaling=args["label_scaling"],
+            split=k,
         )
         for k in splits
     }

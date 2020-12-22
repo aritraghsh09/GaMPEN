@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-# !! ADD sklearn to install_requires !!
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 
@@ -46,3 +45,29 @@ def standardize_labels(labels, data_dir, split, slug, label_col, scaling):
     scaler.fit(fit_labels)
 
     return scaler.transform(labels)
+
+
+def destandardize_preds(preds, data_dir, split, slug, label_col, scaling):
+    """Inverts the predictions from the standard scaling to the
+    scaling in the real data"""
+
+    data_dir = Path(data_dir)
+
+    if split:
+        fit_catalog = data_dir / f"splits/{slug}-train.csv"
+    else:
+        fit_catalog = data_dir / "info.csv"
+
+    fit_data = pd.read_csv(fit_catalog)
+    fit_labels = np.asarray(fit_data[label_col])
+
+    if scaling == "std":
+        scaler = StandardScaler()
+    elif scaling == "minmax":
+        scaler = MinMaxScaler()
+    else:
+        raise ValueError("Scaling {} is not available.".format(scaling))
+
+    scaler.fit(fit_labels)
+
+    return scaler.inverse_transform(preds)

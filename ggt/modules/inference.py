@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory
-from ggt.utils import discover_devices
+from ggt.utils import discover_devices, destandardize_preds
 
 
 def predict(
@@ -23,6 +23,7 @@ def predict(
     batch_size=256,
     n_workers=1,
     model_type="ggt",
+    n_out=1,
 ):
     """Using the model defined in model path, return the output values for
     the given set of images"""
@@ -33,7 +34,7 @@ def predict(
     # Load the model
     logging.info("Loading model...")
     cls = model_factory(model_type)
-    model = cls(cutout_size, channels)
+    model = cls(cutout_size, channels, n_out=n_out)
     model = nn.DataParallel(model) if parallel else model
     model = model.to(device)
     model.load_state_dict(torch.load(model_path))
@@ -78,6 +79,18 @@ def predict(
     help="""The normalize argument controls whether or not, the
               loaded images will be normalized using the arcsinh function""",
 )
+@click.option(
+    "--label_scaling",
+    type=str,
+    default=None,
+    help="""The label scaling option controls whether to
+standardize the labels or not. Set this to std for sklearn's
+StandardScaling() and minmax for sklearn's MinMaxScaler().
+This is especially important when predicting multiple
+outputs. Note that you should pass the same argument for
+label_scaling as was used during the training phase (of the
+model being used for inference).""",
+)
 @click.option("--batch_size", type=int, default=256)
 @click.option(
     "--n_workers",
@@ -96,7 +109,10 @@ def predict(
     "--label_cols",
     type=str,
     default="bt_g",
-    help="""Enter the label column(s) separated by commas""",
+    help="""Enter the label column(s) separated by commas. Note
+    that you should pass the exactly same argument for label_cols
+    as was used during the training phase (of the model being used
+    for inference). """,
 )
 @click.option(
     "--repeat_dims/--no-repeat_dims",
@@ -119,6 +135,7 @@ def main(
     label_cols,
     model_type,
     repeat_dims,
+    label_scaling,
 ):
 
     # Create label cols array
@@ -135,6 +152,7 @@ def main(
         channels=channels,
         label_col=label_cols_arr,
         repeat_dims=repeat_dims,
+        label_scaling=label_scaling,
     )
 
     # Make predictions
@@ -147,13 +165,27 @@ def main(
         batch_size=batch_size,
         n_workers=n_workers,
         model_type=model_type,
+        n_out=len(label_cols_arr),
     )
+
+    # Scale labels back to old values
+    if label_scaling is not None:
+        preds = destandardize_preds(
+            preds,
+            data_dir,
+            split,
+            slug,
+            label_cols_arr,
+            label_scaling,
+        )
 
     # Write a CSV of predictions
     catalog = pd.read_csv(
         Path(data_dir) / "splits/{}-{}.csv".format(slug, split)
     )
-    catalog["preds"] = preds
+    for i in range(0, len(label_cols_arr)):
+        catalog[f"preds_{label_cols_arr[i]}"] = preds[:, i]
+
     catalog.to_csv(output_path, index=False)
 
 
