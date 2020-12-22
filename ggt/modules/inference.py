@@ -22,6 +22,7 @@ def predict(
     parallel=False,
     batch_size=256,
     n_workers=1,
+    model_type="ggt",
 ):
     """Using the model defined in model path, return the output values for
     the given set of images"""
@@ -31,7 +32,7 @@ def predict(
 
     # Load the model
     logging.info("Loading model...")
-    cls = model_factory("ggt")
+    cls = model_factory(model_type)
     model = cls(cutout_size, channels)
     model = nn.DataParallel(model) if parallel else model
     model = model.to(device)
@@ -53,6 +54,11 @@ def predict(
 
 
 @click.command()
+@click.option(
+    "--model_type",
+    type=click.Choice(["ggt", "vgg16"], case_sensitive=False),
+    default="ggt",
+)
 @click.option("--model_path", type=click.Path(exists=True), required=True)
 @click.option("--output_path", type=click.Path(writable=True), required=True)
 @click.option("--data_dir", type=click.Path(exists=True), required=True)
@@ -87,6 +93,12 @@ def predict(
               to use multiple GPUs when they are available""",
 )
 @click.option("--label_col", type=str, default="bt_g")
+@click.option(
+    "--repeat_dims/--no-repeat_dims",
+    default=False,
+    help="""In case of multi-channel data, whether to repeat a two
+              dimensional image as many times as the number of channels""",
+)
 def main(
     model_path,
     output_path,
@@ -100,6 +112,8 @@ def main(
     batch_size,
     n_workers,
     label_col,
+    model_type,
+    repeat_dims,
 ):
 
     # Load the data and create a data loader
@@ -112,6 +126,7 @@ def main(
         cutout_size=cutout_size,
         channels=channels,
         label_col=label_col,
+        repeat_dims=repeat_dims,
     )
 
     # Make predictions
@@ -123,6 +138,7 @@ def main(
         parallel=parallel,
         batch_size=batch_size,
         n_workers=n_workers,
+        model_type=model_type,
     )
 
     # Write a CSV of predictions

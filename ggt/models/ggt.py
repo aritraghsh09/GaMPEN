@@ -11,7 +11,7 @@ from ggt.utils.model_utils import get_output_shape
 class GGT(nn.Module):
     """Galaxy Group-Equivariant Transformer model."""
 
-    def __init__(self, cutout_size, channels):
+    def __init__(self, cutout_size, channels, n_out=1):
         super(GGT, self).__init__()
         self.cutout_size = cutout_size
         self.channels = channels
@@ -21,6 +21,7 @@ class GGT(nn.Module):
             self.cutout_size,
             self.cutout_size,
         )
+        self.n_out = n_out
 
         # Spatial transformer localization-network
         self.localization = nn.Sequential(
@@ -80,7 +81,7 @@ class GGT(nn.Module):
             nn.Dropout(0.5),
             nn.Linear(1024, 512),
             nn.ReLU(inplace=True),
-            nn.Linear(512, 1),
+            nn.Linear(512, self.n_out),
         )
 
     def spatial_transform(self, x):
