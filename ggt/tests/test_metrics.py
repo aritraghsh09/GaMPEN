@@ -18,7 +18,7 @@ def test_elementwise_mae():
         y_pred = torch.rand(1, n_outputs)
         y = y_pred + err
 
-        # Update the metric with this known error    
+        # Update the metric with this known error
         metric.update((y_pred, y))
 
     # Compute the metric and confirm it's equal to the error
