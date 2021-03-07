@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory
-from ggt.utils import discover_devices
+from ggt.utils import discover_devices, enable_dropout
 
 
 def predict(
@@ -23,6 +23,7 @@ def predict(
     batch_size=256,
     n_workers=1,
     model_type="ggt",
+    mc_dropout=False
 ):
     """Using the model defined in model path, return the output values for
     the given set of images"""
@@ -46,6 +47,12 @@ def predict(
     logging.info("Performing predictions...")
     yh = []
     model.eval()
+
+    # Enable Monte Carlo dropout if requested
+    if mc_dropout:
+        logging.info(" -- activating Monte Carlo dropout...")
+        enable_dropout(model)
+
     with torch.no_grad():
         for data in tqdm(loader):
             X, _ = data
@@ -99,6 +106,11 @@ def predict(
     help="""In case of multi-channel data, whether to repeat a two
               dimensional image as many times as the number of channels""",
 )
+@click.option(
+    "--mc_dropout/--no-mc_dropout",
+    default=False,
+    help="""Turn on Monte Carlo dropout during inference.""",
+)
 def main(
     model_path,
     output_path,
@@ -114,6 +126,7 @@ def main(
     label_col,
     model_type,
     repeat_dims,
+    mc_dropout,
 ):
 
     # Load the data and create a data loader
@@ -139,6 +152,7 @@ def main(
         batch_size=batch_size,
         n_workers=n_workers,
         model_type=model_type,
+        mc_dropout=mc_dropout,
     )
 
     # Write a CSV of predictions
