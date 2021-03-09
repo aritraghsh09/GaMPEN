@@ -39,7 +39,7 @@ So this variable should be specified accordingly""",
 )
 @click.option(
     "--model_type",
-    type=click.Choice(["ggt", "vgg16"], case_sensitive=False),
+    type=click.Choice(["ggt","ggt2","ggt3","vgg16"], case_sensitive=False),
     default="ggt",
 )
 @click.option("--model_state", type=click.Path(exists=True), default=None)
