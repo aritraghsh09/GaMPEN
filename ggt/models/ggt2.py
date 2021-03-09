@@ -12,7 +12,7 @@ class GGT2(nn.Module):
     """Galaxy Group-Equivariant Transformer model."""
 
     def __init__(self, cutout_size, channels, n_out=1):
-        super(GGT, self).__init__()
+        super(GGT2, self).__init__()
         self.cutout_size = cutout_size
         self.channels = channels
         self.expected_input_shape = (
