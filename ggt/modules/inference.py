@@ -183,8 +183,8 @@ def main(
     catalog = pd.read_csv(
         Path(data_dir) / "splits/{}-{}.csv".format(slug, split)
     )
-    for i in range(0, len(label_cols_arr)):
-        catalog[f"preds_{label_cols_arr[i]}"] = preds[:, i]
+    for i, label in enumerate(label_cols_arr):
+        catalog[f"preds_{label}"] = preds[:, i]
 
     catalog.to_csv(output_path, index=False)
 

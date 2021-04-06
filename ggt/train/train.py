@@ -127,7 +127,7 @@ def train(**kwargs):
     # Discover devices
     args["device"] = discover_devices()
 
-    # creating traget metrics array
+    # Create target metrics array
     target_metric_arr = args["target_metrics"].split(",")
 
     # Create the model given model_type
