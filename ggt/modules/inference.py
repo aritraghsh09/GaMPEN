@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory
-from ggt.utils import discover_devices, destandardize_preds
+from ggt.utils import discover_devices, standardize_labels
 
 
 
@@ -171,13 +171,14 @@ def main(
 
     # Scale labels back to old values
     if label_scaling is not None:
-        preds = destandardize_preds(
+        preds = standardize_labels(
             preds,
             data_dir,
             split,
             slug,
             label_cols_arr,
             label_scaling,
+            invert=True,
         )
 
     # Write a CSV of predictions

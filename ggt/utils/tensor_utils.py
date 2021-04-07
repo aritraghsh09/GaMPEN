@@ -22,8 +22,11 @@ def load_tensor(filename, tensors_path, as_numpy=True):
     return torch.load(tensors_path / (filename + ".pt")).numpy()
 
 
-def standardize_labels(labels, data_dir, split, slug, label_col, scaling):
-    """ Standardizes the labels"""
+def standardize_labels(input, data_dir, split, slug, label_col, scaling,
+                       invert=False):
+    """Standardizes data. During training, input should
+    be the labels, and during inference, input should be the 
+    predictions."""
 
     data_dir = Path(data_dir)
 
@@ -44,30 +47,8 @@ def standardize_labels(labels, data_dir, split, slug, label_col, scaling):
 
     scaler.fit(fit_labels)
 
-    return scaler.transform(labels)
-
-
-def destandardize_preds(preds, data_dir, split, slug, label_col, scaling):
-    """Inverts the predictions from the standard scaling to the
-    scaling in the real data"""
-
-    data_dir = Path(data_dir)
-
-    if split:
-        fit_catalog = data_dir / f"splits/{slug}-train.csv"
+    if invert:
+        return scaler.inverse_transform(input)
     else:
-        fit_catalog = data_dir / "info.csv"
+        return scaler.transform(input)
 
-    fit_data = pd.read_csv(fit_catalog)
-    fit_labels = np.asarray(fit_data[label_col])
-
-    if scaling == "std":
-        scaler = StandardScaler()
-    elif scaling == "minmax":
-        scaler = MinMaxScaler()
-    else:
-        raise ValueError("Scaling {} is not available.".format(scaling))
-
-    scaler.fit(fit_labels)
-
-    return scaler.inverse_transform(preds)
