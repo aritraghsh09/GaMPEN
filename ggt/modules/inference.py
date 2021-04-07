@@ -14,7 +14,6 @@ from ggt.models import model_factory
 from ggt.utils import discover_devices, standardize_labels
 
 
-
 def predict(
     model_path,
     dataset,

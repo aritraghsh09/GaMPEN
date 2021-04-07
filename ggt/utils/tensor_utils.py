@@ -6,6 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from ggt.utils import load_cat
 
+
 def tensor_to_numpy(x):
     """Convert a torch tensor to NumPy for plotting."""
     return np.clip(x.numpy().transpose((1, 2, 0)), 0, 1)
@@ -21,13 +22,14 @@ def load_tensor(filename, tensors_path, as_numpy=True):
     return torch.load(tensors_path / (filename + ".pt")).numpy()
 
 
-def standardize_labels(input, data_dir, split, slug, label_col, scaling,
-                       invert=False):
+def standardize_labels(
+    input, data_dir, split, slug, label_col, scaling, invert=False
+):
     """Standardizes data. During training, input should
-    be the labels, and during inference, input should be the 
+    be the labels, and during inference, input should be the
     predictions."""
 
-    fit_data = load_cat(data_dir,slug,split="train")
+    fit_data = load_cat(data_dir, slug, split="train")
     fit_labels = np.asarray(fit_data[label_col])
 
     if scaling == "std":
@@ -43,4 +45,3 @@ def standardize_labels(input, data_dir, split, slug, label_col, scaling,
         return scaler.inverse_transform(input)
     else:
         return scaler.transform(input)
-

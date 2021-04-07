@@ -1,6 +1,5 @@
 from astropy.io import fits
 import numpy as np
-import pandas as pd
 from functools import partial
 from pathlib import Path
 from tqdm import tqdm
@@ -9,7 +8,12 @@ import torch
 from torch.utils.data import Dataset
 import torch.multiprocessing as mp
 
-from ggt.utils import arsinh_normalize, load_tensor, standardize_labels, load_cat
+from ggt.utils import (
+    arsinh_normalize,
+    load_tensor,
+    standardize_labels,
+    load_cat,
+)
 
 import logging
 
@@ -51,7 +55,7 @@ class FITSDataset(Dataset):
         self.expand_factor = expand_factor
 
         # Define paths
-        self.data_info = load_cat(self.data_dir,slug,split)
+        self.data_info = load_cat(self.data_dir, slug, split)
         self.cutouts_path = self.data_dir / "cutouts"
         self.tensors_path = self.data_dir / "tensors"
         self.tensors_path.mkdir(parents=True, exist_ok=True)
