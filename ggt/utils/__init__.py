@@ -7,6 +7,8 @@ from .tensor_utils import (
 )
 from .model_utils import get_output_shape
 
+from .data_utils import load_cat
+
 __all__ = [
     "discover_devices",
     "tensor_to_numpy",
@@ -14,4 +16,5 @@ __all__ = [
     "get_output_shape",
     "load_tensor",
     "standardize_labels",
+    "load_cat",
 ]

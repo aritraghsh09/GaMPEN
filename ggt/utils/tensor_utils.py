@@ -1,11 +1,10 @@
 import torch
 import numpy as np
-import pandas as pd
-from pathlib import Path
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 
+from ggt.utils import load_cat
 
 def tensor_to_numpy(x):
     """Convert a torch tensor to NumPy for plotting."""
@@ -28,14 +27,7 @@ def standardize_labels(input, data_dir, split, slug, label_col, scaling,
     be the labels, and during inference, input should be the 
     predictions."""
 
-    data_dir = Path(data_dir)
-
-    if split:
-        fit_catalog = data_dir / f"splits/{slug}-train.csv"
-    else:
-        fit_catalog = data_dir / "info.csv"
-
-    fit_data = pd.read_csv(fit_catalog)
+    fit_data = load_cat(data_dir,slug,split="train")
     fit_labels = np.asarray(fit_data[label_col])
 
     if scaling == "std":

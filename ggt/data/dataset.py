@@ -9,7 +9,7 @@ import torch
 from torch.utils.data import Dataset
 import torch.multiprocessing as mp
 
-from ggt.utils import arsinh_normalize, load_tensor, standardize_labels
+from ggt.utils import arsinh_normalize, load_tensor, standardize_labels, load_cat
 
 import logging
 
@@ -50,14 +50,8 @@ class FITSDataset(Dataset):
         # Set data expansion factor (must be an int and >= 1)
         self.expand_factor = expand_factor
 
-        # Read the catalog csv file
-        if split:
-            catalog = self.data_dir / f"splits/{slug}-{split}.csv"
-        else:
-            catalog = self.data_dir / "info.csv"
-
         # Define paths
-        self.data_info = pd.read_csv(catalog)
+        self.data_info = load_cat(self.data_dir,slug,split)
         self.cutouts_path = self.data_dir / "cutouts"
         self.tensors_path = self.data_dir / "tensors"
         self.tensors_path.mkdir(parents=True, exist_ok=True)
