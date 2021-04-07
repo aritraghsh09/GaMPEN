@@ -6,7 +6,6 @@ from .tensor_utils import (
     standardize_labels,
 )
 from .model_utils import get_output_shape
-
 from .data_utils import load_cat
 
 __all__ = [

@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 
-from ggt.utils import load_cat
+from .data_utils import load_cat
 
 
 def tensor_to_numpy(x):
