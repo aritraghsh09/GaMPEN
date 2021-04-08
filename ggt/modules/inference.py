@@ -7,7 +7,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory
@@ -23,7 +23,7 @@ def predict(
     batch_size=256,
     n_workers=1,
     model_type="ggt",
-    mc_dropout=False
+    mc_dropout=False,
 ):
     """Using the model defined in model path, return the output values for
     the given set of images"""
@@ -111,6 +111,13 @@ def predict(
     default=False,
     help="""Turn on Monte Carlo dropout during inference.""",
 )
+@click.option(
+    "--forward_passes",
+    type=int,
+    default=100,
+    help="""The number of forward passes to perform while using
+    Monte Carlo dropout during inference""",
+)
 def main(
     model_path,
     output_path,
@@ -127,6 +134,7 @@ def main(
     model_type,
     repeat_dims,
     mc_dropout,
+    forward_passes,
 ):
 
     # Load the data and create a data loader
@@ -142,25 +150,27 @@ def main(
         repeat_dims=repeat_dims,
     )
 
-    # Make predictions
-    preds = predict(
-        model_path,
-        dataset,
-        cutout_size,
-        channels,
-        parallel=parallel,
-        batch_size=batch_size,
-        n_workers=n_workers,
-        model_type=model_type,
-        mc_dropout=mc_dropout,
-    )
-
     # Write a CSV of predictions
     catalog = pd.read_csv(
         Path(data_dir) / "splits/{}-{}.csv".format(slug, split)
     )
-    catalog["preds"] = preds
-    catalog.to_csv(output_path, index=False)
+
+    for i in tqdm(range(forward_passes)):
+        # Make predictions
+        preds = predict(
+            model_path,
+            dataset,
+            cutout_size,
+            channels,
+            parallel=parallel,
+            batch_size=batch_size,
+            n_workers=n_workers,
+            model_type=model_type,
+            mc_dropout=mc_dropout,
+        )
+
+        catalog["preds_" + str(i)] = preds
+        catalog.to_csv(output_path, index=False)
 
 
 if __name__ == "__main__":
