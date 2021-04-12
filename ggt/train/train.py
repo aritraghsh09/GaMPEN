@@ -132,9 +132,7 @@ def train(**kwargs):
     # Create the model given model_type
     cls = model_factory(args["model_type"])
     model = cls(
-        args["cutout_size"],
-        args["channels"],
-        n_out=len(target_metric_arr),
+        args["cutout_size"], args["channels"], n_out=len(target_metric_arr),
     )
     model = nn.DataParallel(model) if args["parallel"] else model
     model = model.to(args["device"])

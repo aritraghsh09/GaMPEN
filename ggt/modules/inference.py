@@ -24,7 +24,7 @@ def predict(
     n_workers=1,
     model_type="ggt",
     n_out=1,
-    mc_dropout=False
+    mc_dropout=False,
 ):
     """Using the model defined in model path, return the output values for
     the given set of images"""
