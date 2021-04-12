@@ -11,7 +11,6 @@ import torch
 import torch.nn as nn
 import torch.optim as opt
 
-# import torch_optimizer as opt
 import kornia.augmentation as K
 
 from ggt.data import FITSDataset, get_data_loader
