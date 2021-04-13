@@ -1,6 +1,5 @@
 from astropy.io import fits
 import numpy as np
-import pandas as pd
 from functools import partial
 from pathlib import Path
 from tqdm import tqdm
@@ -9,7 +8,12 @@ import torch
 from torch.utils.data import Dataset
 import torch.multiprocessing as mp
 
-from ggt.utils import arsinh_normalize, load_tensor
+from ggt.utils import (
+    arsinh_normalize,
+    load_tensor,
+    standardize_labels,
+    load_cat,
+)
 
 import logging
 
@@ -33,6 +37,7 @@ class FITSDataset(Dataset):
         transform=None,
         expand_factor=1,
         repeat_dims=False,
+        label_scaling=None,
     ):
 
         # Set data directory
@@ -49,14 +54,8 @@ class FITSDataset(Dataset):
         # Set data expansion factor (must be an int and >= 1)
         self.expand_factor = expand_factor
 
-        # Read the catalog csv file
-        if split:
-            catalog = self.data_dir / f"splits/{slug}-{split}.csv"
-        else:
-            catalog = self.data_dir / "info.csv"
-
         # Define paths
-        self.data_info = pd.read_csv(catalog)
+        self.data_info = load_cat(self.data_dir, slug, split)
         self.cutouts_path = self.data_dir / "cutouts"
         self.tensors_path = self.data_dir / "tensors"
         self.tensors_path.mkdir(parents=True, exist_ok=True)
@@ -64,6 +63,17 @@ class FITSDataset(Dataset):
         # Retrieve labels & filenames
         self.labels = np.asarray(self.data_info[label_col])
         self.filenames = np.asarray(self.data_info["file_name"])
+
+        # Standardizing the labels
+        if label_scaling is not None:
+            self.labels = standardize_labels(
+                self.labels,
+                self.data_dir,
+                split,
+                slug,
+                label_col,
+                scaling=label_scaling,
+            )
 
         # If we haven't already generated PyTorch tensor files, generate them
         logging.info("Generating PyTorch tensors from FITS files...")
@@ -97,7 +107,7 @@ class FITSDataset(Dataset):
 
             # Get image label ("wrap around"; make sure to cast to float!)
             y = torch.tensor(self.labels[index % len(self.labels)])
-            y = y.unsqueeze(-1).float()
+            y = y.float()
 
             # Normalize if necessary
             if self.normalize:
