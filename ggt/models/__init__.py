@@ -2,6 +2,7 @@ import torch
 from pathlib import Path
 
 from .ggt import GGT
+from .ggt_no_gcov import GGT_no_gconv
 from .vgg import vgg16
 
 
@@ -15,6 +16,8 @@ def model_factory(modeltype):
         return GGT
     elif modeltype.lower() == "vgg16":
         return vgg16
+    elif modeltype.lower() == "ggt_no_gconv":
+        return GGT_no_gconv 
     else:
         raise ValueError("Model type {} does not exist.".format(modeltype))
 
