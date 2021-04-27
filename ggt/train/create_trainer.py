@@ -7,6 +7,8 @@ from ignite.engine import (
 )
 from ignite.metrics import MeanAbsoluteError, MeanSquaredError, Loss
 
+from ggt.metrics import ElementwiseMae
+
 
 def create_trainer(model, optimizer, criterion, loaders, device):
     """Set up Ignite trainer and evaluator."""
@@ -17,6 +19,7 @@ def create_trainer(model, optimizer, criterion, loaders, device):
     metrics = {
         "mae": MeanAbsoluteError(),
         "mse": MeanSquaredError(),
+        "elementwise_mae": ElementwiseMae(),
         "loss": Loss(criterion),
     }
     evaluator = create_supervised_evaluator(
