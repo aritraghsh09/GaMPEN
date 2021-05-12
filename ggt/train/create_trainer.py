@@ -33,14 +33,22 @@ def create_trainer(model, optimizer, criterion, loaders, device):
             evaluator.run(loader)
             metrics = evaluator.state.metrics
             for M in metrics.keys():
-                mlflow.log_metric(f"{L}-{M}", metrics[M], 0)
+                if M == "elementwise_mae":
+                    for i in range(0,len(metrics[M])):
+                        mlflow.log_metric(f"{L}-{M}-{i}", metrics[M][i], 0)
+                else:
+                    mlflow.log_metric(f"{L}-{M}", metrics[M], 0)
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_devel_results(trainer):
         evaluator.run(loaders["devel"])
         metrics = evaluator.state.metrics
         for M in metrics.keys():
-            mlflow.log_metric(f"devel-{M}", metrics[M], trainer.state.epoch)
+            if M == "elementwise_mae":
+                    for i in range(0,len(metrics[M])):
+                       mlflow.log_metric(f"devel-{M}-{i}", metrics[M][i], trainer.state.epoch)
+            else:
+                mlflow.log_metric(f"devel-{M}", metrics[M], trainer.state.epoch)
 
     @trainer.on(Events.COMPLETED)
     def log_results_end(trainer):
@@ -48,6 +56,10 @@ def create_trainer(model, optimizer, criterion, loaders, device):
             evaluator.run(loader)
             metrics = evaluator.state.metrics
             for M in metrics.keys():
-                mlflow.log_metric(f"{L}-{M}", metrics[M], trainer.state.epoch)
+                if M == "elementwise_mae":
+                    for i in range(0,len(metrics[M])):
+                        mlflow.log_metric(f"{L}-{M}-{i}", metrics[M][i], trainer.state.epoch)
+                else:
+                    mlflow.log_metric(f"{L}-{M}", metrics[M], trainer.state.epoch)
 
     return trainer
