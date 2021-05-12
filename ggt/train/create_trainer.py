@@ -34,7 +34,7 @@ def create_trainer(model, optimizer, criterion, loaders, device):
             metrics = evaluator.state.metrics
             for M in metrics.keys():
                 if M == "elementwise_mae":
-                    for i in range(0,len(metrics[M])):
+                    for i in range(0, len(metrics[M])):
                         mlflow.log_metric(f"{L}-{M}-{i}", metrics[M][i], 0)
                 else:
                     mlflow.log_metric(f"{L}-{M}", metrics[M], 0)
@@ -45,10 +45,14 @@ def create_trainer(model, optimizer, criterion, loaders, device):
         metrics = evaluator.state.metrics
         for M in metrics.keys():
             if M == "elementwise_mae":
-                    for i in range(0,len(metrics[M])):
-                       mlflow.log_metric(f"devel-{M}-{i}", metrics[M][i], trainer.state.epoch)
+                for i in range(0, len(metrics[M])):
+                    mlflow.log_metric(
+                        f"devel-{M}-{i}", metrics[M][i], trainer.state.epoch
+                    )
             else:
-                mlflow.log_metric(f"devel-{M}", metrics[M], trainer.state.epoch)
+                mlflow.log_metric(
+                    f"devel-{M}", metrics[M], trainer.state.epoch
+                )
 
     @trainer.on(Events.COMPLETED)
     def log_results_end(trainer):
@@ -57,9 +61,13 @@ def create_trainer(model, optimizer, criterion, loaders, device):
             metrics = evaluator.state.metrics
             for M in metrics.keys():
                 if M == "elementwise_mae":
-                    for i in range(0,len(metrics[M])):
-                        mlflow.log_metric(f"{L}-{M}-{i}", metrics[M][i], trainer.state.epoch)
+                    for i in range(0, len(metrics[M])):
+                        mlflow.log_metric(
+                            f"{L}-{M}-{i}", metrics[M][i], trainer.state.epoch
+                        )
                 else:
-                    mlflow.log_metric(f"{L}-{M}", metrics[M], trainer.state.epoch)
+                    mlflow.log_metric(
+                        f"{L}-{M}", metrics[M], trainer.state.epoch
+                    )
 
     return trainer

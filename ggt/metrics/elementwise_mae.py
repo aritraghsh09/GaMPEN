@@ -1,5 +1,4 @@
 import torch
-import torch.nn.functional as F
 from typing import Sequence, Union
 
 from ignite.metrics import Metric
@@ -28,7 +27,7 @@ class ElementwiseMae(Metric):
 
         # Sum absolute errors element-wise
         absolute_errors = torch.abs(y_pred - y.view_as(y_pred))
-        absolute_errors = torch.sum(absolute_errors,0)
+        absolute_errors = torch.sum(absolute_errors, 0)
 
         self._elementwise_sum_abs_errors += absolute_errors
         self._num_examples += y.shape[0]
