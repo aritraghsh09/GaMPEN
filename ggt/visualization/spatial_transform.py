@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import matplotlib
 import torch
 import torchvision
 
@@ -13,7 +14,13 @@ from ggt.utils import discover_devices, tensor_to_numpy
 
 
 def visualize_spatial_transform(
-    model, loader, output_dir, device="cpu", nrow=6, return_grids=False
+    model,
+    loader,
+    output_dir,
+    device="cpu",
+    nrow=6,
+    return_grids=False,
+    matplotlib_backend="agg",
 ):
 
     # Turn off gradients
@@ -47,6 +54,9 @@ def visualize_spatial_transform(
         # If requested, return the grids
         if return_grids:
             return in_grid, out_grid
+
+        if matplotlib_backend is not None:
+            matplotlib.use(matplotlib_backend)
 
         # Show the results and save them to disk
         plt.figure(figsize=(15, 15), dpi=250)
