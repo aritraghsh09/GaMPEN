@@ -22,5 +22,5 @@ def test_elementwise_mae():
         metric.update((y_pred, y))
 
     # Compute the metric and confirm it's equal to the error
-    res = torch.tensor(metric.compute())
+    res = metric.compute()
     assert torch.all(torch.eq(res, err))
