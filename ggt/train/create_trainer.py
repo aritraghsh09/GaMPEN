@@ -34,7 +34,7 @@ def create_trainer(model, optimizer, criterion, loaders, device):
             metrics = evaluator.state.metrics
             for M in metrics.keys():
                 if M == "elementwise_mae":
-                    for i, val in enumerate(metrics[M]):
+                    for i, val in enumerate(metrics[M].tolist()):
                         mlflow.log_metric(f"{L}-{M}-{i}", val, 0)
                 else:
                     mlflow.log_metric(f"{L}-{M}", metrics[M], 0)
@@ -45,9 +45,9 @@ def create_trainer(model, optimizer, criterion, loaders, device):
         metrics = evaluator.state.metrics
         for M in metrics.keys():
             if M == "elementwise_mae":
-                for i in range(0, len(metrics[M])):
+                for i, val in enumerate(metrics[M].tolist()):
                     mlflow.log_metric(
-                        f"devel-{M}-{i}", metrics[M][i], trainer.state.epoch
+                        f"devel-{M}-{i}", val, trainer.state.epoch
                     )
             else:
                 mlflow.log_metric(
@@ -61,9 +61,9 @@ def create_trainer(model, optimizer, criterion, loaders, device):
             metrics = evaluator.state.metrics
             for M in metrics.keys():
                 if M == "elementwise_mae":
-                    for i in range(0, len(metrics[M])):
+                    for i, val in enumerate(metrics[M].tolist()):
                         mlflow.log_metric(
-                            f"{L}-{M}-{i}", metrics[M][i], trainer.state.epoch
+                            f"{L}-{M}-{i}", val, trainer.state.epoch
                         )
                 else:
                     mlflow.log_metric(

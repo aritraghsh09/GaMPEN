@@ -41,4 +41,4 @@ class ElementwiseMae(Metric):
             )
 
         # Average by number of examples to produce elementwise MAE
-        return (self._elementwise_sum_abs_errors / self._num_examples).tolist()
+        return self._elementwise_sum_abs_errors / self._num_examples
