@@ -23,10 +23,12 @@ class ElementwiseMae(Metric):
 
         # Initialize elementwise errors as zeros
         if self._elementwise_sum_abs_errors is None:
-            self._elementwise_sum_abs_errors = torch.zeros_like(y_pred)
+            self._elementwise_sum_abs_errors = torch.zeros_like(y_pred[0])
 
         # Sum absolute errors element-wise
         absolute_errors = torch.abs(y_pred - y.view_as(y_pred))
+        absolute_errors = torch.sum(absolute_errors, 0)
+
         self._elementwise_sum_abs_errors += absolute_errors
         self._num_examples += y.shape[0]
 

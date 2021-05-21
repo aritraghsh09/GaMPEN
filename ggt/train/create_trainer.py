@@ -7,6 +7,8 @@ from ignite.engine import (
 )
 from ignite.metrics import MeanAbsoluteError, MeanSquaredError, Loss
 
+from ggt.metrics import ElementwiseMae
+
 
 def create_trainer(model, optimizer, criterion, loaders, device):
     """Set up Ignite trainer and evaluator."""
@@ -17,6 +19,7 @@ def create_trainer(model, optimizer, criterion, loaders, device):
     metrics = {
         "mae": MeanAbsoluteError(),
         "mse": MeanSquaredError(),
+        "elementwise_mae": ElementwiseMae(),
         "loss": Loss(criterion),
     }
     evaluator = create_supervised_evaluator(
@@ -30,14 +33,26 @@ def create_trainer(model, optimizer, criterion, loaders, device):
             evaluator.run(loader)
             metrics = evaluator.state.metrics
             for M in metrics.keys():
-                mlflow.log_metric(f"{L}-{M}", metrics[M], 0)
+                if M == "elementwise_mae":
+                    for i, val in enumerate(metrics[M].tolist()):
+                        mlflow.log_metric(f"{L}-{M}-{i}", val, 0)
+                else:
+                    mlflow.log_metric(f"{L}-{M}", metrics[M], 0)
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_devel_results(trainer):
         evaluator.run(loaders["devel"])
         metrics = evaluator.state.metrics
         for M in metrics.keys():
-            mlflow.log_metric(f"devel-{M}", metrics[M], trainer.state.epoch)
+            if M == "elementwise_mae":
+                for i, val in enumerate(metrics[M].tolist()):
+                    mlflow.log_metric(
+                        f"devel-{M}-{i}", val, trainer.state.epoch
+                    )
+            else:
+                mlflow.log_metric(
+                    f"devel-{M}", metrics[M], trainer.state.epoch
+                )
 
     @trainer.on(Events.COMPLETED)
     def log_results_end(trainer):
@@ -45,6 +60,14 @@ def create_trainer(model, optimizer, criterion, loaders, device):
             evaluator.run(loader)
             metrics = evaluator.state.metrics
             for M in metrics.keys():
-                mlflow.log_metric(f"{L}-{M}", metrics[M], trainer.state.epoch)
+                if M == "elementwise_mae":
+                    for i, val in enumerate(metrics[M].tolist()):
+                        mlflow.log_metric(
+                            f"{L}-{M}-{i}", val, trainer.state.epoch
+                        )
+                else:
+                    mlflow.log_metric(
+                        f"{L}-{M}", metrics[M], trainer.state.epoch
+                    )
 
     return trainer
