@@ -64,7 +64,7 @@ def predict(
 @click.command()
 @click.option(
     "--model_type",
-    type=click.Choice(["ggt", "vgg16"], case_sensitive=False),
+    type=click.Choice(["ggt", "vgg16","ggt_no_gconv"], case_sensitive=False),
     default="ggt",
 )
 @click.option("--model_path", type=click.Path(exists=True), required=True)
