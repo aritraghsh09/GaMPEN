@@ -20,7 +20,6 @@ def create_trainer(model, optimizer, criterion, loaders, device):
         "mae": MeanAbsoluteError(),
         "elementwise_mae": ElementwiseMae(),
         "mse": MeanSquaredError(),
-        "elementwise_mae": ElementwiseMae(),
         "loss": Loss(criterion),
     }
     evaluator = create_supervised_evaluator(

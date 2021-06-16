@@ -18,7 +18,7 @@ def model_factory(modeltype):
     elif modeltype.lower() == "vgg16":
         return vgg16
     elif modeltype.lower() == "ggt_no_gconv":
-        return GGT_no_gconv 
+        return GGT_no_gconv
     elif modeltype.lower() == "vgg16_w_stn":
         return vgg16_w_stn
     else:
