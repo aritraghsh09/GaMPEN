@@ -6,10 +6,10 @@ from torchvision import models
 from ggt.utils.model_utils import get_output_shape
 
 
-class vgg_w_stn(nn.Module):
+class vgg16_w_stn(nn.Module):
     
     def __init__(self, cutout_size, channels, n_out=1, pretrained=True):
-        super(vgg_w_stn, self).__init__()
+        super(vgg16_w_stn, self).__init__()
         self.cutout_size = cutout_size
         self.channels = channels
         self.expected_input_shape = (
