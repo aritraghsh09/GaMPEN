@@ -13,7 +13,7 @@ def enable_dropout(model):
             m.train()
 
 
-def specify_dropout_rate(model,rate):
+def specify_dropout_rate(model, rate):
     """Specify the dropout rate of all layers"""
     for m in model.modules():
         if m.__class__.__name__.startswith("Dropout"):

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from ggt.utils.model_utils import specify_dropout_rate
 import click
 import logging
 import math
@@ -120,11 +119,14 @@ dimensional image as many times as the number of channels""",
     default=False,
     help="""Whether to use Nesterov momentum or not""",
 )
-@click.option("--dropout_rate", type=float, default=None,
-    help="""The dropout rate to use for all the layers in the 
+@click.option(
+    "--dropout_rate",
+    type=float,
+    default=None,
+    help="""The dropout rate to use for all the layers in the
     model. If this is set to None, then the default dropout rate
-    in the specific model is used.""")
-
+    in the specific model is used.""",
+)
 def train(**kwargs):
     """Runs the training procedure using MLFlow."""
 
@@ -144,10 +146,12 @@ def train(**kwargs):
         args["channels"],
         n_out=len(target_metric_arr),
     )
-    if args["dropout_rate"] is not None:
-        specify_dropout_rate(model,args["dropout_rate"])
     model = nn.DataParallel(model) if args["parallel"] else model
     model = model.to(args["device"])
+
+    # Chnaging the default dropout rate if specified
+    if args["dropout_rate"] is not None:
+        specify_dropout_rate(model, args["dropout_rate"])
 
     # Load the model from a saved state if provided
     if args["model_state"]:
