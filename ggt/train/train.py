@@ -16,7 +16,7 @@ import kornia.augmentation as K
 from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory, model_stats, save_trained_model
 from ggt.train import create_trainer
-from ggt.utils import discover_devices
+from ggt.utils import discover_devices, specify_dropout_rate
 from ggt.visualization.spatial_transform import visualize_spatial_transform
 
 
@@ -117,6 +117,14 @@ dimensional image as many times as the number of channels""",
     default=False,
     help="""Whether to use Nesterov momentum or not""",
 )
+@click.option(
+    "--dropout_rate",
+    type=float,
+    default=None,
+    help="""The dropout rate to use for all the layers in the
+    model. If this is set to None, then the default dropout rate
+    in the specific model is used.""",
+)
 def train(**kwargs):
     """Runs the training procedure using MLFlow."""
 
@@ -138,6 +146,10 @@ def train(**kwargs):
     )
     model = nn.DataParallel(model) if args["parallel"] else model
     model = model.to(args["device"])
+
+    # Chnaging the default dropout rate if specified
+    if args["dropout_rate"] is not None:
+        specify_dropout_rate(model, args["dropout_rate"])
 
     # Load the model from a saved state if provided
     if args["model_state"]:
