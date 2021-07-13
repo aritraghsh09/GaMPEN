@@ -177,6 +177,7 @@ def train(**kwargs):
     T = None
     if args["transform"]:
         T = nn.Sequential(
+            K.CenterCrop(args["cutout_size"]),
             K.RandomHorizontalFlip(),
             K.RandomVerticalFlip(),
             K.RandomRotation(360),
