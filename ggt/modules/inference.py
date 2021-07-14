@@ -9,6 +9,8 @@ import torch.nn as nn
 
 from tqdm import tqdm
 
+import kornia.augmentation as K
+
 from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory
 from ggt.utils import discover_devices, standardize_labels, enable_dropout
@@ -134,6 +136,12 @@ model being used for inference).""",
     default=False,
     help="""Turn on Monte Carlo dropout during inference.""",
 )
+@click.option(
+    "--transform/--no-transform",
+    default=True,
+    help="""If True, the images are passed through a cropping transformation
+to ensure proper cutout size""",
+)
 def main(
     model_path,
     output_path,
@@ -151,10 +159,18 @@ def main(
     repeat_dims,
     label_scaling,
     mc_dropout,
+    transform,
 ):
 
     # Create label cols array
     label_cols_arr = label_cols.split(",")
+
+    # Transforming the dataset to the proper cutout size
+    T = None
+    if transform:
+        T = nn.Sequential(
+            K.CenterCrop(cutout_size),
+        )
 
     # Load the data and create a data loader
     logging.info("Loading images to device...")
