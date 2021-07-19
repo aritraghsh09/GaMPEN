@@ -184,6 +184,7 @@ def main(
         label_col=label_cols_arr,
         repeat_dims=repeat_dims,
         label_scaling=label_scaling,
+        transform = T if T is not None else None,
     )
 
     # Make predictions
