@@ -175,12 +175,17 @@ def train(**kwargs):
 
     # Select the desired transforms
     T = None
+    T_crop = None
     if args["transform"]:
         T = nn.Sequential(
             K.CenterCrop(args["cutout_size"]),
             K.RandomHorizontalFlip(),
             K.RandomVerticalFlip(),
             K.RandomRotation(360),
+        )
+
+        T_crop = nn.Sequential(
+            K.CenterCrop(args["cutout_size"]),
         )
 
     # Generate the DataLoaders and log the train/devel/test split sizes
@@ -194,7 +199,7 @@ def train(**kwargs):
             normalize=args["normalize"],
             repeat_dims=args["repeat_dims"],
             label_col=target_metric_arr,
-            transform=T if k == "train" else None,
+            transform=T if k == "train" else T_crop,
             expand_factor=args["expand_data"] if k == "train" else 1,
             label_scaling=args["label_scaling"],
             split=k,
