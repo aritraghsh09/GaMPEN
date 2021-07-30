@@ -4,7 +4,6 @@ from pathlib import Path
 from .ggt import GGT
 from .ggt_no_gcov import GGT_no_gconv
 from .vgg import vgg16
-from .vgg16_w_stn import vgg16_w_stn
 from .vgg16_w_stn_drp import vgg16_w_stn_drp
 
 
@@ -20,9 +19,7 @@ def model_factory(modeltype):
         return vgg16
     elif modeltype.lower() == "ggt_no_gconv":
         return GGT_no_gconv
-    elif modeltype.lower() == "vgg16_w_stn":
-        return vgg16_w_stn
-    elif modeltype.lower() == "vgg16_w_stn_drp":
+    elif modeltype.lower() == "vgg16_w_stn_drp" or "vgg16_w_stn":
         return vgg16_w_stn_drp
     else:
         raise ValueError("Model type {} does not exist.".format(modeltype))

@@ -13,7 +13,12 @@ import kornia.augmentation as K
 
 from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory
-from ggt.utils import discover_devices, standardize_labels, enable_dropout
+from ggt.utils import (
+    discover_devices,
+    standardize_labels,
+    enable_dropout,
+    specify_dropout_rate,
+)
 
 
 def predict(
@@ -27,6 +32,7 @@ def predict(
     model_type="ggt",
     n_out=1,
     mc_dropout=False,
+    dropout_rate=None,
 ):
     """Using the model defined in model path, return the output values for
     the given set of images"""
@@ -34,12 +40,27 @@ def predict(
     # Discover devices
     device = discover_devices()
 
-    # Load the model
-    logging.info("Loading model...")
+    # Declare the model given model_type
     cls = model_factory(model_type)
-    model = cls(cutout_size, channels, n_out=n_out)
+    model_args = {
+        "cutout_size": cutout_size,
+        "channels": channels,
+        "n_out": n_out,
+    }
+
+    if model_type == "vgg16_w_stn_drp":
+        model_args["dropout"] = "True"
+
+    model = cls(**model_args)
     model = nn.DataParallel(model) if parallel else model
     model = model.to(device)
+
+    # Changing the dropout rate if specified
+    if dropout_rate is not None:
+        specify_dropout_rate(model, dropout_rate)
+
+    # Load the model
+    logging.info("Loading model...")
     model.load_state_dict(torch.load(model_path))
 
     # Create a data loader
@@ -53,7 +74,7 @@ def predict(
 
     # Enable Monte Carlo dropout if requested
     if mc_dropout:
-        logging.info(" -- activating Monte Carlo dropout...")
+        logging.info("Activating Monte Carlo dropout...")
         enable_dropout(model)
 
     with torch.no_grad():
@@ -67,7 +88,8 @@ def predict(
 @click.option(
     "--model_type",
     type=click.Choice(
-        ["ggt", "vgg16", "ggt_no_gconv", "vgg16_w_stn"], case_sensitive=False
+        ["ggt", "vgg16", "ggt_no_gconv", "vgg16_w_stn", "vgg16_w_stn_drp"],
+        case_sensitive=False,
     ),
     default="ggt",
 )
@@ -137,6 +159,16 @@ model being used for inference).""",
     help="""Turn on Monte Carlo dropout during inference.""",
 )
 @click.option(
+    "--dropout_rate",
+    type=float,
+    default=None,
+    help="""The dropout rate to use for all the layers in the
+    model. If this is set to None, then the default dropout rate
+    in the specific model is used. This option should only be
+    used while setting mc_dropout to True. The rate
+    should be set equal to the rate used during training.""",
+)
+@click.option(
     "--transform/--no-transform",
     default=True,
     help="""If True, the images are passed through a cropping transformation
@@ -159,6 +191,7 @@ def main(
     repeat_dims,
     label_scaling,
     mc_dropout,
+    dropout_rate,
     transform,
 ):
 
@@ -199,6 +232,7 @@ def main(
         model_type=model_type,
         n_out=len(label_cols_arr),
         mc_dropout=mc_dropout,
+        dropout_rate=dropout_rate,
     )
 
     # Scale labels back to old values

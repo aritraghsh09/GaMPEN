@@ -39,7 +39,8 @@ So this variable should be specified accordingly""",
 @click.option(
     "--model_type",
     type=click.Choice(
-        ["ggt", "vgg16", "ggt_no_gconv", "vgg16_w_stn"], case_sensitive=False
+        ["ggt", "vgg16", "ggt_no_gconv", "vgg16_w_stn", "vgg16_w_stn_drp"],
+        case_sensitive=False,
     ),
     default="ggt",
 )
@@ -141,11 +142,16 @@ def train(**kwargs):
 
     # Create the model given model_type
     cls = model_factory(args["model_type"])
-    model = cls(
-        args["cutout_size"],
-        args["channels"],
-        n_out=len(target_metric_arr),
-    )
+    model_args = {
+        "cutout_size": args["cutout_size"],
+        "channels": args["channels"],
+        "n_out": len(target_metric_arr),
+    }
+
+    if args["model_type"] == "vgg16_w_stn_drp":
+        model_args["dropout"] = "True"
+
+    model = cls(**model_args)
     model = nn.DataParallel(model) if args["parallel"] else model
     model = model.to(args["device"])
 

@@ -7,8 +7,15 @@ from ggt.utils.model_utils import get_output_shape
 
 
 class vgg16_w_stn_drp(nn.Module):
-    def __init__(self, cutout_size, channels, n_out=1, pretrained=True,
-                dropout=False,p=0.5):
+    def __init__(
+        self,
+        cutout_size,
+        channels,
+        n_out=1,
+        pretrained=True,
+        dropout=False,
+        dropout_rate=0.5,
+    ):
         super(vgg16_w_stn_drp, self).__init__()
         self.cutout_size = cutout_size
         self.channels = channels
@@ -53,13 +60,16 @@ class vgg16_w_stn_drp(nn.Module):
         self.vgg = models.vgg16(pretrained=self.pretrained)
         self.vgg.classifier[6] = nn.Linear(4096, self.n_out)
 
-        # Adding dropout layers infront of Conv2D Layers
+        # Adding dropout layers infront of Conv2D Layers and
+        # altering the dropout rate in the classifier
         if dropout:
             features = list(self.vgg.features)
             new_features = []
-            for i,feature in enumerate(features):
-                if isinstance(feature, nn.Conv2d) and i!=0:
-                    new_features.append(nn.Dropout(p=p, inplace=True))
+            for i, feature in enumerate(features):
+                if isinstance(feature, nn.Conv2d) and i != 0:
+                    new_features.append(
+                        nn.Dropout(p=dropout_rate, inplace=False)
+                    )
                 new_features.append(feature)
             self.vgg.features = nn.Sequential(*new_features)
 
