@@ -146,7 +146,7 @@ def main(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Generate the visualizations
-    visualize_spatial_transform(model, loader, output_dir, nrow, device)
+    visualize_spatial_transform(model, loader, output_dir, device, nrow)
 
 
 if __name__ == "__main__":
