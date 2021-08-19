@@ -165,12 +165,13 @@ model being used for inference).""",
     help="""The dropout rate to use for all the layers in the
     model. If this is set to None, then the default dropout rate
     in the specific model is used. This option should only be
-    used while setting mc_dropout to True. The rate
-    should be set equal to the rate used during training.""",
+    used when you have used a non-default dropout rate during
+    training and have set --mc_dropout to True. The rate should 
+    be set equal to the rate used during training.""",
 )
 @click.option(
     "--transform/--no-transform",
-    default=True,
+    default=False,
     help="""If True, the images are passed through a cropping transformation
 to ensure proper cutout size""",
 )
