@@ -5,6 +5,7 @@ from .ggt import GGT
 from .ggt_no_gcov import GGT_no_gconv
 from .vgg import vgg16
 from .vgg16_w_stn_drp import vgg16_w_stn_drp
+from .vgg16_w_stn_drp_2 import vgg16_w_stn_drp_2
 
 
 def model_stats(model):
@@ -21,6 +22,8 @@ def model_factory(modeltype):
         return GGT_no_gconv
     elif modeltype.lower() == "vgg16_w_stn_drp" or "vgg16_w_stn":
         return vgg16_w_stn_drp
+    elif modeltype.lower() == "vgg16_w_stn_drp_2":
+        return vgg16_w_stn_drp_2
     else:
         raise ValueError("Model type {} does not exist.".format(modeltype))
 

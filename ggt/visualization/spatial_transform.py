@@ -128,7 +128,6 @@ def main(
     model = cls(**model_args)
     model = model.to(device)
 
-
     # Load the model from a saved state if provided
     model.load_state_dict(torch.load(model_path))
 
