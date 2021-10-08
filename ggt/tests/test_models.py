@@ -20,8 +20,14 @@ def test_ggt_no_gconv():
     print(model)
 
 
-@pytest.mark.skip(reason="connects to internet")
 def test_vgg16():
     cls = model_factory('vgg16')
-    model = cls(169, 1, 1)
+    model = cls(169, 1, 1, pretrained=False)
+    print(model)
+
+
+@pytest.mark.skip(reason="requires network connection")
+def test_vgg16_pretrained():
+    cls = model_factory('vgg16')
+    model = cls(169, 1, 1, pretrained=True)
     print(model)
