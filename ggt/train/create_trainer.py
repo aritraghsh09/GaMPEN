@@ -54,18 +54,19 @@ def create_trainer(model, optimizer, criterion, loaders, device):
                     f"devel-{M}", metrics[M], trainer.state.epoch
                 )
 
-#    @trainer.on(Events.EPOCH_COMPLETED)
-#    def log_STN_weights(trainer):
-#            if hasattr(model, "spatial_transform") or hasattr(
-#                model.module, "spatial_transform"
-#            ):
-#                if hasattr(model, "spatial_transform"):
-#                    fc_loc = model.fc_loc
-#                else:
-#                    fc_loc = model.module.fc_loc
-#
-#                for i, param in enumerate(fc_loc.parameters()):
-#                    mlflow.log_param(f"STN_weights-{i}", param.data.tolist())
+    #    @trainer.on(Events.EPOCH_COMPLETED)
+    #    def log_STN_weights(trainer):
+    #            if hasattr(model, "spatial_transform") or hasattr(
+    #                model.module, "spatial_transform"
+    #            ):
+    #                if hasattr(model, "spatial_transform"):
+    #                    fc_loc = model.fc_loc
+    #                else:
+    #                    fc_loc = model.module.fc_loc
+    #
+    #                for i, param in enumerate(fc_loc.parameters()):
+    #                    mlflow.log_param(f"STN_weights-{i}",
+    #                    param.data.tolist())
 
     @trainer.on(Events.COMPLETED)
     def log_results_end(trainer):
