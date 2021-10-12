@@ -225,6 +225,7 @@ def train(**kwargs):
     # Start the training process
     mlflow.set_experiment(args["experiment_name"])
     with mlflow.start_run(run_id=args["run_id"], run_name=args["run_name"]):
+
         # Write the parameters and model stats to MLFlow
         args = {**args, **model_stats(model)}  # py3.9: d1 |= d2
         for k, v in args.items():

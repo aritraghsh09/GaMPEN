@@ -166,7 +166,7 @@ model being used for inference).""",
     model. If this is set to None, then the default dropout rate
     in the specific model is used. This option should only be
     used when you have used a non-default dropout rate during
-    training and have set --mc_dropout to True. The rate should 
+    training and have set --mc_dropout to True. The rate should
     be set equal to the rate used during training.""",
 )
 @click.option(
