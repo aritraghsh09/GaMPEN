@@ -202,9 +202,7 @@ def main(
     # Transforming the dataset to the proper cutout size
     T = None
     if transform:
-        T = nn.Sequential(
-            K.CenterCrop(cutout_size),
-        )
+        T = nn.Sequential(K.CenterCrop(cutout_size),)
 
     # Load the data and create a data loader
     logging.info("Loading images to device...")

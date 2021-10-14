@@ -197,9 +197,7 @@ def train(**kwargs):
             K.RandomRotation(360),
         )
 
-        T_crop = nn.Sequential(
-            K.CenterCrop(args["cutout_size"]),
-        )
+        T_crop = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
 
     # Generate the DataLoaders and log the train/devel/test split sizes
     splits = ("train", "devel", "test")
