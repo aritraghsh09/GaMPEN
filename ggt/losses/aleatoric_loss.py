@@ -22,12 +22,11 @@ def aleatoric_loss(outputs, targets, average=True):
 
     y_hat = outputs[..., :int(num_out / 2)]
     s_k = outputs[..., -int(num_out / 2):]
-    y_true = targets
 
     # Compute the aleatoric loss
-    first_term = 0.5 * torch.pow(y_hat - y_true, 2) * torch.exp(-1.0 * s_k)
-    second_term = 0.5 * s_k
-    aleatoric_loss = first_term + second_term
+    aleatoric_loss = (
+        0.5 * torch.pow(y_hat - targets, 2) * torch.exp(-1.0 * s_k) + 0.5 * s_k
+    )
 
     if average:
         aleatoric_loss = torch.mean(aleatoric_loss)
