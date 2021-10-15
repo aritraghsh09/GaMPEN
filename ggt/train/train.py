@@ -160,12 +160,17 @@ def train(**kwargs):
     # Create target metrics array
     target_metric_arr = args["target_metrics"].split(",")
 
+    # Calculating the number of outputs
+    n_out = len(target_metric_arr)
+    if args["loss"] == "aleatoric":
+        n_out = int(n_out * 2)
+
     # Create the model given model_type
     cls = model_factory(args["model_type"])
     model_args = {
         "cutout_size": args["cutout_size"],
         "channels": args["channels"],
-        "n_out": len(target_metric_arr),
+        "n_out": n_out,
     }
 
     if args["model_type"] == "vgg16_w_stn_drp":

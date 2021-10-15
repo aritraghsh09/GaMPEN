@@ -8,6 +8,8 @@ from ignite.engine import (
 from ignite.metrics import MeanAbsoluteError, MeanSquaredError, Loss
 
 from ggt.metrics import ElementwiseMae
+from ggt.losses import AleatoricLoss
+from ggt.utils import metric_output_transform
 
 
 def create_trainer(model, optimizer, criterion, loaders, device):
@@ -16,12 +18,18 @@ def create_trainer(model, optimizer, criterion, loaders, device):
         model, optimizer, criterion, device=device
     )
 
+    if isinstance(criterion, AleatoricLoss):
+        output_transform = metric_output_transform
+    else:
+        def output_transform(x): return x
+
     metrics = {
-        "mae": MeanAbsoluteError(),
-        "elementwise_mae": ElementwiseMae(),
-        "mse": MeanSquaredError(),
+        "mae": MeanAbsoluteError(output_transform=output_transform),
+        "elementwise_mae": ElementwiseMae(output_transform=output_transform),
+        "mse": MeanSquaredError(output_transform=output_transform),
         "loss": Loss(criterion),
     }
+
     evaluator = create_supervised_evaluator(
         model, metrics=metrics, device=device
     )

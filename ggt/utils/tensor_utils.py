@@ -45,3 +45,16 @@ def standardize_labels(
         return scaler.inverse_transform(input)
     else:
         return scaler.transform(input)
+
+
+def metric_output_transform(output):
+    """Transforms the output of the model, when using
+    aleatoric loss, to a form which can be used by the
+    ignote metric calculators"""
+
+    y_pred, y = output
+
+    # Chopping y_pred to half it's size to match y
+    y_pred = y_pred[..., : int(y_pred.shape[len(y_pred.shape) - 1] / 2)]
+
+    return y_pred, y
