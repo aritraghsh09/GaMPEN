@@ -11,7 +11,7 @@ from ggt.utils.model_utils import get_output_shape
 class GGT(nn.Module):
     """Galaxy Group-Equivariant Transformer model."""
 
-    def __init__(self, cutout_size, channels, n_out=1):
+    def __init__(self, cutout_size, channels, n_out=1, dropout=0.5):
         super(GGT, self).__init__()
         self.cutout_size = cutout_size
         self.channels = channels
@@ -29,19 +29,14 @@ class GGT(nn.Module):
         # Set up featurizer block(s)
         self.setup_featurizer()
 
-        # Adaptive pooling
-        self.pool = nn.AdaptiveAvgPool2d((6, 6))
+        # Set up regression block
+        self.setup_regression()
 
-        # Fully-connected regression
-        self.regress = nn.Sequential(
-            nn.Dropout(0.5),
-            nn.Linear(256 * 6 * 6, 1024),
-            nn.ReLU(inplace=True),
-            nn.Dropout(0.5),
-            nn.Linear(1024, 512),
-            nn.ReLU(inplace=True),
-            nn.Linear(512, self.n_out),
-        )
+        # Set up adaptive pooling
+        self.setup_pooling()
+
+        # Set up dropout (not necessary for parent class)
+        self.setup_dropout(dropout)
 
     def setup_stn(self, input_shape):
         # Spatial transformer localization network
@@ -90,6 +85,33 @@ class GGT(nn.Module):
             nn.ReLU(inplace=True),
         )
 
+    def setup_regression(self):
+        # Fully-connected regression
+        if dropout > 0:
+            self.regress = nn.Sequential(
+                nn.Dropout(dropout),
+                nn.Linear(256 * 6 * 6, 1024),
+                nn.ReLU(inplace=True),
+                nn.Dropout(dropout),
+                nn.Linear(1024, 512),
+                nn.ReLU(inplace=True),
+                nn.Linear(512, self.n_out),
+            )
+        else:
+            self.regress = nn.Sequential(
+                nn.Linear(256 * 6 * 6, 1024),
+                nn.ReLU(inplace=True),
+                nn.Linear(1024, 512),
+                nn.ReLU(inplace=True),
+                nn.Linear(512, self.n_out),
+            )
+
+    def setup_pooling(self, input_shape=(6, 6)):
+        self.pool = nn.AdaptiveAvgPool2d(input_shape)
+
+    def setup_dropout(self, dropout):
+        pass
+
     def spatial_transform(self, x):
         xs = self.localization(x)
         xs = xs.view(-1, self.fc_in_size)
@@ -137,9 +159,7 @@ class GGTNoGConv(GGT):
 
     def forward(self, x):
         x = self.spatial_transform(x)
-
         x = self.featurize(x)
-
         x = x.view(x.size()[0], x.size()[1], x.size()[2], -1)
         x = self.pool(x)
         x = torch.flatten(x, 1)
