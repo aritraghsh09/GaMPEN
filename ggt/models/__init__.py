@@ -2,7 +2,7 @@ import torch
 from pathlib import Path
 
 from .ggt import GGT, GGTNoGConv
-from .vgg import vgg16
+from .vgg import vgg16, vgg16_w_stn_drp
 
 
 def model_stats(model):
@@ -15,6 +15,8 @@ def model_factory(modeltype):
         return GGT
     elif modeltype.lower() == "ggt_no_gconv":
         return GGTNoGConv
+    elif modeltype.lower() == "vgg16_w_stn_drp" or "vgg16_w_stn":
+        return vgg16_w_stn_drp
     elif modeltype.lower() == "vgg16":
         return vgg16
     else:
