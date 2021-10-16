@@ -18,9 +18,9 @@ class VGG(GGTNoGConv):
         pretrained=True,
         use_spatial_transformer=False,
     ):
-        super(VGG, self).__init__(cutout_size, channels, n_out, dropout)
         self.pretrained = pretrained
         self.use_spatial_transformer = use_spatial_transformer
+        super(VGG, self).__init__(cutout_size, channels, n_out, dropout)
 
     def setup_featurizer(self):
         self.featurize = models.vgg16(pretrained=self.pretrained)
