@@ -24,7 +24,7 @@ def predict(
     n_workers=1,
     model_type="ggt",
     n_out=1,
-    mc_dropout=False,
+    use_dropout=False,
 ):
     """Using the model defined in model path, return the output values for
     the given set of images"""
@@ -50,7 +50,7 @@ def predict(
     model.eval()
 
     # Enable Monte Carlo dropout if requested
-    if mc_dropout:
+    if use_dropout:
         logging.info(" -- activating Monte Carlo dropout...")
         enable_dropout(model)
 
@@ -128,7 +128,7 @@ model being used for inference).""",
               dimensional image as many times as the number of channels""",
 )
 @click.option(
-    "--mc_dropout/--no-mc_dropout",
+    "--use_dropout/--no-dropout",
     default=False,
     help="""Turn on Monte Carlo dropout during inference.""",
 )
@@ -148,7 +148,7 @@ def main(
     model_type,
     repeat_dims,
     label_scaling,
-    mc_dropout,
+    use_dropout,
 ):
 
     # Create label cols array
@@ -179,7 +179,7 @@ def main(
         n_workers=n_workers,
         model_type=model_type,
         n_out=len(label_cols_arr),
-        mc_dropout=mc_dropout,
+        use_dropout=use_dropout,
     )
 
     # Scale labels back to old values
