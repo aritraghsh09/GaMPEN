@@ -16,7 +16,7 @@ import kornia.augmentation as K
 from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory, model_stats, save_trained_model
 from ggt.train import create_trainer
-from ggt.utils import discover_devices, specify_dropout_rate
+from ggt.utils import discover_devices
 from ggt.visualization.spatial_transform import visualize_spatial_transform
 
 
@@ -39,7 +39,7 @@ So this variable should be specified accordingly""",
 @click.option(
     "--model_type",
     type=click.Choice(
-        ["ggt", "ggt_no_gconv", "vgg16", "vgg16_w_stn", "vgg16_w_stn_drp"],
+        ["ggt", "ggt_no_gconv", "vgg"],
         case_sensitive=False,
     ),
     default="ggt",
@@ -121,7 +121,7 @@ dimensional image as many times as the number of channels""",
     help="""Whether to use Nesterov momentum or not""",
 )
 @click.option(
-    "--dropout_rate",
+    "--dropout",
     type=float,
     default=None,
     help="""The dropout rate to use for all the layers in the
@@ -146,18 +146,12 @@ def train(**kwargs):
         "cutout_size": args["cutout_size"],
         "channels": args["channels"],
         "n_out": len(target_metric_arr),
+        "dropout": args["dropout"],
     }
-
-    if args["model_type"] == "vgg16_w_stn_drp":
-        model_args["dropout"] = "True"
 
     model = cls(**model_args)
     model = nn.DataParallel(model) if args["parallel"] else model
     model = model.to(args["device"])
-
-    # Chnaging the default dropout rate if specified
-    if args["dropout_rate"] is not None:
-        specify_dropout_rate(model, args["dropout_rate"])
 
     # Load the model from a saved state if provided
     if args["model_state"]:
