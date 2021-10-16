@@ -7,14 +7,25 @@ from ggt.utils.model_utils import get_output_shape
 
 
 class VGG(GGTNoGConv):
-    """VGG model as described in Very Deep Convolutional Networks for Large-Scale 
+    """VGG model as described in Very Deep Convolutional Networks for Large-Scale
     Image Recognition (Simonyan & Zisserman, 2015), plus optional dropout."""
 
     def __init__(
-        self, cutout_size, channels, n_out=1, dropout=0.5, pretrained=True
+        self,
+        cutout_size,
+        channels,
+        n_out=1,
+        dropout=0.5,
+        pretrained=True,
+        use_spatial_transformer=False,
     ):
         super(VGG, self).__init__(cutout_size, channels, n_out, dropout)
         self.pretrained = pretrained
+        self.use_spatial_transformer = use_spatial_transformer
+
+        if not self.use_spatial_transformer:
+            self.setup_stn = lambda *args: None
+            self.spatial_transform = lambda x: x
 
     def setup_featurizer(self):
         self.featurize = models.vgg16(pretrained=self.pretrained)
@@ -37,7 +48,8 @@ class VGG(GGTNoGConv):
             self.featurize.features = nn.Sequential(*new_features)
 
     def forward(self, x):
-        x = self.spatial_transform(x)
+        if self.use_spatial_transformer:
+            x = self.spatial_transform(x)
         x = self.featurize(x)
 
         return x
