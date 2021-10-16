@@ -46,7 +46,7 @@ def standardize_labels(
     else:
         return scaler.transform(input)
 
-    
+
 def metric_output_transform(output):
     """Transforms the output of the model, when using
     aleatoric loss, to a form which can be used by the
