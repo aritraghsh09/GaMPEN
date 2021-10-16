@@ -23,10 +23,6 @@ class VGG(GGTNoGConv):
         self.pretrained = pretrained
         self.use_spatial_transformer = use_spatial_transformer
 
-        if not self.use_spatial_transformer:
-            self.setup_stn = lambda *args: None
-            self.spatial_transform = lambda x: x
-
     def setup_featurizer(self):
         self.featurize = models.vgg16(pretrained=self.pretrained)
         self.featurize.classifier[6] = nn.Linear(4096, self.n_out)
