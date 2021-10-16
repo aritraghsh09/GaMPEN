@@ -72,7 +72,15 @@ def visualize_spatial_transform(
 
 
 @click.command()
+@click.option(
+    "--model_type",
+    type=click.Choice(["ggt", "ggt_no_gconv", "vgg"], case_sensitive=False),
+    default="ggt",
+)
 @click.option("--model_path", type=click.Path(exists=True), required=True)
+@click.option("--cutout_size", type=int, default=167)
+@click.option("--channels", type=int, default=1)
+@click.option("--n_out", type=int, default=1)
 @click.option("--data_dir", type=click.Path(exists=True), required=True)
 @click.option("--split_slug", type=str, required=True)
 @click.option(
@@ -82,8 +90,13 @@ def visualize_spatial_transform(
 @click.option("--nrow", type=int, default=6)
 @click.option("--n_workers", type=int, default=8)
 @click.option("--normalize/--no-normalize", default=True)
+@click.option("--dropout", type=float, default=0.0)
 def main(
+    model_type,
     model_path,
+    cutout_size,
+    channels,
+    n_out,
     data_dir,
     split_slug,
     split,
@@ -91,6 +104,7 @@ def main(
     nrow,
     n_workers,
     normalize,
+    dropout,
 ):
     """Visualize the transformation performed by the spatial transformer
     module.
@@ -100,8 +114,15 @@ def main(
     device = discover_devices()
 
     # Create the model given model_type
-    cls = model_factory("ggt")  # TODO @amritrau This can be cleaner
-    model = cls()
+    cls = model_factory(model_type)
+    model_args = {
+        "cutout_size": cutout_size,
+        "channels": channels,
+        "n_out": n_out,
+        "dropout": dropout,
+    }
+
+    model = cls(**model_args)
     model = model.to(device)
 
     # Load the model from a saved state if provided
