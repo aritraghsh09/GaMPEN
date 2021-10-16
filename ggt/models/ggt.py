@@ -22,6 +22,7 @@ class GGT(nn.Module):
             self.cutout_size,
         )
         self.n_out = n_out
+        self.dropout = dropout
 
         # Set up spatial transformer network
         self.setup_stn(self.expected_input_shape)
@@ -36,7 +37,7 @@ class GGT(nn.Module):
         self.setup_pooling()
 
         # Set up dropout (not necessary for parent class)
-        self.setup_dropout(dropout)
+        self.setup_dropout(self.dropout)
 
     def setup_stn(self, input_shape):
         # Spatial transformer localization network
@@ -87,12 +88,12 @@ class GGT(nn.Module):
 
     def setup_regression(self):
         # Fully-connected regression
-        if dropout > 0:
+        if self.dropout > 0:
             self.regress = nn.Sequential(
-                nn.Dropout(dropout),
+                nn.Dropout(self.dropout),
                 nn.Linear(256 * 6 * 6, 1024),
                 nn.ReLU(inplace=True),
-                nn.Dropout(dropout),
+                nn.Dropout(self.dropout),
                 nn.Linear(1024, 512),
                 nn.ReLU(inplace=True),
                 nn.Linear(512, self.n_out),

@@ -1,9 +1,8 @@
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 from torchvision import models
-from ggt.utils.model_utils import get_output_shape
+
+from ggt.models import GGTNoGConv
 
 
 class VGG(GGTNoGConv):
