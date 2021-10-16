@@ -21,7 +21,6 @@ def create_trainer(model, optimizer, criterion, loaders, device):
     if isinstance(criterion, AleatoricLoss):
         output_transform = metric_output_transform
     else:
-
         def output_transform(x):
             return x
 
