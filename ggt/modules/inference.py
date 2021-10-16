@@ -166,7 +166,7 @@ model being used for inference).""",
     model. If this is set to None, then the default dropout rate
     in the specific model is used. This option should only be
     used when you have used a non-default dropout rate during
-    training and have set --mc_dropout to True. The rate should 
+    training and have set --mc_dropout to True. The rate should
     be set equal to the rate used during training.""",
 )
 @click.option(
@@ -174,6 +174,13 @@ model being used for inference).""",
     default=False,
     help="""If True, the images are passed through a cropping transformation
 to ensure proper cutout size""",
+)
+@click.option(
+    "--errors/--no-errors",
+    default=False,
+    help="""If True and if the model allows for it, aleatoric uncertainties are
+    written to the output file. Only set this to True if you trained the model
+    with aleatoric loss.""",
 )
 def main(
     model_path,
@@ -194,10 +201,17 @@ def main(
     mc_dropout,
     dropout_rate,
     transform,
+    errors,
 ):
 
     # Create label cols array
     label_cols_arr = label_cols.split(",")
+
+    # Calculating the number of outputs
+    if errors:
+        n_out = int(len(label_cols_arr) * 2)
+    else:
+        n_out = len(label_cols_arr)
 
     # Transforming the dataset to the proper cutout size
     T = None
@@ -231,29 +245,53 @@ def main(
         batch_size=batch_size,
         n_workers=n_workers,
         model_type=model_type,
-        n_out=len(label_cols_arr),
+        n_out=n_out,
         mc_dropout=mc_dropout,
         dropout_rate=dropout_rate,
     )
 
     # Scale labels back to old values
     if label_scaling is not None:
-        preds = standardize_labels(
-            preds,
-            data_dir,
-            split,
-            slug,
-            label_cols_arr,
-            label_scaling,
-            invert=True,
-        )
+        if errors:
+            means = standardize_labels(
+                preds[..., :int(n_out / 2)],
+                data_dir,
+                split,
+                slug,
+                label_cols_arr,
+                label_scaling,
+                invert=True,
+            )
+            sks = standardize_labels(
+                preds[..., -int(n_out / 2):],
+                data_dir,
+                split,
+                slug,
+                label_cols_arr,
+                label_scaling,
+                invert=True,
+            )
+        else:
+            preds = standardize_labels(
+                preds,
+                data_dir,
+                split,
+                slug,
+                label_cols_arr,
+                label_scaling,
+                invert=True,
+            )
 
     # Write a CSV of predictions
     catalog = pd.read_csv(
         Path(data_dir) / "splits/{}-{}.csv".format(slug, split)
     )
     for i, label in enumerate(label_cols_arr):
-        catalog[f"preds_{label}"] = preds[:, i]
+        if errors:
+            catalog[f"mean_{label}"] = means[:, i]
+            catalog[f"sk_{label}"] = sks[:, i]
+        else:
+            catalog[f"preds_{label}"] = preds[:, i]
 
     catalog.to_csv(output_path, index=False)
 
