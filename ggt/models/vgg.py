@@ -5,12 +5,14 @@ import torch.nn.functional as F
 from torchvision import models
 from ggt.utils.model_utils import get_output_shape
 
+
 def vgg16(cutout_size, channels, n_out=1, pretrained=True):
 
     model = models.vgg16(pretrained=pretrained)
     model.classifier[6] = nn.Linear(4096, n_out)
 
     return model
+
 
 class vgg16_w_stn_drp(nn.Module):
     def __init__(
@@ -95,4 +97,3 @@ class vgg16_w_stn_drp(nn.Module):
         x = self.vgg(x)
 
         return x
-
