@@ -7,7 +7,7 @@ from .tensor_utils import (
     metric_output_transform,
 )
 from .data_utils import load_cat
-from .model_utils import get_output_shape, enable_dropout, specify_dropout_rate
+from .model_utils import get_output_shape, enable_dropout
 
 __all__ = [
     "discover_devices",
@@ -18,6 +18,5 @@ __all__ = [
     "load_cat",
     "get_output_shape",
     "enable_dropout",
-    "specify_dropout_rate",
     "metric_output_transform",
 ]
