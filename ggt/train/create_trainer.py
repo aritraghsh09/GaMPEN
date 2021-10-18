@@ -20,7 +20,10 @@ def create_trainer(model, optimizer, criterion, loaders, device):
         model, optimizer, criterion, device=device
     )
 
+    # Choose an output transform for the evaluator
     if isinstance(criterion, AleatoricLoss):
+        # If the criterion is an aleatoric loss, we want to pass forward
+        # only the distribution means y_hat
         output_transform = metric_output_transform
     else:
         output_transform = nn.Identity()
