@@ -1,3 +1,3 @@
-from .losses import AleatoricLoss
+from .aleatoric_loss import AleatoricLoss
 
 __all__ = ["AleatoricLoss"]

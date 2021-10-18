@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 
 
 def aleatoric_loss(outputs, targets, average=True):
@@ -10,27 +11,33 @@ def aleatoric_loss(outputs, targets, average=True):
         size_average: (bool) - if True, the losses are
                averaged over all elements of the batch
     Returns:
-        aleatoric_loss: (tensor) - aleatoric loss
+        loss: (tensor) - aleatoric loss
     """
 
-    num_out = outputs.shape[len(outputs.shape) - 1]
-    if num_out % 2 != 0:
+    if outputs.shape[-1] % 2 != 0:
         raise ValueError(
             "The number of predicted variables should be divisible by "
             "2 for calculation of aleatoric loss"
         )
 
-    y_hat = outputs[..., :int(num_out / 2)]
-    s_k = outputs[..., -int(num_out / 2):]
+    k = outputs.shape[-1] // 2
+    yh, sk = outputs[..., :k], outputs[..., -k:]
 
     # Compute the aleatoric loss
-    aleatoric_loss = (
-        0.5 * torch.pow(y_hat - targets, 2) * torch.exp(-1.0 * s_k) + 0.5 * s_k
-    )
+    loss = 0.5 * torch.pow(yh - targets, 2) * torch.exp(-1.0 * sk) + 0.5 * sk
 
     if average:
-        aleatoric_loss = torch.mean(aleatoric_loss)
+        loss = torch.mean(loss)
     else:
-        aleatoric_loss = torch.sum(aleatoric_loss)
+        loss = torch.sum(loss)
 
-    return aleatoric_loss
+    return loss
+
+
+class AleatoricLoss(nn.Module):
+    def __init__(self, average=True):
+        super(AleatoricLoss, self).__init__()
+        self.average = average
+
+    def forward(self, outputs, targets):
+        return aleatoric_loss(outputs, targets, average=self.average)
