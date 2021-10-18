@@ -1,5 +1,7 @@
 import mlflow
 
+import torch.nn as nn
+
 from ignite.engine import (
     Events,
     create_supervised_trainer,
@@ -21,9 +23,7 @@ def create_trainer(model, optimizer, criterion, loaders, device):
     if isinstance(criterion, AleatoricLoss):
         output_transform = metric_output_transform
     else:
-
-        def output_transform(x):
-            return x
+        output_transform = nn.Identity()
 
     metrics = {
         "mae": MeanAbsoluteError(output_transform=output_transform),
