@@ -1,5 +1,7 @@
 import mlflow
 
+import torch.nn as nn
+
 from ignite.engine import (
     Events,
     create_supervised_trainer,
@@ -8,6 +10,8 @@ from ignite.engine import (
 from ignite.metrics import MeanAbsoluteError, MeanSquaredError, Loss
 
 from ggt.metrics import ElementwiseMae
+from ggt.losses import AleatoricLoss
+from ggt.utils import metric_output_transform
 
 
 def create_trainer(model, optimizer, criterion, loaders, device):
@@ -16,10 +20,18 @@ def create_trainer(model, optimizer, criterion, loaders, device):
         model, optimizer, criterion, device=device
     )
 
+    # Choose an output transform for the evaluator
+    if isinstance(criterion, AleatoricLoss):
+        # If the criterion is an aleatoric loss, we want to pass forward
+        # only the distribution means y_hat
+        output_transform = metric_output_transform
+    else:
+        output_transform = nn.Identity()
+
     metrics = {
-        "mae": MeanAbsoluteError(),
-        "mse": MeanSquaredError(),
-        "elementwise_mae": ElementwiseMae(),
+        "mae": MeanAbsoluteError(output_transform=output_transform),
+        "elementwise_mae": ElementwiseMae(output_transform=output_transform),
+        "mse": MeanSquaredError(output_transform=output_transform),
         "loss": Loss(criterion),
     }
     evaluator = create_supervised_evaluator(

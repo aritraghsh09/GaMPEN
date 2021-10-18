@@ -18,6 +18,7 @@ from ggt.models import model_factory, model_stats, save_trained_model
 from ggt.train import create_trainer
 from ggt.utils import discover_devices
 from ggt.visualization.spatial_transform import visualize_spatial_transform
+from ggt.losses import AleatoricLoss
 
 
 @click.command()
@@ -60,6 +61,12 @@ to what fraction is picked for train/devel/test.""",
     type=str,
     default="bt_g",
     help="""Enter the target metrics separated by commas""",
+)
+@click.option(
+    "--loss",
+    type=click.Choice(["mse", "aleatoric"], case_sensitive=False),
+    default="mse",
+    help="""The loss function to use""",
 )
 @click.option(
     "--expand_data",
@@ -140,6 +147,11 @@ def train(**kwargs):
     # Create target metrics array
     target_metric_arr = args["target_metrics"].split(",")
 
+    # Calculating the number of outputs
+    n_out = len(target_metric_arr)
+    if args["loss"] == "aleatoric":
+        n_out = int(n_out * 2)
+
     # Create the model given model_type
     cls = model_factory(args["model_type"])
     model_args = {
@@ -157,14 +169,20 @@ def train(**kwargs):
     if args["model_state"]:
         model.load_state_dict(torch.load(args["model_state"]))
 
-    # Define the optimizer and criterion
+    # Define the optimizer
     optimizer = opt.SGD(
         model.parameters(),
         lr=args["lr"],
         momentum=args["momentum"],
         nesterov=args["nesterov"],
     )
-    criterion = nn.MSELoss()
+
+    # Define the criterion
+    loss_dict = {
+        "mse": nn.MSELoss(),
+        "aleatoric": AleatoricLoss(average=True),
+    }
+    criterion = loss_dict[args["loss"]]
 
     # Create a DataLoader factory based on command-line args
     loader_factory = partial(
