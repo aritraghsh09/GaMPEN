@@ -101,6 +101,7 @@ data loading process.""",
 @click.option("--epochs", type=int, default=40)
 @click.option("--lr", type=float, default=0.005)
 @click.option("--momentum", type=float, default=0.9)
+@click.option("--weight_decay", type=float, default=0)
 @click.option(
     "--parallel/--no-parallel",
     default=False,
@@ -194,6 +195,7 @@ def train(**kwargs):
         lr=args["lr"],
         momentum=args["momentum"],
         nesterov=args["nesterov"],
+        weight_decay=args["weight_decay"],
     )
 
     # Define the criterion
