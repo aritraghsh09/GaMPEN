@@ -46,14 +46,14 @@ class vgg16_w_stn_drp(nn.Module):
         # Calculate the input size of the upcoming FC layer
         self.fc_in_size = torch.prod(torch.tensor(self.ln_out_shape[-3:]))
 
-        # Fully-connected regression network (predicts 3 * 2 affine matrix)
+        # Fully-connected regression network (predicts the cropping parameter)
         self.fc_loc = nn.Sequential(
-            nn.Linear(self.fc_in_size, 32), nn.ReLU(True), nn.Linear(32, 3 * 2)
+            nn.Linear(self.fc_in_size, 32), nn.ReLU(True), nn.Linear(32, 1)
         )
 
         # Initialize the weights/bias with identity transformation
         self.fc_loc[2].weight.data.zero_()
-        ident = [1, 0, 0, 0, 1, 0]
+        ident = [1]
         self.fc_loc[2].bias.data.copy_(torch.tensor(ident, dtype=torch.float))
 
         # Featurizer -- VGG
@@ -76,8 +76,16 @@ class vgg16_w_stn_drp(nn.Module):
     def spatial_transform(self, x):
         xs = self.localization(x)
         xs = xs.view(-1, self.fc_in_size)
-        theta = self.fc_loc(xs)
-        theta = theta.view(-1, 2, 3)
+        crop_para = self.fc_loc(xs)
+
+        # Initialize a dummy tensor to hold the affine transformation
+        theta = torch.zeros(len(crop_para), 2, 3).float().to(crop_para.device)
+
+        # We use advanced Numpy indexing below to write out
+        # the correct values to the entries of the affine matrix
+        theta[
+            torch.arange(len(crop_para)).unsqueeze(1), [0, 1], [0, 1]
+        ] = crop_para
 
         grid = F.affine_grid(theta, x.size(), align_corners=True)
         x = F.grid_sample(x, grid, align_corners=True)
