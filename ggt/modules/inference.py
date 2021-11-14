@@ -6,6 +6,7 @@ import pandas as pd
 
 import torch
 import torch.nn as nn
+import numpy as np
 
 from tqdm import tqdm
 
@@ -259,10 +260,10 @@ def main(
             # in the transformed/scaled label space. 
             means = preds[..., :int(n_out / 2)]
             sks = preds[..., -int(n_out / 2):]
-            sigmas =  torch.sqrt(torch.exp(sks))
+            sigmas =  np.sqrt(np.exp(sks))
 
-            preds = torch.normal(means, sigmas)
-
+            preds = np.random.normal(means, sigmas)
+            
         preds = standardize_labels(
             preds,
             data_dir,
