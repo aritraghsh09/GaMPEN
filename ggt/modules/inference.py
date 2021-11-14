@@ -252,46 +252,38 @@ def main(
 
     # Scale labels back to old values
     if label_scaling is not None:
+
         if errors:
-            means = standardize_labels(
-                preds[..., :int(n_out / 2)],
-                data_dir,
-                split,
-                slug,
-                label_cols_arr,
-                label_scaling,
-                invert=True,
-            )
-            sks = standardize_labels(
-                preds[..., -int(n_out / 2):],
-                data_dir,
-                split,
-                slug,
-                label_cols_arr,
-                label_scaling,
-                invert=True,
-            )
-        else:
-            preds = standardize_labels(
-                preds,
-                data_dir,
-                split,
-                slug,
-                label_cols_arr,
-                label_scaling,
-                invert=True,
-            )
+            # Note that here we are drawing the
+            # predictions from a distribution 
+            # in the transformed/scaled label space. 
+            means = preds[..., :int(n_out / 2)]
+            sks = preds[..., -int(n_out / 2):]
+            sigmas =  torch.sqrt(torch.exp(sks))
+
+            preds = torch.normal(means, sigmas)
+
+        preds = standardize_labels(
+            preds,
+            data_dir,
+            split,
+            slug,
+            label_cols_arr,
+            label_scaling,
+            invert=True,
+        )
 
     # Write a CSV of predictions
     catalog = pd.read_csv(
         Path(data_dir) / "splits/{}-{}.csv".format(slug, split)
     )
     for i, label in enumerate(label_cols_arr):
+
         if errors:
-            catalog[f"mean_{label}"] = means[:, i]
-            catalog[f"sk_{label}"] = sks[:, i]
-        else:
-            catalog[f"preds_{label}"] = preds[:, i]
+            catalog[f"transformd_mean_{label}"] = means[:, i]
+            catalog[f"transformed_sigma_{label}"] = sigmas[:, i]
+
+        catalog[f"preds_{label}"] = preds[:, i]
 
     catalog.to_csv(output_path, index=False)
 
