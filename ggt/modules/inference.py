@@ -251,19 +251,19 @@ def main(
         dropout_rate=dropout_rate,
     )
 
+    if errors:
+        # Note that here we are drawing the
+        # predictions from a distribution 
+        # in the transformed/scaled label space. 
+        means = preds[..., :int(n_out / 2)]
+        sks = preds[..., -int(n_out / 2):]
+        sigmas =  np.sqrt(np.exp(sks))
+
+        preds = np.random.normal(means, sigmas)
+
     # Scale labels back to old values
     if label_scaling is not None:
 
-        if errors:
-            # Note that here we are drawing the
-            # predictions from a distribution 
-            # in the transformed/scaled label space. 
-            means = preds[..., :int(n_out / 2)]
-            sks = preds[..., -int(n_out / 2):]
-            sigmas =  np.sqrt(np.exp(sks))
-
-            preds = np.random.normal(means, sigmas)
-            
         preds = standardize_labels(
             preds,
             data_dir,
