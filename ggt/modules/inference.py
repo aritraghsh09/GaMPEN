@@ -160,6 +160,13 @@ model being used for inference).""",
     help="""Turn on Monte Carlo dropout during inference.""",
 )
 @click.option(
+    "--n_runs",
+    type=int,
+    default=1,
+    help="""The number of times to run inference. This is helpful
+    when usng mc_dropout""",
+)
+@click.option(
     "--dropout_rate",
     type=float,
     default=None,
@@ -203,6 +210,7 @@ def main(
     dropout_rate,
     transform,
     errors,
+    n_runs,
 ):
 
     # Create label cols array
@@ -236,57 +244,62 @@ def main(
         transform=T if T is not None else None,
     )
 
-    # Make predictions
-    preds = predict(
-        model_path,
-        dataset,
-        cutout_size,
-        channels,
-        parallel=parallel,
-        batch_size=batch_size,
-        n_workers=n_workers,
-        model_type=model_type,
-        n_out=n_out,
-        mc_dropout=mc_dropout,
-        dropout_rate=dropout_rate,
-    )
+    for run_num in range(1,n_runs+1):
 
-    if errors:
-        # Note that here we are drawing the
-        # predictions from a distribution 
-        # in the transformed/scaled label space. 
-        means = preds[..., :int(n_out / 2)]
-        sks = preds[..., -int(n_out / 2):]
-        sigmas =  np.sqrt(np.exp(sks))
+        logging.info(f"Running inference run {run_num}")
 
-        preds = np.random.normal(means, sigmas)
-
-    # Scale labels back to old values
-    if label_scaling is not None:
-
-        preds = standardize_labels(
-            preds,
-            data_dir,
-            split,
-            slug,
-            label_cols_arr,
-            label_scaling,
-            invert=True,
+        # Make predictions
+        preds = predict(
+            model_path,
+            dataset,
+            cutout_size,
+            channels,
+            parallel=parallel,
+            batch_size=batch_size,
+            n_workers=n_workers,
+            model_type=model_type,
+            n_out=n_out,
+            mc_dropout=mc_dropout,
+            dropout_rate=dropout_rate,
         )
 
-    # Write a CSV of predictions
-    catalog = pd.read_csv(
-        Path(data_dir) / "splits/{}-{}.csv".format(slug, split)
-    )
-    for i, label in enumerate(label_cols_arr):
-
         if errors:
-            catalog[f"transformd_mean_{label}"] = means[:, i]
-            catalog[f"transformed_sigma_{label}"] = sigmas[:, i]
+            # Note that here we are drawing the
+            # predictions from a distribution 
+            # in the transformed/scaled label space. 
+            means = preds[..., :int(n_out / 2)]
+            sks = preds[..., -int(n_out / 2):]
+            sigmas =  np.sqrt(np.exp(sks))
 
-        catalog[f"preds_{label}"] = preds[:, i]
+            preds = np.random.normal(means, sigmas)
 
-    catalog.to_csv(output_path, index=False)
+        # Scale labels back to old values
+        if label_scaling is not None:
+
+            preds = standardize_labels(
+                preds,
+                data_dir,
+                split,
+                slug,
+                label_cols_arr,
+                label_scaling,
+                invert=True,
+            )
+
+        # Write a CSV of predictions
+        catalog = pd.read_csv(
+            Path(data_dir) / "splits/{}-{}.csv".format(slug, split)
+        )
+
+        for i, label in enumerate(label_cols_arr):
+
+            if errors:
+                catalog[f"transformd_mean_{label}"] = means[:, i]
+                catalog[f"transformed_sigma_{label}"] = sigmas[:, i]
+
+            catalog[f"preds_{label}"] = preds[:, i]
+
+        catalog.to_csv(output_path + f"inf_{run_num}.csv", index=False)
 
 
 if __name__ == "__main__":
