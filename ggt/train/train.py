@@ -18,7 +18,7 @@ from ggt.models import model_factory, model_stats, save_trained_model
 from ggt.train import create_trainer
 from ggt.utils import discover_devices, specify_dropout_rate
 from ggt.visualization.spatial_transform import visualize_spatial_transform
-from ggt.losses import AleatoricLoss
+from ggt.losses import AleatoricLoss, AleatoricCovLoss
 
 
 @click.command()
@@ -75,6 +75,7 @@ to what fraction is picked for train/devel/test.""",
         [
             "mse",
             "aleatoric",
+            "aleatoric_cov",
         ],
         case_sensitive=False,
     ),
@@ -165,6 +166,8 @@ def train(**kwargs):
     n_out = len(target_metric_arr)
     if args["loss"] == "aleatoric":
         n_out = int(n_out * 2)
+    elif args["loss"] == "aleatoric_cov":
+        n_out = int((3 * n_out + n_out ** 2) / 2)
 
     # Create the model given model_type
     cls = model_factory(args["model_type"])
@@ -202,6 +205,7 @@ def train(**kwargs):
     loss_dict = {
         "mse": nn.MSELoss(),
         "aleatoric": AleatoricLoss(average=True),
+        "aleatoric_cov": AleatoricCovLoss(num_var=len(target_metric_arr), average=True),
     }
     criterion = loss_dict[args["loss"]]
 

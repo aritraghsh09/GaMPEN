@@ -190,6 +190,13 @@ to ensure proper cutout size""",
     written to the output file. Only set this to True if you trained the model
     with aleatoric loss.""",
 )
+@click.option(
+    "--cov_errors/--no-cov_errors",
+    default=False,
+    help="""If True and if the model allows for it, aleatoric uncertainties are
+    written to the output file. Only set this to True if you trained the model
+    with aleatoric_cov loss.""",
+)
 def main(
     model_path,
     output_path,
@@ -210,6 +217,7 @@ def main(
     dropout_rate,
     transform,
     errors,
+    cov_errors,
     n_runs,
 ):
 
@@ -219,6 +227,9 @@ def main(
     # Calculating the number of outputs
     if errors:
         n_out = int(len(label_cols_arr) * 2)
+    elif cov_errors:
+        n_var = len(label_cols_arr)
+        n_out = int((3*n_var + n_var**2)/2) 
     else:
         n_out = len(label_cols_arr)
 
@@ -272,6 +283,32 @@ def main(
             sigmas = np.sqrt(np.exp(sks))
 
             preds = np.random.normal(means, sigmas)
+
+        elif cov_errors:
+            # Note that here we are drawing the 
+            # predictions from a distribution
+            # in the transformed/scaled label space.
+            num_var = len(label_cols_arr)
+
+            y_hat = preds[..., :int(num_var)]
+            var = preds[..., int(num_var): int(num_var * 2)]
+            covs = preds[..., int(num_var * 2):]
+
+            D = torch.diag_embed(var)
+
+            N = torch.zeros(batch_size, num_var, num_var)
+            i, j = torch.tril_indices(num_var, num_var, -1)
+            N[:, i, j] = covs
+
+            Id = torch.eye(num_var)
+            Id = Id.reshape(1, num_var, num_var)
+            Id = Id.repeat(batch_size, 1, 1)
+
+            L = Id + N
+            LT = torch.transpose(L, 1, 2)
+            cov_mat = torch.bmm(torch.bmm(L, D), LT)
+
+            preds = np.random.multivariate_normal(y_hat, cov_mat)
 
         # Scale labels back to old values
         if label_scaling is not None:
