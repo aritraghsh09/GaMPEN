@@ -244,7 +244,7 @@ def main(
         transform=T if T is not None else None,
     )
 
-    for run_num in range(1,n_runs+1):
+    for run_num in range(1, n_runs + 1):
 
         logging.info(f"Running inference run {run_num}")
 
@@ -265,11 +265,11 @@ def main(
 
         if errors:
             # Note that here we are drawing the
-            # predictions from a distribution 
-            # in the transformed/scaled label space. 
-            means = preds[..., :int(n_out / 2)]
+            # predictions from a distribution
+            # in the transformed/scaled label space.
+            means = preds[..., : int(n_out / 2)]
             sks = preds[..., -int(n_out / 2):]
-            sigmas =  np.sqrt(np.exp(sks))
+            sigmas = np.sqrt(np.exp(sks))
 
             preds = np.random.normal(means, sigmas)
 

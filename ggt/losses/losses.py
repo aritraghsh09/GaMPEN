@@ -20,4 +20,6 @@ class AleatoricCovLoss(nn.Module):
         self.num_var = num_var
 
     def forward(self, outputs, targets):
-        return aleatoric_cov_loss(outputs, targets, num_var=self.num_var, average=self.average)
+        return aleatoric_cov_loss(
+            outputs, targets, num_var=self.num_var, average=self.average
+        )
