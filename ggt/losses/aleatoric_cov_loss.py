@@ -1,5 +1,4 @@
 import torch
-from torch.functional import chain_matmul
 
 
 def aleatoric_cov_loss(outputs, targets, average=True):
@@ -18,6 +17,10 @@ def aleatoric_cov_loss(outputs, targets, average=True):
                averaged over all elements of the batch
     Returns:
         aleatoric_cov_loss: (tensor) - aleatoric loss
+
+    Formula:
+        loss = 0.5 * [y_i - y_i_hat].T * cov_mat_inv 
+                * [y_i - y_i_hat] + 0.5 * log(det(cov_mat))
     """
 
     #num_out = outputs.shape[len(outputs.shape) - 1]
@@ -27,7 +30,7 @@ def aleatoric_cov_loss(outputs, targets, average=True):
     num_var = 3
 
     y_hat = outputs[..., :int(num_var)]
-    vars = outputs[..., int(num_var):int(num_var*2)]
+    var = outputs[..., int(num_var):int(num_var*2)]
     covs = outputs[..., int(num_var*2):]
 
 
@@ -36,10 +39,8 @@ def aleatoric_cov_loss(outputs, targets, average=True):
     #Cov. Mat = LDLT
     #And L = (I + N)
 
-    D = torch.diag_embed(vars)
-    N = torch.eye(num_var)
-    N = N.reshape(1, num_var, num_var)
-    N = N.repeat(batch_size, 1, 1)
+    D = torch.diag_embed(var)
+    N = torch.zeros(batch_size, num_var, num_var)
 
     i,j = torch.tril_indices(num_var, num_var, -1)
     N[:,i,j] = covs
@@ -52,25 +53,29 @@ def aleatoric_cov_loss(outputs, targets, average=True):
     #LT = torch.transpose(L, 1, 2)
 
     #cov_mat = torch.chain_matmul(L, D, LT)
+    #cov_mat = torch.bmm(torch.bmm(L, D), LT)
 
-    L_inv = I + torch.einsum
+    Nk = torch.zeros_like(N)
+    for k in range(1, num_var):
+        Nk = Nk + (-1)**k * torch.matrix_power(N,k)
+    L_inv = I + Nk
     L_inv_T = torch.transpose(L_inv, 1, 2)
 
     D_inv_ele = 1.0 / torch.diagonal(D,0,1,2)
     D_inv = torch.diag_embed(D_inv_ele)
 
-    cov_mat_inv = torch.chain_matmul(L_inv_T, D_inv, L_inv)
+    cov_mat_inv = torch.bmm(torch.bmm(L_inv_T, D_inv), L_inv)
 
     log_det_cov = torch.sum(torch.diagonal(D,0,1,2).log(), 1)
 
     diff = y_hat - targets
+    diff = torch.unsqueeze(diff,-1)
     diffT = torch.transpose(diff, 1, 2)
 
     #Compute the aleatoric loss
     aleatoric_loss = (
-        0.5 * torch.chain_matmul(diffT, cov_mat_inv, diff) + 0.5 * log_det_cov
+        0.5 * torch.bmm(torch.bmm(diffT, cov_mat_inv), diff).squeeze(dim=1).squeeze(dim=1) + 0.5 * log_det_cov
     )
-
 
     if average:
         aleatoric_loss = torch.mean(aleatoric_loss)
