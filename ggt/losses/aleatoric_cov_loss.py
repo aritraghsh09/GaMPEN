@@ -1,7 +1,7 @@
 import torch
 
 
-def aleatoric_cov_loss(outputs, targets, average=True):
+def aleatoric_cov_loss(outputs, targets, num_var=3, average=True):
     """
     Computes the Aleatoric Loss while including the full
     covariance matrix of the outputs.
@@ -23,11 +23,14 @@ def aleatoric_cov_loss(outputs, targets, average=True):
                 * [y_i - y_i_hat] + 0.5 * log(det(cov_mat))
     """
 
-    #num_out = outputs.shape[len(outputs.shape) - 1]
+    # Checking that all dimensions match up properly
+    num_out = outputs.shape[len(outputs.shape) - 1]
+    if num_out != (3*num_var + num_var**2)/2:
+        raise ValueError(
+            "The number of predicted variables should be equal to "
+            "3n + n^2/2 for calculation of aleatoric loss"
+        )
     batch_size = outputs.shape[0]
-    
-    #Hardcoding this for now. Try to find a cleaner way to do this.
-    num_var = 3
 
     y_hat = outputs[..., :int(num_var)]
     var = outputs[..., int(num_var):int(num_var*2)]
