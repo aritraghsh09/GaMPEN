@@ -20,8 +20,8 @@ def aleatoric_loss(outputs, targets, average=True):
             "2 for calculation of aleatoric loss"
         )
 
-    y_hat = outputs[..., :int(num_out / 2)]
-    s_k = outputs[..., -int(num_out / 2):]
+    y_hat = outputs[..., : int(num_out / 2)]
+    s_k = outputs[..., -int(num_out / 2) :]
 
     # Compute the aleatoric loss
     aleatoric_loss = (

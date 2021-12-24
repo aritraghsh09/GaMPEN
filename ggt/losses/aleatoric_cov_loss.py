@@ -42,21 +42,23 @@ def aleatoric_cov_loss(outputs, targets, num_var=3, average=True):
     # where D is a diagonal matrix and L is a lower triangular
     # matrix with all diagonal elements set to 1.
     # cov_mat_inv = (L^-1).T * D^-1 * (L^-1)
-    y_hat = outputs[..., :int(num_var)]
-    var = outputs[..., int(num_var): int(num_var * 2)]
-    covs = outputs[..., int(num_var * 2):]
+    y_hat = outputs[..., : int(num_var)]
+    var = outputs[..., int(num_var) : int(num_var * 2)]
+    covs = outputs[..., int(num_var * 2) :]
 
     D = torch.diag_embed(var)
+    D = D.to(outputs.device)
 
     # We further write L = I + N for ease of calculation
     # L^-1 = (I+N)^-1 = I + Sum_j (-1)**j * N^j
     # I is written as Id in code
     N = torch.zeros(batch_size, num_var, num_var)
+    N = N.to(outputs.device)
 
     i, j = torch.tril_indices(num_var, num_var, -1)
     N[:, i, j] = covs
 
-    Id = torch.eye(num_var)
+    Id = torch.eye(num_var).to(outputs.device)
     Id = Id.reshape(1, num_var, num_var)
     Id = Id.repeat(batch_size, 1, 1)
 
@@ -65,7 +67,7 @@ def aleatoric_cov_loss(outputs, targets, num_var=3, average=True):
     # LT = torch.transpose(L, 1, 2)
     # cov_mat = torch.bmm(torch.bmm(L, D), LT)
 
-    Nk = torch.zeros_like(N)
+    Nk = torch.zeros_like(N).to(outputs.device)
     for k in range(1, num_var):
         Nk = Nk + (-1) ** k * torch.matrix_power(N, k)
     L_inv = Id + Nk
@@ -74,7 +76,7 @@ def aleatoric_cov_loss(outputs, targets, num_var=3, average=True):
     # Becasue D is a diagonal matrix,
     # D^-1 = 1/D_ii for all i
     D_inv_ele = 1.0 / torch.diagonal(D, 0, 1, 2)
-    D_inv = torch.diag_embed(D_inv_ele)
+    D_inv = torch.diag_embed(D_inv_ele).to(outputs.device)
 
     cov_mat_inv = torch.bmm(torch.bmm(L_inv_T, D_inv), L_inv)
 

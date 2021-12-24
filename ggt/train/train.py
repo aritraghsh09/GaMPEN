@@ -205,7 +205,9 @@ def train(**kwargs):
     loss_dict = {
         "mse": nn.MSELoss(),
         "aleatoric": AleatoricLoss(average=True),
-        "aleatoric_cov": AleatoricCovLoss(num_var=len(target_metric_arr), average=True),
+        "aleatoric_cov": AleatoricCovLoss(
+            num_var=len(target_metric_arr), average=True
+        ),
     }
     criterion = loss_dict[args["loss"]]
 

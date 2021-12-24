@@ -8,8 +8,11 @@ from ignite.engine import (
 from ignite.metrics import MeanAbsoluteError, MeanSquaredError, Loss
 
 from ggt.metrics import ElementwiseMae
-from ggt.losses import AleatoricLoss
-from ggt.utils import metric_output_transform
+from ggt.losses import AleatoricLoss, AleatoricCovLoss
+from ggt.utils import (
+    metric_output_transform_al_loss,
+    metric_output_transform_al_cov_loss,
+)
 
 
 def create_trainer(model, optimizer, criterion, loaders, device):
@@ -19,7 +22,9 @@ def create_trainer(model, optimizer, criterion, loaders, device):
     )
 
     if isinstance(criterion, AleatoricLoss):
-        output_transform = metric_output_transform
+        output_transform = metric_output_transform_al_loss
+    elif isinstance(criterion, AleatoricCovLoss):
+        output_transform = metric_output_transform_al_cov_loss
     else:
 
         def output_transform(x):

@@ -4,7 +4,8 @@ from .tensor_utils import (
     arsinh_normalize,
     load_tensor,
     standardize_labels,
-    metric_output_transform,
+    metric_output_transform_al_loss,
+    metric_output_transform_al_cov_loss,
 )
 from .data_utils import load_cat
 from .model_utils import get_output_shape, enable_dropout, specify_dropout_rate
@@ -19,5 +20,6 @@ __all__ = [
     "get_output_shape",
     "enable_dropout",
     "specify_dropout_rate",
-    "metric_output_transform",
+    "metric_output_transform_al_loss",
+    "metric_output_transform_al_cov_loss",
 ]

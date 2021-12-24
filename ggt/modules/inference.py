@@ -229,7 +229,7 @@ def main(
         n_out = int(len(label_cols_arr) * 2)
     elif cov_errors:
         n_var = len(label_cols_arr)
-        n_out = int((3*n_var + n_var**2)/2) 
+        n_out = int((3 * n_var + n_var ** 2) / 2)
     else:
         n_out = len(label_cols_arr)
 
@@ -279,20 +279,20 @@ def main(
             # predictions from a distribution
             # in the transformed/scaled label space.
             means = preds[..., : int(n_out / 2)]
-            sks = preds[..., -int(n_out / 2):]
+            sks = preds[..., -int(n_out / 2) :]
             sigmas = np.sqrt(np.exp(sks))
 
             preds = np.random.normal(means, sigmas)
 
         elif cov_errors:
-            # Note that here we are drawing the 
+            # Note that here we are drawing the
             # predictions from a distribution
             # in the transformed/scaled label space.
             num_var = len(label_cols_arr)
 
-            y_hat = preds[..., :int(num_var)]
-            var = preds[..., int(num_var): int(num_var * 2)]
-            covs = preds[..., int(num_var * 2):]
+            y_hat = preds[..., : int(num_var)]
+            var = preds[..., int(num_var) : int(num_var * 2)]
+            covs = preds[..., int(num_var * 2) :]
 
             D = torch.diag_embed(var)
 
