@@ -291,8 +291,8 @@ def main(
             num_var = len(label_cols_arr)
 
             y_hat = preds[..., : int(num_var)]
-            var = preds[..., int(num_var) : int(num_var * 2)]
-            covs = preds[..., int(num_var * 2) :]
+            var = torch.exp(preds[..., int(num_var) : int(num_var * 2)])
+            covs = torch.exp(preds[..., int(num_var * 2) :])
 
             D = torch.diag_embed(var)
 

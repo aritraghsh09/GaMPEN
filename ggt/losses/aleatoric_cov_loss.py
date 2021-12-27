@@ -43,8 +43,8 @@ def aleatoric_cov_loss(outputs, targets, num_var=3, average=True):
     # matrix with all diagonal elements set to 1.
     # cov_mat_inv = (L^-1).T * D^-1 * (L^-1)
     y_hat = outputs[..., : int(num_var)]
-    var = outputs[..., int(num_var) : int(num_var * 2)]
-    covs = outputs[..., int(num_var * 2) :]
+    var = torch.exp(outputs[..., int(num_var) : int(num_var * 2)])
+    covs = torch.exp(outputs[..., int(num_var * 2) :])
 
     D = torch.diag_embed(var)
     D = D.to(outputs.device)
