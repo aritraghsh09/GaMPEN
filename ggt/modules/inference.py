@@ -6,7 +6,6 @@ import pandas as pd
 
 import torch
 import torch.nn as nn
-import numpy as np
 
 from tqdm import tqdm
 
@@ -82,7 +81,7 @@ def predict(
         for data in tqdm(loader):
             X, _ = data
             yh.append(model(X.to(device)))
-    return torch.cat(yh).cpu().numpy()
+    return torch.cat(yh)
 
 
 @click.command()
@@ -280,9 +279,13 @@ def main(
             # in the transformed/scaled label space.
             means = preds[..., : int(n_out / 2)]
             sks = preds[..., -int(n_out / 2) :]
-            sigmas = np.sqrt(np.exp(sks))
+            sigmas = torch.sqrt(torch.exp(sks))
 
-            preds = np.random.normal(means, sigmas)
+            # preds = np.random.normal(means, sigmas)
+            preds = torch.distributions.Normal(means, sigmas).sample()
+            preds = preds.cpu().numpy()
+            means = means.cpu().numpy()
+            sigmas = sigmas.cpu().numpy()
 
         elif cov_errors:
             # Note that here we are drawing the
@@ -292,23 +295,32 @@ def main(
 
             y_hat = preds[..., : int(num_var)]
             var = torch.exp(preds[..., int(num_var) : int(num_var * 2)])
-            covs = torch.exp(preds[..., int(num_var * 2) :])
+            covs = preds[..., int(num_var * 2) :]
 
             D = torch.diag_embed(var)
+            D = D.to(preds.device)
 
-            N = torch.zeros(batch_size, num_var, num_var)
+            N = torch.zeros(preds.shape[0], num_var, num_var)
+            N = N.to(preds.device)
+
             i, j = torch.tril_indices(num_var, num_var, -1)
             N[:, i, j] = covs
 
-            Id = torch.eye(num_var)
+            Id = torch.eye(num_var).to(preds.device)
             Id = Id.reshape(1, num_var, num_var)
-            Id = Id.repeat(batch_size, 1, 1)
+            Id = Id.repeat(preds.shape[0], 1, 1)
 
             L = Id + N
             LT = torch.transpose(L, 1, 2)
             cov_mat = torch.bmm(torch.bmm(L, D), LT)
 
-            preds = np.random.multivariate_normal(y_hat, cov_mat)
+            preds = torch.distributions.MultivariateNormal(
+                y_hat, cov_mat
+            ).sample()
+            preds = preds.cpu().numpy()
+
+        else:
+            preds = preds.cpu().numpy()
 
         # Scale labels back to old values
         if label_scaling is not None:
