@@ -80,9 +80,7 @@ class vgg16_w_stn_oc_drp(nn.Module):
         crop_para = self.fc_loc(xs)
 
         # Initialize the transformation matrix
-        theta = (
-            torch.zeros(crop_para.shape[0], 2, 3).float().to(crop_para.device)
-        )
+        theta = torch.zeros(crop_para.shape[0], 2, 3).to(crop_para.device)
 
         theta[:, [0, 1], [0, 1]] = crop_para
 
