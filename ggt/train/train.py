@@ -47,6 +47,8 @@ So this variable should be specified accordingly""",
             "vgg16_w_stn",
             "vgg16_w_stn_drp",
             "vgg16_w_stn_drp_2",
+            "vgg16_w_stn_at_drp",
+            "vgg16_w_stn_oc_drp",
         ],
         case_sensitive=False,
     ),
@@ -177,7 +179,12 @@ def train(**kwargs):
         "n_out": n_out,
     }
 
-    if args["model_type"] == "vgg16_w_stn_drp":
+    if "drp" in args["model_type"].split("_"):
+        logging.info(
+            "Using dropout rate of {} in the model".format(
+                args["dropout_rate"]
+            )
+        )
         model_args["dropout"] = "True"
 
     model = cls(**model_args)

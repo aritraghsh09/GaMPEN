@@ -48,7 +48,10 @@ def predict(
         "n_out": n_out,
     }
 
-    if model_type == "vgg16_w_stn_drp":
+    if "drp" in model_type.split("_"):
+        logging.info(
+            "Using dropout rate of {} in the model".format(dropout_rate)
+        )
         model_args["dropout"] = "True"
 
     model = cls(**model_args)
@@ -88,7 +91,15 @@ def predict(
 @click.option(
     "--model_type",
     type=click.Choice(
-        ["ggt", "vgg16", "ggt_no_gconv", "vgg16_w_stn", "vgg16_w_stn_drp"],
+        [
+            "ggt",
+            "vgg16",
+            "ggt_no_gconv",
+            "vgg16_w_stn",
+            "vgg16_w_stn_drp",
+            "vgg16_w_stn_at_drp",
+            "vgg16_w_stn_oc_drp",
+        ],
         case_sensitive=False,
     ),
     default="ggt",
