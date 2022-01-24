@@ -177,6 +177,13 @@ model being used for inference).""",
     when usng mc_dropout""",
 )
 @click.option(
+    "--ini_run_num",
+    type=int,
+    default=1,
+    help="""The number of the first run. i.e. the output csv files
+    are named as (inf_run_num+iteration_number).csv""",
+)
+@click.option(
     "--dropout_rate",
     type=float,
     default=None,
@@ -246,9 +253,7 @@ def main(
     # Transforming the dataset to the proper cutout size
     T = None
     if transform:
-        T = nn.Sequential(
-            K.CenterCrop(cutout_size),
-        )
+        T = nn.Sequential(K.CenterCrop(cutout_size),)
 
     # Load the data and create a data loader
     logging.info("Loading images to device...")
@@ -265,7 +270,7 @@ def main(
         transform=T if T is not None else None,
     )
 
-    for run_num in range(1, n_runs + 1):
+    for run_num in range(ini_run_num, n_runs + ini_run_num):
 
         logging.info(f"Running inference run {run_num}")
 
