@@ -236,6 +236,7 @@ def main(
     errors,
     cov_errors,
     n_runs,
+    ini_run_num,
 ):
 
     # Create label cols array
