@@ -129,6 +129,13 @@ outputs""",
 series of random transformations""",
 )
 @click.option(
+    "--crop/--no-crop",
+    default=True,
+    help="""If True, all images are passed through a cropping
+operation before being fed into the network. Images are cropped
+to the cutout_size parameter""",
+)
+@click.option(
     "--repeat_dims/--no-repeat_dims",
     default=False,
     help="""In case of multi-channel data, whether to repeat a two
@@ -223,6 +230,11 @@ def train(**kwargs):
     # Select the desired transforms
     T = None
     T_crop = None
+    
+    if args["crop"]:
+        T = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
+        T_crop = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
+    
     if args["transform"]:
         T = nn.Sequential(
             K.CenterCrop(args["cutout_size"]),
@@ -232,6 +244,9 @@ def train(**kwargs):
         )
 
         T_crop = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
+
+
+
 
     # Generate the DataLoaders and log the train/devel/test split sizes
     splits = ("train", "devel", "test")
