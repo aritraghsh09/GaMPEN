@@ -74,7 +74,7 @@ to what fraction is picked for train/devel/test.""",
 @click.option(
     "--loss",
     type=click.Choice(
-        ["mse", "aleatoric", "aleatoric_cov",], case_sensitive=False,
+        ["mse", "aleatoric", "aleatoric_cov", ], case_sensitive=False,
     ),
     default="mse",
     help="""The loss function to use""",
