@@ -19,5 +19,7 @@ Tutorials
 
 Public_data
 
+FAQs
+
 ```
 
