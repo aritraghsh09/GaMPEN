@@ -12,7 +12,7 @@ This tutorial demonstrates how you can use GaMPEN models to make predictions usi
 
 This tutorial uses simulated SDSS galaxies to train a GaMPEN model from scratch. 
 
-## Transfer Learning with GaMorNet 
+## Transfer Learning with GaMPEN 
 
-This tutorial uses real SDSS galaxies to perform transfer learning on a GaMorNet model trained only on simulations. 
+This tutorial uses real SDSS galaxies to perform transfer learning on a GaMPEN model trained only on simulations. 
 

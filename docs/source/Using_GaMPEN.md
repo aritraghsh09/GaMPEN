@@ -93,9 +93,9 @@ dimensional image as many times as the number of channels.
     model. If this is set to None, then the default dropout rate
     in the specific model is used.
 
-### Returns: 
-     Trained GaMReN model.
- 
+### Returns:
+    Trained GaMReN model.
+
 
 ### Return type: 
     PyTorch `Model` class. 
