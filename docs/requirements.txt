@@ -44,6 +44,7 @@ mccabe==0.6.1
 mlflow==1.10.0
 more-itertools==8.4.0
 msrest==0.6.18
+myst-parser
 numpy==1.19.1
 oauthlib==3.1.0
 packaging==20.4
