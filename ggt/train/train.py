@@ -74,12 +74,7 @@ to what fraction is picked for train/devel/test.""",
 @click.option(
     "--loss",
     type=click.Choice(
-        [
-            "mse",
-            "aleatoric",
-            "aleatoric_cov",
-        ],
-        case_sensitive=False,
+        ["mse", "aleatoric", "aleatoric_cov", ], case_sensitive=False,
     ),
     default="mse",
     help="""The loss function to use""",
@@ -237,12 +232,8 @@ def train(**kwargs):
     T_crop = None
 
     if args["crop"]:
-        T = nn.Sequential(
-            K.CenterCrop(args["cutout_size"]),
-        )
-        T_crop = nn.Sequential(
-            K.CenterCrop(args["cutout_size"]),
-        )
+        T = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
+        T_crop = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
 
     if args["transform"]:
         T = nn.Sequential(
@@ -252,9 +243,7 @@ def train(**kwargs):
             K.RandomRotation(360),
         )
 
-        T_crop = nn.Sequential(
-            K.CenterCrop(args["cutout_size"]),
-        )
+        T_crop = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
 
     # Generate the DataLoaders and log the train/devel/test split sizes
     splits = ("train", "devel", "test")
