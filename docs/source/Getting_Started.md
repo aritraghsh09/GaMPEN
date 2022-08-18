@@ -2,17 +2,15 @@
 
 GaMPEN is written in Python and uses the PyTorch deep learning library to perform all of the machine learning operations. 
 
-## Ways to use GaMPEN
-
 ## Installation
-Training and inference for GaMPEN require a Python 3.6+ and a CUDA-friendly GPU.
+Training and inference for GaMPEN requires a Python 3.6+ and a CUDA-friendly GPU.
 
 1. Create and activate a new Python 3.6+ `virtualenv`. More details can be found [here](https://docs.python.org/3/library/venv.html).
 2. Clone this repository with
 ```bash
-git clone https://github.com/amritrau/ggt.git
+git clone https://github.com/aritraghsh09/GaMReN.git
 ```
-3. Install all the required dependencies. From the root directory of the `ggt` repository, run
+3. Install all the required dependencies. From the root directory of `GaMPEN` repository, run
 ```bash
 make requirements
 ```
@@ -20,9 +18,14 @@ make requirements
 ```bash
 make check
 ```
-
+5. To check whether the GaMPEN is able to detect GPUs, type `Python` from the root directory and run the following command:
+```python
+from ggt.utils.device_utils import discover_devices
+discover_devices()
+```
+You should get the output as *cuda*. 
 ### Quickstart
-To train a GGT model, you need to prepare the dataset and run the provided trainer. During and after training, you can [launch the MLFlow UI](#launching-the-mlflow-ui) to view the training logs and artifacts.
+To train a GaMPEN model, you need to prepare the dataset and run the module `train.py`. During and after training, you can [launch the MLFlow UI](#launching-the-mlflow-ui) to view the training logs and artifacts. Check out our [Tutorials](#Tutorials)section for 
 
 #### Data preparation
 In this section, we will prepare and load the SDSS sample of Simard, et al. To load another dataset, see [Loading other datasets](#loading-other-datasets).
@@ -75,26 +78,25 @@ No output will be shown if the connection was successful. Open a browser and nav
 mkdir -p data/(dataset-name)/cutouts
 ```
 2. Place FITS files in `data/(dataset-name)/cutouts`.
-3. Provide a file titled `info.csv` at `data/(dataset-name)`. This file should have (at least) a column titled `file_name` (corresponding to the basenames of the files in `data/(dataset-name)/cutouts`) and a column titled `bt_g` containing bulge-to-total ratios. See [here](http://amritrau.github.io/assets/data/info.csv) for an example CSV (7.3M).
+3. Provide a file titled `info.csv` at `data/(dataset-name)`. This file should have (at least) a column titled `file_name` (corresponding to the basenames of the files in `data/(dataset-name)/cutouts`) and a column titled `bt_g` containing bulge-to-total ratios.
+
 4. Generate train/devel/test splits with
 ```bash
 python ggt/data/make_splits.py --data_dir=data/(dataset-name)/
 ```
+After generating the splits, the subdirectory `data` should look like:
+```
+- data
+    - __init__.py
+    - dataset.py
+    - make_splits.py
+    - dataset_name
+        - info.csv
+        - cutouts 
+        - splits
+```
 5. Follow the instructions under [Running the trainer](#running-the-trainer), replacing `data/sdss/` with `data/(dataset-name)/`.
 
-### Modules
-#### Auto-cropping
-The spatial transformer subnetwork that GGT learns can be extracted and used as an auto-cropping module to automatically focus on the region of interest of an image. After training a GGT model (or downloading a pretrained model), run the auto-cropping module with
-```bash
-python -m ggt.modules.autocrop \
-  --model_path=models/<your_model>.pt \
-  --image_dir=path/to/fits/cutouts/
-```
-
-The auto-cropping module automatically resizes and normalizes the provided FITS images to match GGT's required image format. Then, the auto-cropping module feeds the prepared image through the provided model's spatial transformer subnetwork to automatically crop the image. Results are written in `.png` form back to the provided image directory. An example with a Hyper Suprime-Cam image is shown below.
-
-
-![Auto-cropping](../assets/stn_figure.png)
 
 ## GPU Support
 
