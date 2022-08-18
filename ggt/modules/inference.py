@@ -214,6 +214,30 @@ to ensure proper cutout size""",
     written to the output file. Only set this to True if you trained the model
     with aleatoric_cov loss.""",
 )
+@click.option(
+    "--labels/--no-labels",
+    default=True,
+    help="""If True, this means you have labels available for the daataset. 
+    If False, this means that you have no labels available and want to do
+    pure inference using a pre-trained model.""",
+)
+@click.option(
+    "--scaling_data_dir", type=click.Path(exists=True), required=False,
+    default=None,
+    help="""If you have a separate directory for scaling data,
+    you can specify it here. This is helpful when using the 
+    no-labels argument."""
+)
+@click.option(
+    "--scaling_slug",
+    type=str,
+    required=False,
+    default=None,
+    help="""This specifies which slug (balanced/unbalanced
+    xs, sm, lg, dev) corresponding to the scaling_data_dir
+    is used to perform the data scaling on.""",
+)
+
 def main(
     model_path,
     output_path,
@@ -239,6 +263,16 @@ def main(
     ini_run_num,
 ):
 
+    if labels is False:
+        logging.info("Performing pure inference without labels. Using column names to infer number of expected outputs.") 
+        if scaling_data_dir is None:
+            raise ValueError("You must specify a scaling_data_dir if you are not using labels.")
+        elif scaling_slug is None:
+            raise ValueError("You must specify a scaling_slug if you are not using labels.")
+    else:
+        scaling_data_dir = data_dir
+        scaling_slug = slug
+    
     # Create label cols array
     label_cols_arr = label_cols.split(",")
 
@@ -271,6 +305,8 @@ def main(
         repeat_dims=repeat_dims,
         label_scaling=label_scaling,
         transform=T if T is not None else None,
+        scaling_data_dir=scaling_data_dir,
+        scaling_slug=scaling_slug,
     )
 
     for run_num in range(ini_run_num, n_runs + ini_run_num):
@@ -346,9 +382,9 @@ def main(
 
             preds = standardize_labels(
                 preds,
-                data_dir,
+                scaling_data_dir,
                 split,
-                slug,
+                scaling_slug,
                 label_cols_arr,
                 label_scaling,
                 invert=True,

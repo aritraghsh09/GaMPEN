@@ -38,10 +38,17 @@ class FITSDataset(Dataset):
         expand_factor=1,
         repeat_dims=False,
         label_scaling=None,
+        scaling_data_dir=None,
+        scaling_slug=None,
     ):
 
-        # Set data directory
+        # Set data directories
         self.data_dir = Path(data_dir)
+
+        if scaling_data_dir is None:
+            self.scaling_data_dir = self.data_dir
+        else:
+            self.scaling_data_dir = Path(scaling_data_dir)
 
         # Set cutouts shape
         self.cutout_shape = (channels, cutout_size, cutout_size)
@@ -64,13 +71,17 @@ class FITSDataset(Dataset):
         self.labels = np.asarray(self.data_info[label_col])
         self.filenames = np.asarray(self.data_info["file_name"])
 
+        # If scaling slug is not specified, use the same slug as the data slug
+        if scaling_slug is None:
+            scaling_slug = slug
+
         # Standardizing the labels
         if label_scaling is not None:
             self.labels = standardize_labels(
                 self.labels,
-                self.data_dir,
+                self.scaling_data_dir,
                 split,
-                slug,
+                scaling_slug,
                 label_col,
                 scaling=label_scaling,
             )
