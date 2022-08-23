@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import click
 import logging
-from pathlib import Path
-import pandas as pd
 
 import torch
 import torch.nn as nn
@@ -18,6 +16,7 @@ from ggt.utils import (
     standardize_labels,
     enable_dropout,
     specify_dropout_rate,
+    load_cat,
 )
 
 
@@ -217,7 +216,7 @@ to ensure proper cutout size""",
 @click.option(
     "--labels/--no-labels",
     default=True,
-    help="""If True, this means you have labels available for the daataset.
+    help="""If True, this means you have labels available for the dataset.
     If False, this means that you have no labels available and want to do
     pure inference using a pre-trained model.""",
 )
@@ -301,7 +300,9 @@ def main(
     # Transforming the dataset to the proper cutout size
     T = None
     if transform:
-        T = nn.Sequential(K.CenterCrop(cutout_size),)
+        T = nn.Sequential(
+            K.CenterCrop(cutout_size),
+        )
 
     # Load the data and create a data loader
     logging.info("Loading images to device...")
@@ -318,6 +319,7 @@ def main(
         transform=T if T is not None else None,
         scaling_data_dir=scaling_data_dir,
         scaling_slug=scaling_slug,
+        load_labels=labels,
     )
 
     for run_num in range(ini_run_num, n_runs + ini_run_num):
@@ -402,9 +404,7 @@ def main(
             )
 
         # Write a CSV of predictions
-        catalog = pd.read_csv(
-            Path(data_dir) / "splits/{}-{}.csv".format(slug, split)
-        )
+        catalog = load_cat(data_dir, slug, split)
 
         for i, label in enumerate(label_cols_arr):
 

@@ -40,6 +40,7 @@ class FITSDataset(Dataset):
         label_scaling=None,
         scaling_data_dir=None,
         scaling_slug=None,
+        load_labels=True,
     ):
 
         # Set data directories
@@ -68,7 +69,12 @@ class FITSDataset(Dataset):
         self.tensors_path.mkdir(parents=True, exist_ok=True)
 
         # Retrieve labels & filenames
-        self.labels = np.asarray(self.data_info[label_col])
+        if load_labels:
+            self.labels = np.asarray(self.data_info[label_col])
+        else:
+            # generate fake labels of appropriate shape
+            self.labels = np.ones((len(self.data_info), len(label_col)))
+
         self.filenames = np.asarray(self.data_info["file_name"])
 
         # If scaling slug is not specified, use the same slug as the data slug
@@ -76,7 +82,7 @@ class FITSDataset(Dataset):
             scaling_slug = slug
 
         # Standardizing the labels
-        if label_scaling is not None:
+        if load_labels and (label_scaling is not None):
             self.labels = standardize_labels(
                 self.labels,
                 self.scaling_data_dir,
