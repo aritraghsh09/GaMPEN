@@ -63,7 +63,10 @@ def predict(
 
     # Load the model
     logging.info("Loading model...")
-    model.load_state_dict(torch.load(model_path))
+    if device == "cpu":
+        model.load_state_dict(torch.load(model_path, map_location="cpu"))
+    else:
+        model.load_state_dict(torch.load(model_path))
 
     # Create a data loader
     loader = get_data_loader(
@@ -269,8 +272,13 @@ def main(
     if labels is False:
         logging.info(
             """Performing pure inference without labels. Using
-            column names to infer number of expected outputs."""
+            column names to infer number of expected outputs.
+            Split and Slug values entered will be ignored and
+            info.csv will be used."""
         )
+        split = None
+        slug = None
+
         if scaling_data_dir is None:
             raise ValueError(
                 """You must specify a scaling_data_dir if
@@ -300,9 +308,7 @@ def main(
     # Transforming the dataset to the proper cutout size
     T = None
     if transform:
-        T = nn.Sequential(
-            K.CenterCrop(cutout_size),
-        )
+        T = nn.Sequential(K.CenterCrop(cutout_size),)
 
     # Load the data and create a data loader
     logging.info("Loading images to device...")

@@ -74,12 +74,7 @@ to what fraction is picked for train/devel/test.""",
 @click.option(
     "--loss",
     type=click.Choice(
-        [
-            "mse",
-            "aleatoric",
-            "aleatoric_cov",
-        ],
-        case_sensitive=False,
+        ["mse", "aleatoric", "aleatoric_cov", ], case_sensitive=False,
     ),
     default="mse",
     help="""The loss function to use""",
@@ -87,12 +82,12 @@ to what fraction is picked for train/devel/test.""",
 @click.option(
     "--expand_data",
     type=int,
-    default=16,
+    default=1,
     help="""This controls the factor by which the training
 data is augmented""",
 )
 @click.option("--cutout_size", type=int, default=167)
-@click.option("--channels", type=int, default=1)
+@click.option("--channels", type=int, default=3)
 @click.option(
     "--n_workers",
     type=int,
@@ -107,7 +102,7 @@ data loading process.""",
 @click.option("--weight_decay", type=float, default=0)
 @click.option(
     "--parallel/--no-parallel",
-    default=False,
+    default=True,
     help="""The parallel argument controls whether or not
 to use multiple GPUs when they are available""",
 )
@@ -120,7 +115,7 @@ loaded images will be normalized using the arcsinh function""",
 @click.option(
     "--label_scaling",
     type=str,
-    default=None,
+    default="std",
     help="""The label scaling option controls whether to
 standardize the labels or not. Set this to std for sklearn's
 StandardScaling() and minmax for sklearn's MinMaxScaler().
@@ -237,12 +232,8 @@ def train(**kwargs):
     T_crop = None
 
     if args["crop"]:
-        T = nn.Sequential(
-            K.CenterCrop(args["cutout_size"]),
-        )
-        T_crop = nn.Sequential(
-            K.CenterCrop(args["cutout_size"]),
-        )
+        T = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
+        T_crop = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
 
     if args["transform"]:
         T = nn.Sequential(
@@ -252,9 +243,7 @@ def train(**kwargs):
             K.RandomRotation(360),
         )
 
-        T_crop = nn.Sequential(
-            K.CenterCrop(args["cutout_size"]),
-        )
+        T_crop = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
 
     # Generate the DataLoaders and log the train/devel/test split sizes
     splits = ("train", "devel", "test")
