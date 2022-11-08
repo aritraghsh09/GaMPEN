@@ -167,7 +167,7 @@ model being used for inference).""",
               dimensional image as many times as the number of channels""",
 )
 @click.option(
-    "--use_dropout/--no-dropout",
+    "--mc_dropout/--no-mc_dropout",
     default=False,
     help="""Turn on Monte Carlo dropout during inference.""",
 )
