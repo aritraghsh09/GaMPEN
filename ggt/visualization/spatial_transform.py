@@ -74,7 +74,10 @@ def visualize_spatial_transform(
 @click.command()
 @click.option(
     "--model_type",
-    type=click.Choice(["ggt", "ggt_no_gconv", "vgg"], case_sensitive=False),
+    type=click.Choice(
+        ["ggt", "vgg16", "ggt_no_gconv", "vgg16_w_stn", "vgg16_w_stn_drp"],
+        case_sensitive=False,
+    ),
     default="ggt",
 )
 @click.option("--model_path", type=click.Path(exists=True), required=True)
@@ -119,8 +122,10 @@ def main(
         "cutout_size": cutout_size,
         "channels": channels,
         "n_out": n_out,
-        "dropout": dropout,
     }
+
+    if model_type == "vgg16_w_stn_drp":
+        model_args["dropout"] = "True"
 
     model = cls(**model_args)
     model = model.to(device)

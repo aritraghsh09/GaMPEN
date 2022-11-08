@@ -14,7 +14,8 @@ split_types = dict(
     md=dict(train=0.090, devel=0.010, test=0.900),
     lg=dict(train=0.200, devel=0.050, test=0.750),
     xl=dict(train=0.450, devel=0.050, test=0.500),
-    dev=dict(train=0.70, devel=0.15, test=0.15),
+    dev=dict(train=0.700, devel=0.150, test=0.150),
+    dev2=dict(train=0.700, devel=0.050, test=0.250),
 )
 
 
