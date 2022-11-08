@@ -80,9 +80,9 @@ Made available under a `GNU GPL v3.0 <https://github.com/aritraghsh09/GaMPEN/blo
 
 Contributors
 ------------
-GaMPEN was initially developed by `Aritra Ghosh <http://www.ghosharitra.com/>`_ and `Amrit Rau <https://amritrau.xyz/>`_
+GaMPEN was initially developed by `Amrit Rau <https://amritrau.xyz/>`_ and `Aritra Ghosh <http://www.ghosharitra.com/>`_
 
-The initial documentation was developed by `Aritra Ghosh <http://www.ghosharitra.com/>`_ and `Aayush Mishra <https://github.com/aayush2505>`_
+The initial documentation was developed by `Aayush Mishra <https://github.com/aayush2505>`_ and `Aritra Ghosh <http://www.ghosharitra.com/>`_ 
 
 For an updated list of all current contributors, please see `here <https://github.com/aritraghsh09/GaMPEN/graphs/contributors>`_
 
