@@ -1,17 +1,23 @@
 # -*- coding: utf-8 -*-
 import click
 import logging
-from pathlib import Path
-import pandas as pd
 
 import torch
 import torch.nn as nn
 
 from tqdm import tqdm
 
+import kornia.augmentation as K
+
 from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory
-from ggt.utils import discover_devices, standardize_labels, enable_dropout
+from ggt.utils import (
+    discover_devices,
+    standardize_labels,
+    enable_dropout,
+    specify_dropout_rate,
+    load_cat,
+)
 
 
 def predict(
@@ -25,6 +31,7 @@ def predict(
     model_type="ggt",
     n_out=1,
     mc_dropout=False,
+    dropout_rate=None,
 ):
     """Using the model defined in model path, return the output values for
     the given set of images"""
@@ -32,13 +39,34 @@ def predict(
     # Discover devices
     device = discover_devices()
 
-    # Load the model
-    logging.info("Loading model...")
+    # Declare the model given model_type
     cls = model_factory(model_type)
-    model = cls(cutout_size, channels, n_out=n_out)
+    model_args = {
+        "cutout_size": cutout_size,
+        "channels": channels,
+        "n_out": n_out,
+    }
+
+    if "drp" in model_type.split("_"):
+        logging.info(
+            "Using dropout rate of {} in the model".format(dropout_rate)
+        )
+        model_args["dropout"] = "True"
+
+    model = cls(**model_args)
     model = nn.DataParallel(model) if parallel else model
     model = model.to(device)
-    model.load_state_dict(torch.load(model_path))
+
+    # Changing the dropout rate if specified
+    if dropout_rate is not None:
+        specify_dropout_rate(model, dropout_rate)
+
+    # Load the model
+    logging.info("Loading model...")
+    if device == "cpu":
+        model.load_state_dict(torch.load(model_path, map_location="cpu"))
+    else:
+        model.load_state_dict(torch.load(model_path))
 
     # Create a data loader
     loader = get_data_loader(
@@ -51,20 +79,31 @@ def predict(
 
     # Enable Monte Carlo dropout if requested
     if mc_dropout:
-        logging.info(" -- activating Monte Carlo dropout...")
+        logging.info("Activating Monte Carlo dropout...")
         enable_dropout(model)
 
     with torch.no_grad():
         for data in tqdm(loader):
             X, _ = data
             yh.append(model(X.to(device)))
-    return torch.cat(yh).cpu().numpy()
+    return torch.cat(yh)
 
 
 @click.command()
 @click.option(
     "--model_type",
-    type=click.Choice(["ggt", "ggt_no_gconv", "vgg16"], case_sensitive=False),
+    type=click.Choice(
+        [
+            "ggt",
+            "vgg16",
+            "ggt_no_gconv",
+            "vgg16_w_stn",
+            "vgg16_w_stn_drp",
+            "vgg16_w_stn_at_drp",
+            "vgg16_w_stn_oc_drp",
+        ],
+        case_sensitive=False,
+    ),
     default="ggt",
 )
 @click.option("--model_path", type=click.Path(exists=True), required=True)
@@ -132,6 +171,76 @@ model being used for inference).""",
     default=False,
     help="""Turn on Monte Carlo dropout during inference.""",
 )
+@click.option(
+    "--n_runs",
+    type=int,
+    default=1,
+    help="""The number of times to run inference. This is helpful
+    when usng mc_dropout""",
+)
+@click.option(
+    "--ini_run_num",
+    type=int,
+    default=1,
+    help="""The number of the first run. i.e. the output csv files
+    are named as (inf_run_num+iteration_number).csv""",
+)
+@click.option(
+    "--dropout_rate",
+    type=float,
+    default=None,
+    help="""The dropout rate to use for all the layers in the
+    model. If this is set to None, then the default dropout rate
+    in the specific model is used. This option should only be
+    used when you have used a non-default dropout rate during
+    training and have set --mc_dropout to True. The rate should
+    be set equal to the rate used during training.""",
+)
+@click.option(
+    "--transform/--no-transform",
+    default=False,
+    help="""If True, the images are passed through a cropping transformation
+to ensure proper cutout size""",
+)
+@click.option(
+    "--errors/--no-errors",
+    default=False,
+    help="""If True and if the model allows for it, aleatoric uncertainties are
+    written to the output file. Only set this to True if you trained the model
+    with aleatoric loss.""",
+)
+@click.option(
+    "--cov_errors/--no-cov_errors",
+    default=False,
+    help="""If True and if the model allows for it, aleatoric uncertainties are
+    written to the output file. Only set this to True if you trained the model
+    with aleatoric_cov loss.""",
+)
+@click.option(
+    "--labels/--no-labels",
+    default=True,
+    help="""If True, this means you have labels available for the dataset.
+    If False, this means that you have no labels available and want to do
+    pure inference using a pre-trained model.""",
+)
+@click.option(
+    "--scaling_data_dir",
+    type=click.Path(exists=True),
+    required=False,
+    default=None,
+    help="""If you have a separate directory for scaling data,
+    you can specify it here. This is helpful when using the
+    no-labels argument.""",
+)
+@click.option(
+    "--scaling_slug",
+    type=str,
+    required=False,
+    default=None,
+    help="""This specifies which slug (balanced/unbalanced
+    xs, sm, lg, dev) corresponding to the scaling_data_dir
+    is used to perform the data scaling on.""",
+)
 def main(
     model_path,
     output_path,
@@ -149,10 +258,57 @@ def main(
     repeat_dims,
     label_scaling,
     mc_dropout,
+    dropout_rate,
+    transform,
+    errors,
+    cov_errors,
+    n_runs,
+    ini_run_num,
+    labels,
+    scaling_data_dir,
+    scaling_slug,
 ):
+
+    if labels is False:
+        logging.info(
+            """Performing pure inference without labels. Using
+            column names to infer number of expected outputs.
+            Split and Slug values entered will be ignored and
+            info.csv will be used."""
+        )
+        split = None
+        slug = None
+
+        if scaling_data_dir is None:
+            raise ValueError(
+                """You must specify a scaling_data_dir if
+                you are not using labels."""
+            )
+        elif scaling_slug is None:
+            raise ValueError(
+                """You must specify a scaling_slug if you are
+                not using labels."""
+            )
+    else:
+        scaling_data_dir = data_dir
+        scaling_slug = slug
 
     # Create label cols array
     label_cols_arr = label_cols.split(",")
+
+    # Calculating the number of outputs
+    if errors:
+        n_out = int(len(label_cols_arr) * 2)
+    elif cov_errors:
+        n_var = len(label_cols_arr)
+        n_out = int((3 * n_var + n_var ** 2) / 2)
+    else:
+        n_out = len(label_cols_arr)
+
+    # Transforming the dataset to the proper cutout size
+    T = None
+    if transform:
+        T = nn.Sequential(K.CenterCrop(cutout_size),)
 
     # Load the data and create a data loader
     logging.info("Loading images to device...")
@@ -166,42 +322,105 @@ def main(
         label_col=label_cols_arr,
         repeat_dims=repeat_dims,
         label_scaling=label_scaling,
+        transform=T if T is not None else None,
+        scaling_data_dir=scaling_data_dir,
+        scaling_slug=scaling_slug,
+        load_labels=labels,
     )
 
-    # Make predictions
-    preds = predict(
-        model_path,
-        dataset,
-        cutout_size,
-        channels,
-        parallel=parallel,
-        batch_size=batch_size,
-        n_workers=n_workers,
-        model_type=model_type,
-        n_out=len(label_cols_arr),
-        mc_dropout=mc_dropout,
-    )
+    for run_num in range(ini_run_num, n_runs + ini_run_num):
 
-    # Scale labels back to old values
-    if label_scaling is not None:
-        preds = standardize_labels(
-            preds,
-            data_dir,
-            split,
-            slug,
-            label_cols_arr,
-            label_scaling,
-            invert=True,
+        logging.info(f"Running inference run {run_num}")
+
+        # Make predictions
+        preds = predict(
+            model_path,
+            dataset,
+            cutout_size,
+            channels,
+            parallel=parallel,
+            batch_size=batch_size,
+            n_workers=n_workers,
+            model_type=model_type,
+            n_out=n_out,
+            mc_dropout=mc_dropout,
+            dropout_rate=dropout_rate,
         )
 
-    # Write a CSV of predictions
-    catalog = pd.read_csv(
-        Path(data_dir) / "splits/{}-{}.csv".format(slug, split)
-    )
-    for i, label in enumerate(label_cols_arr):
-        catalog[f"preds_{label}"] = preds[:, i]
+        if errors:
+            # Note that here we are drawing the
+            # predictions from a distribution
+            # in the transformed/scaled label space.
+            means = preds[..., : int(n_out / 2)]
+            sks = preds[..., -int(n_out / 2) :]
+            sigmas = torch.sqrt(torch.exp(sks))
 
-    catalog.to_csv(output_path, index=False)
+            # preds = np.random.normal(means, sigmas)
+            preds = torch.distributions.Normal(means, sigmas).sample()
+            preds = preds.cpu().numpy()
+            means = means.cpu().numpy()
+            sigmas = sigmas.cpu().numpy()
+
+        elif cov_errors:
+            # Note that here we are drawing the
+            # predictions from a distribution
+            # in the transformed/scaled label space.
+            num_var = len(label_cols_arr)
+
+            y_hat = preds[..., : int(num_var)]
+            var = torch.exp(preds[..., int(num_var) : int(num_var * 2)])
+            covs = preds[..., int(num_var * 2) :]
+
+            D = torch.diag_embed(var)
+            D = D.to(preds.device)
+
+            N = torch.zeros(preds.shape[0], num_var, num_var)
+            N = N.to(preds.device)
+
+            i, j = torch.tril_indices(num_var, num_var, -1)
+            N[:, i, j] = covs
+
+            Id = torch.eye(num_var).to(preds.device)
+            Id = Id.reshape(1, num_var, num_var)
+            Id = Id.repeat(preds.shape[0], 1, 1)
+
+            L = Id + N
+            LT = torch.transpose(L, 1, 2)
+            cov_mat = torch.bmm(torch.bmm(L, D), LT)
+
+            preds = torch.distributions.MultivariateNormal(
+                y_hat, cov_mat
+            ).sample()
+            preds = preds.cpu().numpy()
+
+        else:
+            preds = preds.cpu().numpy()
+
+        # Scale labels back to old values
+        if label_scaling is not None:
+
+            preds = standardize_labels(
+                preds,
+                scaling_data_dir,
+                split,
+                scaling_slug,
+                label_cols_arr,
+                label_scaling,
+                invert=True,
+            )
+
+        # Write a CSV of predictions
+        catalog = load_cat(data_dir, slug, split)
+
+        for i, label in enumerate(label_cols_arr):
+
+            if errors:
+                catalog[f"transformd_mean_{label}"] = means[:, i]
+                catalog[f"transformed_sigma_{label}"] = sigmas[:, i]
+
+            catalog[f"preds_{label}"] = preds[:, i]
+
+        catalog.to_csv(output_path + f"inf_{run_num}.csv", index=False)
 
 
 if __name__ == "__main__":

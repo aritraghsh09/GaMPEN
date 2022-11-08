@@ -18,6 +18,7 @@ from ggt.models import model_factory, model_stats, save_trained_model
 from ggt.train import create_trainer
 from ggt.utils import discover_devices, specify_dropout_rate
 from ggt.visualization.spatial_transform import visualize_spatial_transform
+from ggt.losses import AleatoricLoss, AleatoricCovLoss
 
 
 @click.command()
@@ -38,7 +39,19 @@ So this variable should be specified accordingly""",
 )
 @click.option(
     "--model_type",
-    type=click.Choice(["ggt", "ggt_no_gconv", "vgg16"], case_sensitive=False),
+    type=click.Choice(
+        [
+            "ggt",
+            "vgg16",
+            "ggt_no_gconv",
+            "vgg16_w_stn",
+            "vgg16_w_stn_drp",
+            "vgg16_w_stn_drp_2",
+            "vgg16_w_stn_at_drp",
+            "vgg16_w_stn_oc_drp",
+        ],
+        case_sensitive=False,
+    ),
     default="ggt",
 )
 @click.option("--model_state", type=click.Path(exists=True), default=None)
@@ -59,14 +72,22 @@ to what fraction is picked for train/devel/test.""",
     help="""Enter the target metrics separated by commas""",
 )
 @click.option(
+    "--loss",
+    type=click.Choice(
+        ["mse", "aleatoric", "aleatoric_cov", ], case_sensitive=False,
+    ),
+    default="mse",
+    help="""The loss function to use""",
+)
+@click.option(
     "--expand_data",
     type=int,
-    default=16,
+    default=1,
     help="""This controls the factor by which the training
 data is augmented""",
 )
 @click.option("--cutout_size", type=int, default=167)
-@click.option("--channels", type=int, default=1)
+@click.option("--channels", type=int, default=3)
 @click.option(
     "--n_workers",
     type=int,
@@ -78,9 +99,10 @@ data loading process.""",
 @click.option("--epochs", type=int, default=40)
 @click.option("--lr", type=float, default=0.005)
 @click.option("--momentum", type=float, default=0.9)
+@click.option("--weight_decay", type=float, default=0)
 @click.option(
     "--parallel/--no-parallel",
-    default=False,
+    default=True,
     help="""The parallel argument controls whether or not
 to use multiple GPUs when they are available""",
 )
@@ -93,7 +115,7 @@ loaded images will be normalized using the arcsinh function""",
 @click.option(
     "--label_scaling",
     type=str,
-    default=None,
+    default="std",
     help="""The label scaling option controls whether to
 standardize the labels or not. Set this to std for sklearn's
 StandardScaling() and minmax for sklearn's MinMaxScaler().
@@ -105,6 +127,13 @@ outputs""",
     default=True,
     help="""If True, the training images are passed through a
 series of random transformations""",
+)
+@click.option(
+    "--crop/--no-crop",
+    default=True,
+    help="""If True, all images are passed through a cropping
+operation before being fed into the network. Images are cropped
+to the cutout_size parameter""",
 )
 @click.option(
     "--repeat_dims/--no-repeat_dims",
@@ -137,13 +166,30 @@ def train(**kwargs):
     # Create target metrics array
     target_metric_arr = args["target_metrics"].split(",")
 
+    # Calculating the number of outputs
+    n_out = len(target_metric_arr)
+    if args["loss"] == "aleatoric":
+        n_out = int(n_out * 2)
+    elif args["loss"] == "aleatoric_cov":
+        n_out = int((3 * n_out + n_out ** 2) / 2)
+
     # Create the model given model_type
     cls = model_factory(args["model_type"])
-    model = cls(
-        args["cutout_size"],
-        args["channels"],
-        n_out=len(target_metric_arr),
-    )
+    model_args = {
+        "cutout_size": args["cutout_size"],
+        "channels": args["channels"],
+        "n_out": n_out,
+    }
+
+    if "drp" in args["model_type"].split("_"):
+        logging.info(
+            "Using dropout rate of {} in the model".format(
+                args["dropout_rate"]
+            )
+        )
+        model_args["dropout"] = "True"
+
+    model = cls(**model_args)
     model = nn.DataParallel(model) if args["parallel"] else model
     model = model.to(args["device"])
 
@@ -155,14 +201,24 @@ def train(**kwargs):
     if args["model_state"]:
         model.load_state_dict(torch.load(args["model_state"]))
 
-    # Define the optimizer and criterion
+    # Define the optimizer
     optimizer = opt.SGD(
         model.parameters(),
         lr=args["lr"],
         momentum=args["momentum"],
         nesterov=args["nesterov"],
+        weight_decay=args["weight_decay"],
     )
-    criterion = nn.MSELoss()
+
+    # Define the criterion
+    loss_dict = {
+        "mse": nn.MSELoss(),
+        "aleatoric": AleatoricLoss(average=True),
+        "aleatoric_cov": AleatoricCovLoss(
+            num_var=len(target_metric_arr), average=True
+        ),
+    }
+    criterion = loss_dict[args["loss"]]
 
     # Create a DataLoader factory based on command-line args
     loader_factory = partial(
@@ -173,12 +229,21 @@ def train(**kwargs):
 
     # Select the desired transforms
     T = None
+    T_crop = None
+
+    if args["crop"]:
+        T = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
+        T_crop = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
+
     if args["transform"]:
         T = nn.Sequential(
+            K.CenterCrop(args["cutout_size"]),
             K.RandomHorizontalFlip(),
             K.RandomVerticalFlip(),
             K.RandomRotation(360),
         )
+
+        T_crop = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
 
     # Generate the DataLoaders and log the train/devel/test split sizes
     splits = ("train", "devel", "test")
@@ -191,7 +256,7 @@ def train(**kwargs):
             normalize=args["normalize"],
             repeat_dims=args["repeat_dims"],
             label_col=target_metric_arr,
-            transform=T if k == "train" else None,
+            transform=T if k == "train" else T_crop,
             expand_factor=args["expand_data"] if k == "train" else 1,
             label_scaling=args["label_scaling"],
             split=k,
@@ -204,6 +269,7 @@ def train(**kwargs):
     # Start the training process
     mlflow.set_experiment(args["experiment_name"])
     with mlflow.start_run(run_id=args["run_id"], run_name=args["run_name"]):
+
         # Write the parameters and model stats to MLFlow
         args = {**args, **model_stats(model)}  # py3.9: d1 |= d2
         for k, v in args.items():

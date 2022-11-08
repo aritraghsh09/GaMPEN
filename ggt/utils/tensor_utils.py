@@ -45,3 +45,31 @@ def standardize_labels(
         return scaler.inverse_transform(input)
     else:
         return scaler.transform(input)
+
+
+def metric_output_transform_al_loss(output):
+    """Transforms the output of the model, when using
+    aleatoric loss, to a form which can be used by the
+    ignote metric calculators"""
+
+    y_pred, y = output
+
+    # Chopping y_pred to half it's size to match y
+    y_pred = y_pred[..., : int(y_pred.shape[len(y_pred.shape) - 1] / 2)]
+
+    return y_pred, y
+
+
+def metric_output_transform_al_cov_loss(output):
+    """Transforms the output of the model, when using
+    aleatoric covariance loss, to a form which can be used by the
+    ignote metric calculators"""
+
+    y_pred, y = output
+
+    num_var = y.shape[-1]
+
+    # Chopping y_pred to include only the "means" of the predictions
+    y_pred = y_pred[..., :num_var]
+
+    return y_pred, y

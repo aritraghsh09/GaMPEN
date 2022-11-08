@@ -16,7 +16,7 @@ clean:
 
 # Lint using flake8
 lint:
-	flake8 $(PROJECT_NAME)
+	flake8 --ignore=E203,W503 $(PROJECT_NAME)
 
 # Automatically fix code style
 style:
