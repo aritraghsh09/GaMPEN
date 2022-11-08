@@ -16,7 +16,7 @@ import kornia.augmentation as K
 from ggt.data import FITSDataset, get_data_loader
 from ggt.models import model_factory, model_stats, save_trained_model
 from ggt.train import create_trainer
-from ggt.utils import discover_devices
+from ggt.utils import discover_devices, specify_dropout_rate
 from ggt.visualization.spatial_transform import visualize_spatial_transform
 from ggt.losses import AleatoricLoss, AleatoricCovLoss
 
@@ -147,7 +147,7 @@ dimensional image as many times as the number of channels""",
     help="""Whether to use Nesterov momentum or not""",
 )
 @click.option(
-    "--dropout",
+    "--dropout_rate",
     type=float,
     default=None,
     help="""The dropout rate to use for all the layers in the
@@ -192,7 +192,11 @@ def train(**kwargs):
     model = cls(**model_args)
     model = nn.DataParallel(model) if args["parallel"] else model
     model = model.to(args["device"])
-
+    
+    # Chnaging the default dropout rate if specified
+    if args["dropout_rate"] is not None:
+        specify_dropout_rate(model, args["dropout_rate"])
+        
     # Load the model from a saved state if provided
     if args["model_state"]:
         model.load_state_dict(torch.load(args["model_state"]))
