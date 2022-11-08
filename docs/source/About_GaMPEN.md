@@ -1,5 +1,5 @@
 
-```{note}
+```{attention}
 Note that we are still actively working on the documentation and tutorials of GaMPEN; and the docs are not complete yet. We hope to have the docs fully completed by early Spring 2023. If you run into issues while trying to use GaMPEN before that, please contact us! We will be happy to help you.
 ```
 
