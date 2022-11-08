@@ -1,7 +1,5 @@
 import mlflow
 
-import torch.nn as nn
-
 from ignite.engine import (
     Events,
     create_supervised_trainer,
