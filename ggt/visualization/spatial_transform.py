@@ -93,7 +93,6 @@ def visualize_spatial_transform(
 @click.option("--nrow", type=int, default=6)
 @click.option("--n_workers", type=int, default=8)
 @click.option("--normalize/--no-normalize", default=True)
-@click.option("--dropout", type=float, default=0.0)
 def main(
     model_type,
     model_path,
@@ -107,7 +106,6 @@ def main(
     nrow,
     n_workers,
     normalize,
-    dropout,
 ):
     """Visualize the transformation performed by the spatial transformer
     module.
