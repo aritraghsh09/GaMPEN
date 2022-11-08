@@ -8,7 +8,7 @@ Training and inference for GaMPEN requires a Python 3.6+ and a CUDA-friendly GPU
 1. Create and activate a new Python 3.6+ `virtualenv`. More details can be found [here](https://docs.python.org/3/library/venv.html).
 2. Clone this repository with
 ```bash
-git clone https://github.com/aritraghsh09/GaMReN.git
+git clone https://github.com/aritraghsh09/GaMPEN.git
 ```
 3. Install all the required dependencies. From the root directory of `GaMPEN` repository, run
 ```bash
