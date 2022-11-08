@@ -2,6 +2,7 @@ import torch.nn as nn
 
 from torchvision import models
 
+
 def vgg16(cutout_size, channels, n_out=1, pretrained=True):
 
     model = models.vgg16(pretrained=pretrained)

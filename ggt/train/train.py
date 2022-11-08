@@ -74,7 +74,12 @@ to what fraction is picked for train/devel/test.""",
 @click.option(
     "--loss",
     type=click.Choice(
-        ["mse", "aleatoric", "aleatoric_cov", ], case_sensitive=False,
+        [
+            "mse",
+            "aleatoric",
+            "aleatoric_cov",
+        ],
+        case_sensitive=False,
     ),
     default="mse",
     help="""The loss function to use""",
@@ -192,11 +197,11 @@ def train(**kwargs):
     model = cls(**model_args)
     model = nn.DataParallel(model) if args["parallel"] else model
     model = model.to(args["device"])
-    
+
     # Chnaging the default dropout rate if specified
     if args["dropout_rate"] is not None:
         specify_dropout_rate(model, args["dropout_rate"])
-        
+
     # Load the model from a saved state if provided
     if args["model_state"]:
         model.load_state_dict(torch.load(args["model_state"]))
@@ -232,8 +237,12 @@ def train(**kwargs):
     T_crop = None
 
     if args["crop"]:
-        T = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
-        T_crop = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
+        T = nn.Sequential(
+            K.CenterCrop(args["cutout_size"]),
+        )
+        T_crop = nn.Sequential(
+            K.CenterCrop(args["cutout_size"]),
+        )
 
     if args["transform"]:
         T = nn.Sequential(
@@ -243,7 +252,9 @@ def train(**kwargs):
             K.RandomRotation(360),
         )
 
-        T_crop = nn.Sequential(K.CenterCrop(args["cutout_size"]),)
+        T_crop = nn.Sequential(
+            K.CenterCrop(args["cutout_size"]),
+        )
 
     # Generate the DataLoaders and log the train/devel/test split sizes
     splits = ("train", "devel", "test")

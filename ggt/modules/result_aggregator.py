@@ -109,10 +109,10 @@ def calculate_ci(data, n=1000, warnings=False):
 def expit_custom(x_input, scaling_array=None):
 
     """Performs a custom implementation of Scipy's expit
-       function. If the scaling array is supplied, it does
-       the unscaling keeping in mind how 0s and 1s were mapped
-       to different values while the scaling was done.
-       expit is the inverse of the logit function."""
+    function. If the scaling array is supplied, it does
+    the unscaling keeping in mind how 0s and 1s were mapped
+    to different values while the scaling was done.
+    expit is the inverse of the logit function."""
 
     x = np.array(x_input)
 
@@ -239,7 +239,7 @@ def bayesian_inference_file_gobbler(
 
 def create_summary_df(data):
 
-    """ This function takes the xarray produced by
+    """This function takes the xarray produced by
     bayesian_inference_file_gobbler and then produces
     a dataframe with summary statistics."""
 
