@@ -8,7 +8,7 @@
 :maxdepth: 2
 :hidden:
 
-About_GaMPEN
+self
 Getting_Started
 Using_GaMPEN
 Tutorials
@@ -16,6 +16,10 @@ Public_data
 FAQs
 API_reference
 
+```
+
+```{attention}
+Note that we are still actively working on the documentation and tutorials of GaMPEN; and the docs are not complete yet. We hope to have the docs fully completed by early Spring 2023. If you run into issues while trying to use GaMPEN before that, please contact us! We will be happy to help you.
 ```
 
 # About GaMPEN
@@ -71,14 +75,50 @@ In order to start using GaMPEN, please first look at the Getting Started section
 
 Finally, you should have a look at the Public Data Release Handbook for our recommendations on how to use different elements of GaMPEN’s public data release for your own work and the API Documentation for detailed documentation of the different functions in the module.
 
-## Publication & Other Data
+## Publication 
+
+GaMPEN was initially introduced in this [ApJ paper](https://iopscience.iop.org/article/10.3847/1538-4357/ac7f9e) 
+
+An updated record of GaMPEN's trained models and catalogs produced are maintained [here](http://gampen.ghosharitra.com/)
+
 
 ## Attribution Info.
 
+Please cite the above mentioned publication if you make use of this software module or some code herein.
+
+
+```tex
+   @article{Ghosh2022,
+   author = {Aritra Ghosh and C. Megan Urry and Amrit Rau and Laurence Perreault-Levasseur and Miles Cranmer and Kevin Schawinski and Dominic Stark and Chuan Tian and Ryan Ofman and Tonima Tasnim Ananna and Connor Auge and Nico Cappelluti and David B. Sanders and Ezequiel Treister},
+   doi = {10.3847/1538-4357/ac7f9e},
+   issn = {0004-637X},
+   issue = {2},
+   journal = {The Astrophysical Journal},
+   month = {8},
+   pages = {138},
+   title = {GaMPEN: A Machine-learning Framework for Estimating Bayesian Posteriors of Galaxy Morphological Parameters},
+   volume = {935},
+   year = {2022},
+   }
+```
+
+Additionally, if you want, please include the following text in the Software/Acknowledgment section.
+
+```tex
+This work uses trained models/software made available as a part of the Galaxy Morphology Posterior Estimation Network public data release.
+```
+
 ## License
+
+Copyright 2022 Aritra Ghosh, Amrit Rau & contributors
+
+Made available under a [GNU GPL v3.0](https://github.com/aritraghsh09/GaMPEN/blob/master/LICENSE) license. 
+
 
 ## Getting Help/Contributing
 
-If you have a question, please first have a look at the FAQs section. If your question is not answered there, please send me an e-mail at this ............ Gmail address.
+If you have a question, please send me an e-mail at this ``aritraghsh09@xxxxx.com`` GMail address.
 
-If you have spotted a bug in the code/documentation or you want to propose a new feature, please feel free to open an issue/a pull request on [GitHub](https://github.com/aritraghsh09/GaMReN).
+If you have spotted a bug in the code/documentation or you want to propose a new feature, please feel free to open an issue/a pull request on [GitHub](https://github.com/aritraghsh09/GaMPEN).
+
+
