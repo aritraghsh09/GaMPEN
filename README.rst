@@ -1,3 +1,7 @@
+.. image:: https://readthedocs.org/projects/gampen/badge/?version=latest
+    :target: https://gampen.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
 .. image:: https://img.shields.io/badge/license-GPL%20v3.0-blue
     :target: https://github.com/aritraghsh09/GaMPEN/blob/master/LICENSE
     :alt: License Information
