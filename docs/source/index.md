@@ -13,9 +13,7 @@ Getting_Started
 Using_GaMPEN
 Tutorials
 Public_data
-FAQs
 API_reference
-
 ```
 
 ```{attention}

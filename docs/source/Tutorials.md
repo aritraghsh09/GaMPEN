@@ -6,14 +6,14 @@ You can either download these notebooks from GitHub and run them on your own mac
 
 ## Training GaMPEN and making inferences
 
-This tutorial uses simulated SDSS galaxies to train a GaMPEN model from scratch. 
+Coming Soon! 
 
 ## Transfer Learning with GaMPEN 
 
-This tutorial uses real SDSS galaxies to perform transfer learning on a GaMPEN model trained only on simulations. 
+Coming Soon! 
 
 ## Making Predictions
 
-This tutorial demonstrates how you can use GaMPEN models to make predictions using two images from our SDSS dataset. 
+Coming Soon!
 
 
