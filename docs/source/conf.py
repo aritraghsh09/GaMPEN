@@ -18,8 +18,8 @@
 # -- Project information -----------------------------------------------------
 
 project = 'GaMPEN'
-copyright = '2022, Aritra Ghosh, Aayush Mishra'
-author = 'Aritra Ghosh, Aayush Mishra'
+copyright = '2022, Aritra Ghosh, Amrit Rau, Aayush Mishra'
+author = 'Aritra Ghosh, Amrit Rau, Aayush Mishra'
 
 # The full version, including alpha/beta/rc tags
 release = '1.0.0'
