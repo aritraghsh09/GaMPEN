@@ -4,7 +4,7 @@ setup(
     name="ggt",
     packages=find_packages(),
     version="0.1.0",
-    description="Galaxy Group Transformer",
-    author="Amrit Rau",
-    license="",
+    description="Galaxy Morphology Posterior Estimation Network",
+    author="Amrit Rau, Aritra Ghosh",
+    license="GNU GPL v3",
 )
