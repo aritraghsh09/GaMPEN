@@ -8,6 +8,7 @@
     
 .. image:: https://img.shields.io/badge/Python-3.7%2B-blue
    :alt: Python Version 3.7 and above 
+   :target: https://www.python.org/downloads/
 
 .. image:: https://img.shields.io/github/license/aritraghsh09/GaMPEN
    :alt: GitHub license
