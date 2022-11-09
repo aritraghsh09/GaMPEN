@@ -1,3 +1,7 @@
+.. image:: https://github.com/aritraghsh09/GaMPEN/actions/workflows/main.yml/badge.svg
+    :target: https://github.com/aritraghsh09/GaMPEN/actions/workflows/main.yml
+    :alt: Status of Build and Tests Workflow
+
 .. image:: https://readthedocs.org/projects/gampen/badge/?version=latest
     :target: https://gampen.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
