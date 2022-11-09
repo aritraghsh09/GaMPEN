@@ -1,10 +1,18 @@
+.. image:: https://github.com/aritraghsh09/GaMPEN/actions/workflows/main.yml/badge.svg
+    :target: https://github.com/aritraghsh09/GaMPEN/actions/workflows/main.yml
+    :alt: Status of Build and Tests Workflow
+
 .. image:: https://readthedocs.org/projects/gampen/badge/?version=latest
     :target: https://gampen.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
+    
+.. image:: https://img.shields.io/badge/Python-3.7%2B-blue
+   :alt: Python Version 3.7 and above 
+   :target: https://www.python.org/downloads/
 
-.. image:: https://img.shields.io/badge/license-GPL%20v3.0-blue
-    :target: https://github.com/aritraghsh09/GaMPEN/blob/master/LICENSE
-    :alt: License Information
+.. image:: https://img.shields.io/github/license/aritraghsh09/GaMPEN
+   :alt: GitHub license
+   :target: https://github.com/aritraghsh09/GaMPEN/blob/master/LICENSE
     
 .. image:: https://img.shields.io/badge/doi-10.3847%2F1538--4357%2Fac7f9e-blue
     :target: https://doi.org/10.3847/1538-4357/ac7f9e
