@@ -4,12 +4,12 @@
 We are still rolling out the full data release of HSC PDR2 morphological parameters. This page will be updated continuously through the Fall of 2022. Please check back for updates and contact us if you have any questions.
 ```
 
-# FTP Server
+## FTP Server
 
 All components of the public data release are hosted on the Yale Astronomy FTP server ``ftp.astro.yale.edu``. There are multiple ways you can access the FTP server, and we summarize some of the methods below.
 
 
-## Using Unix Command Line
+### Using Unix Command Line
 
 ```bash
 ftp ftp.astro.yale.edu
@@ -18,19 +18,20 @@ cd pub/aghosh/hsc_wide_pdr2_morph/<appropriate_subdirectory>
 
 If prompted for a username, try `anonymous` and keep the password field blank. After connecting, you can download files using the ``get`` command. 
 
-## Using a Browser
+### Using a Browser
 
-Navigate to ``ftp://ftp.astro.yale.edu/pub/aghosh/hsc_wide_pdr2_morph/<appropriate_subdirectory>``
+Navigate to ``ftp://ftp.astro.yale.edu/pub/<appropriate_subdirectory>``
 
-## Using Finder on OSX
+### Using Finder on OSX
 
 Open Finder, and then choose Go &rarr; Connect to Server (or command + K) and enter ``ftp://ftp.astro.yale.edu/pub/aghosh/``. Choose to connect as 
 ``Guest`` when prompted. 
 
 Thereafter, navigate to the appropriate subdirectory. 
 
+## Hyper Suprime-Cam Wide PDR2 Morphology
 
-# Prediction Tables
+### Prediction Tables
 
 The prediction tables are located at the following subdirectories on the FTP server:
 
@@ -73,7 +74,7 @@ There are multiple columns for each of the three morphological parmaeters: effec
 * ``preds_xx_threesig_ci``: The 3-sigma confidence interval of the posterior distribution of the morphological parameter.
 
 
-# Posterior Distribution Files for Individual Galaxies
+### Posterior Distribution Files for Individual Galaxies
 
 The predicted posterior distributions for individual galaxies are available as ``.npy`` files. The files are named as ``zz.npy`` where zz is the ``object_id`` mentioned in the prediction tables. The files located at the following subdirectories on the FTP server:
 
@@ -95,7 +96,7 @@ You can load the `.npy` files using the `np.load` function in `Numpy`. The array
 * 7 &rarr; y of magnitude
 
 
-# Trained GaMPEN Models
+### Trained GaMPEN Models
 
 Coming Soon! 
 
