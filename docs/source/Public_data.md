@@ -13,7 +13,7 @@ All components of the public data release are hosted on the Yale Astronomy FTP s
 
 ```bash
 ftp ftp.astro.yale.edu
-cd pub/aghosh/hsc_wide_pdr2_morph/<appropriate_subdirectory>
+cd pub/hsc_morph/<appropriate_subdirectory>
 ```
 
 If prompted for a username, try `anonymous` and keep the password field blank. After connecting, you can download files using the ``get`` command. 
