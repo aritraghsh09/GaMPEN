@@ -24,7 +24,7 @@ Navigate to ``ftp://ftp.astro.yale.edu/pub/<appropriate_subdirectory>``
 
 ### Using Finder on OSX
 
-Open Finder, and then choose Go &rarr; Connect to Server (or command + K) and enter ``ftp://ftp.astro.yale.edu/pub/aghosh/``. Choose to connect as 
+Open Finder, and then choose Go &rarr; Connect to Server (or command + K) and enter ``ftp://ftp.astro.yale.edu/pub/hsc_morph/``. Choose to connect as 
 ``Guest`` when prompted. 
 
 Thereafter, navigate to the appropriate subdirectory. 
@@ -35,11 +35,11 @@ Thereafter, navigate to the appropriate subdirectory.
 
 The prediction tables are located at the following subdirectories on the FTP server:
 
-* g-band HSC-Wide z < 0.25 galaxies &rarr; ``/pub/aghosh/hsc_wide_pdr2_morph/g_0_025/g_0_025_preds_summary.csv``
+* g-band HSC-Wide z < 0.25 galaxies &rarr; ``/pub/hsc_morph/g_0_025/g_0_025_preds_summary.csv``
 
-* r-band HSC-Wide 0.25 < z < 0.50 galaxies &rarr; ``/pub/aghosh/hsc_wide_pdr2_morph/r_025_050/r_025_050_preds_summary.csv``
+* r-band HSC-Wide 0.25 < z < 0.50 galaxies &rarr; ``/pub/hsc_morph/r_025_050/r_025_050_preds_summary.csv``
 
-* i-band HSC-Wide 0.50 < z < 0.75 galaxies &rarr; ``/pub/aghosh/hsc_wide_pdr2_morph/i_050_075/i_050_075_preds_summary.csv``
+* i-band HSC-Wide 0.50 < z < 0.75 galaxies &rarr; ``/pub/hsc_morph/i_050_075/i_050_075_preds_summary.csv``
 
 The various columns in the prediction tables are described below:
 
@@ -78,11 +78,11 @@ There are multiple columns for each of the three morphological parmaeters: effec
 
 The predicted posterior distributions for individual galaxies are available as ``.npy`` files. The files are named as ``zz.npy`` where zz is the ``object_id`` mentioned in the prediction tables. The files located at the following subdirectories on the FTP server:
 
-* g-band HSC-Wide z < 0.25 galaxies &rarr; ``/pub/aghosh/hsc_wide_pdr2_morph/g_0_025/posterior_arrays/``
+* g-band HSC-Wide z < 0.25 galaxies &rarr; ``/pub/hsc_morph/g_0_025/posterior_arrays/``
 
-* r-band HSC-Wide 0.25 < z < 0.50 galaxies &rarr; ``/pub/aghosh/hsc_wide_pdr2_morph/r_025_050/posterior_arrays/``
+* r-band HSC-Wide 0.25 < z < 0.50 galaxies &rarr; ``/pub/hsc_morph/r_025_050/posterior_arrays/``
 
-* i-band HSC-Wide 0.50 < z < 0.75 galaxies &rarr; ``/pub/aghosh/hsc_wide_pdr2_morph/i_050_075/posterior_arrays/``
+* i-band HSC-Wide 0.50 < z < 0.75 galaxies &rarr; ``/pub/hsc_morph/i_050_075/posterior_arrays/``
 
 You can load the `.npy` files using the `np.load` function in `Numpy`. The array dimensions are as follows:
 
