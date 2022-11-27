@@ -98,7 +98,13 @@ You can load the `.npy` files using the `np.load` function in `Numpy`. The array
 
 ### Trained GaMPEN Models
 
-Coming Soon! 
+The trained GaMPEN models are available as  ``.pt`` PyTorch files. The models are at the following locations
+
+* g-band HSC-Wide z < 0.25 galaxies &rarr; ``/pub/hsc_morph/g_0_025/trained_model/g_0_025_model.pt``
+
+* r-band HSC-Wide 0.25 < z < 0.50 galaxies &rarr; ``/pub/hsc_morph/r_025_050/trained_model/r_025_050_model.pt``
+
+* i-band HSC-Wide 0.50 < z < 0.75 galaxies &rarr; ``/pub/hsc_morph/i_050_075/trained_model/i_050_075_model.pt``
 
 
 

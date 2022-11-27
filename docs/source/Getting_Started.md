@@ -1,31 +1,46 @@
 # Getting Started
 
-GaMPEN is written in Python and uses the PyTorch deep learning library to perform all of the machine learning operations. 
+GaMPEN is written in Python and relies on the [PyTorch](https://pytorch.org/) deep learning library to perform all of its tensor operations.
 
 ## Installation
-Training and inference for GaMPEN requires a Python 3.6+ and a CUDA-friendly GPU.
+Training and inference for GaMPEN requires Python 3.7+. Trained GaMPEN models can be run on a CPU to perform inference, but training a model requires access to a CUDA-enabled GPU for reasonable training times.
 
-1. Create and activate a new Python 3.6+ `virtualenv`. More details can be found [here](https://docs.python.org/3/library/venv.html).
-2. Clone this repository with
+1. Create a new conda environment with Python 3.7+. Extensive instructions on how to create a conda enviornment can be found [here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands). Of course, you could use any other method of creating a virtual environment, but we will assume you are using conda for the rest of this guide.
+```bash
+conda create -n gampen python=3.7
+```
+2. Activate the new environment
+```bash
+conda activate gampen
+```
+3. Navigate to the directory where you want to install GaMPEN and then clone this repository with
 ```bash
 git clone https://github.com/aritraghsh09/GaMPEN.git
 ```
-3. Install all the required dependencies. From the root directory of `GaMPEN` repository, run
+4. Install all the required dependencies. From the root directory of `GaMPEN` repository, run
 ```bash
 make requirements
 ```
-4. To confirm that the installation was successful, run
+5. To confirm that the installation was successful, run
 ```bash
 make check
 ```
-5. To check whether the GaMPEN is able to detect GPUs, type `Python` from the root directory and run the following command:
+It is okay if there are some warnings or some tests are skipped. The only thing you should look out for is errors. 
+
+6. To check whether the GaMPEN is able to detect GPUs, type `Python` from the root directory and run the following command:
 ```python
 from ggt.utils.device_utils import discover_devices
 discover_devices()
 ```
-You should get the output as *cuda*. 
+The output should be *cuda*.
+
+
 ### Quickstart
-To train a GaMPEN model, you need to prepare the dataset and run the module `train.py`. During and after training, you can [launch the MLFlow UI](#launching-the-mlflow-ui) to view the training logs and artifacts. Check out our [Tutorials](#Tutorials)section for 
+To train a GaMPEN model, you need to place the training images and their corresponding labels in a specific directory structure. Here, we do a quick demonstration on some SDSS data. The backbone of GaMPEN's training is done by `train.py`. 
+
+In order to have an easy GUI monitoring all your models during and after training, you can [launch the MLFlow UI](#launching-the-mlflow-ui) to view various statistics of the models being trained as well as the paths to the trained models.
+
+Check out our [Tutorials](Tutorials.md) page for extensive details on how to train a GaMPEN model from scratch, how to perform transfer-learning/fine-tuning, and how to use GaMPEN to perform inference on your own data.
 
 #### Data preparation
 In this section, we will prepare and load the SDSS sample of Simard, et al. To load another dataset, see [Loading other datasets](#loading-other-datasets).
@@ -54,7 +69,7 @@ python ggt/train/train.py \
   --normalize \
   --transform
 ```
-To list additional options, run
+To list the all possible options along with explanations, head to the [Using GaMPEN](Using_GaMPEN.md) page or run
 ```bash
 python ggt/train/train.py --help
 ```
@@ -78,7 +93,7 @@ No output will be shown if the connection was successful. Open a browser and nav
 mkdir -p data/(dataset-name)/cutouts
 ```
 2. Place FITS files in `data/(dataset-name)/cutouts`.
-3. Provide a file titled `info.csv` at `data/(dataset-name)`. This file should have (at least) a column titled `file_name` (corresponding to the basenames of the files in `data/(dataset-name)/cutouts`) and a column titled `bt_g` containing bulge-to-total ratios.
+3. Provide a file titled `info.csv` at `data/(dataset-name)`. This file should have (at least) a column titled `file_name` (corresponding to the basenames of the files in `data/(dataset-name)/cutouts`) and one column for each of the variables that you are trying to predict. For example, if you are trying to predict the radius of a galaxy, you would have a column titled `radius`. The values in this column should be the target values of the radius of the galaxies in the dataset.
 
 4. Generate train/devel/test splits with
 ```bash
@@ -100,4 +115,4 @@ After generating the splits, the subdirectory `data` should look like:
 
 ## GPU Support
 
-If you are using a GPU, then you would need to make sure that the appropriate CUDA and cuDNN versions are installed. The appropriate version is decided by the versions of your installed Python libraries. For detailed instructions on how to enable GPU support for Tensorflow, please see [this link](https://www.tensorflow.org/install/source#linux).
+If you are using an NVIDIA GPU, then you would need to make sure that the appropriate CUDA and cuDNN versions are installed. See [this link](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch) for more details.
