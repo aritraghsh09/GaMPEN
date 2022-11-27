@@ -99,6 +99,9 @@ mkdir -p data/(dataset-name)/cutouts
 ```bash
 python ggt/data/make_splits.py --data_dir=data/(dataset-name)/
 ```
+
+The `make_splits.py` file splits the dataset into a variety of splits and you can choose to use any of these for your analysis. Details of the various splits are mentioned on the [Using GaMPEN](https://gampen.readthedocs.io/en/latest/Using_GaMPEN.html#make-splits) page.
+
 After generating the splits, the subdirectory `data` should look like:
 ```
 - data
