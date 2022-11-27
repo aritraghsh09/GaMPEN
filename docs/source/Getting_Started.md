@@ -35,14 +35,14 @@ discover_devices()
 The output should be *cuda*.
 
 
-### Quickstart
+## Quickstart
 To train a GaMPEN model, you need to place the training images and their corresponding labels in a specific directory structure. Here, we do a quick demonstration on some SDSS data. The backbone of GaMPEN's training is done by `train.py`. 
 
 In order to have an easy GUI monitoring all your models during and after training, you can [launch the MLFlow UI](#launching-the-mlflow-ui) to view various statistics of the models being trained as well as the paths to the trained models.
 
 Check out our [Tutorials](Tutorials.md) page for extensive details on how to train a GaMPEN model from scratch, how to perform transfer-learning/fine-tuning, and how to use GaMPEN to perform inference on your own data.
 
-#### Data preparation
+### Data preparation
 In this section, we will prepare and load the SDSS sample of Simard, et al. To load another dataset, see [Loading other datasets](#loading-other-datasets).
 
 1. From the root directory of this repository, run
@@ -55,7 +55,7 @@ make sdss
 python ggt/data/make_splits.py --data_dir=data/sdss/
 ```
 
-#### Running the trainer
+### Running the trainer
 Run the trainer with
 ```bash
 python ggt/train/train.py \
@@ -74,7 +74,7 @@ To list the all possible options along with explanations, head to the [Using GaM
 python ggt/train/train.py --help
 ```
 
-#### Launching the MLFlow UI
+### Launching the MLFlow UI
 Open a separate shell and activate the virtual environment that the model is training in. Then, run
 ```bash
 mlflow ui
