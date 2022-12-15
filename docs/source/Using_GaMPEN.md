@@ -299,6 +299,14 @@ Functions
 .. py:function:: main(data_dir,num,out_summary_df_path,out_pdfs_path, unscale,scaling_df_path, drop_old)
 
 ```
+
+```{attention}
+The result aggregator module also converts flux
+to magnitudes. However, this conversion is only
+valid for HSC. If you are using the module for
+some other survey, please alter the relevant line in the `unscale_preds` function of `result_aggregator.py` or ignore the mangitudes produced by the `result_aggregator` module.
+```
+
 ### Parameters
 
 * **data_dir**  - Full path to the directory that has the prediction csv files that need to be aggregated.
@@ -314,5 +322,7 @@ cd
 * **scaling_df_path** - Full path to the `info.csv` file that contains the scaling information. This is only used if `unscale` is set to True. Refer to the [Predictions Tutorial](https://gampen.readthedocs.io/en/latest/Tutorials.html#making-predictions) for a demonstration.
 
 * **drop_old/no-drop_old** - If True, the unscaled prediction columns will be dropped.
+
+
 
 
