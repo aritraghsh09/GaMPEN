@@ -123,7 +123,7 @@ def predict(
     "--normalize/--no-normalize",
     default=True,
     help="""The normalize argument controls whether or not, the
-              loaded images will be normalized using the arcsinh function""",
+              loaded images will be normalized using the arsinh function""",
 )
 @click.option(
     "--label_scaling",

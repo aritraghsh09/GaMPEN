@@ -212,75 +212,107 @@ Functions
 ```
 ### Parameters
 
-* **model_type** - Same as the model types mentioned in Running the trainer. 
+* **model_type**  - Same as the model types mentioned in Running the Trainer section previously. If using our pre-trained models, this should be set to `vgg16_w_stn_oc_drp`.
 
-* **model_path** - Add path to the trained model which you'll be using to run inference. 
+* **model_path** - The full path to the trained `.pt` model file which you want to use for performing prediction.
 
-* **output_path** - Add path to the directory where you want to store the output files. 
+* **output_path** - The full path to the output directory where the predictions of the model will be stored.
 
-* **data_dir** - Add path to the data directory. The directory should be made as per the directions given in README.
+* **data_dir** - The full path to the data directory that should contain a `cutouts` folder with all the images that you want to perform predictions on as well as an `info.csv` file that contains the filenames for all the images. For more information on how to create this directory structure during performing inference, plese refer to the [Predictions Tutorial](https://gampen.readthedocs.io/en/latest/Tutorials.html#making-predictions)
 
-* **cutout_size** (*int*) - Size of the fits image that the model takes as input. Default 167x167 pixels. 
+* **cutout_size** (*int*) - Size of the input image that the model takes as input. For our pre-trained models, this should be set to 239, 143, 96 for the low, mid, and high redshift models respectively.
 
-* **channels** - 
+* **channels** (*int*) - Number of channels in the input image. For our pre-trained models, this should be set to 3.
 
-* **slug** (*str*) - This specifies which slug (balanced/unbalanced xs, sm, lg, dev) is used to perform predictions on.
+* **slug** (*str*) - This specifies which slug (balanced/unbalanced xs, sm, lg, dev, dev2) is used to perform predictions on. Each slug refers to a different way to split the data into train, devel, and test sets. For more information on the fraction of data assigned to the train/deve/test sets for each slug, please refer to the [`make_splits`](https://gampen.readthedocs.io/en/latest/Using_GaMPEN.html#make-splits) function and the [``make_splits.py`` file](https://github.com/aritraghsh09/GaMPEN/blob/master/ggt/data/make_splits.py).
 
-* **split** (*str*) - The dataset you want to run inference on. 
+    If you are performing predictions on a dataset for which you don't have access to the ground truth labels (and thus you haven't run `make_splits`), this should be set to `None` as shown in the [Predictions Tutorial](https://gampen.readthedocs.io/en/latest/Tutorials.html#making-predictions).
 
-* **normalize/no-normalize** (*bool*) - The normalize argument controls whether or not, the
-loaded images will be normalized using the `arcsinh` function. 
+* **split** (*str*) - The split of the data that you want to perform predictions on. This should be set to `test` if you are performing predictions on the test set. If you are performing predictions on the train or devel set, this should be set to `train` or `devel` respectively.
 
-* **label_scaling** - The label scaling option controls whether to
-standardize the labels or not. Set this to *std* for sklearn's
-`StandardScaling()` and *minmax* for sklearn's `MinMaxScaler()`.
+    If you are performing predictions on a dataset for which you don't have access to the ground truth labels (and thus you haven't run `make_splits`), this should be set to `None` as shown in the [Predictions Tutorial](https://gampen.readthedocs.io/en/latest/Tutorials.html#making-predictions).
+
+* **normalize/no-normalize** (*bool*) - The normalize argument controls whether or not, the loaded images will be normalized using the `arsinh` function. 
+
+* **label_scaling** (*str*) - The label scaling option controls whether to
+standardize the labels or not. Set this to `std` for sklearn's
+`StandardScaling()` and `minmax` for sklearn's `MinMaxScaler()`.
 This is especially important when predicting multiple
 outputs. For more information, visit [here](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html).
+    
+    Note that you should pass the same argument for
+`label_scaling` as was used during the training phase (of the
+model being used for inference). For all our pre-trained models, this should be set to `std`."
 
-* **batch_size** (*int*) - Mention the batch size to be used during training the model. 
-     This variable specifies how many images will be processed in a single batch. This is a hyperparameter. The default value is a good starting point.
+* **batch_size** (*int*) - The batch size to be used during inference. This specfies how many images will be processed in a single batch. During inference, the only consideration is to keep the batch size small enough so that the batch can be fit within the memory of the GPU.
 
 * **n_workers** (*int*) - The number of workers to be used during the
-    data loading process.
+data loading process. You should set this to the number of threads you have access to. 
 
-* **parallel/ no-parallel** (*bool*) - The parallel argument controls whether or not
-    to use multiple GPUs when they are available. 
+* **parallel/ no-parallel** (*bool*) - The parallel argument controls whether or not to use multiple GPUs when they are available. 
 
-* **label_cols** - Enter the label column(s) separated by commas. Note
-    that you should pass the exactly same argument for label_cols
-    as was used during the training phase (of the model being used
-    for inference)
+    Note that this variable needs to be set to whatever value was used during the training phase (of the model being used for inference). For all our pre-trained models, this should be set to `parallell`
 
-* **repeat_dims/no-repeat_dims** - In case of multi-channel data, whether to repeat a two
-    dimensional image as many times as the number of channels.
+* **label_cols** (*str*) - Enter the label column(s) separated by commas. Note that you should pass the exactly same argument for label_cols as was used during the training phase (of the model being used for inference)
 
-* **mc_dropout/no-mc_dropout** - Turn on Monte Carlo dropout during inference.
+* **repeat_dims/no-repeat_dims** (*bool*) - In case of multi-channel data, whether to repeat a two dimensional image as many times as the number of channels. Note that you should pass the exactly same argument for repeat_dims as was used during the training phase (of the model being used for inference). For all our pre-trained models, this should be set to `repeat_dims`
 
-* **n_runs** - The number of times to run inference. This is helpful
-    when usng mc_dropout
+* **mc_dropout/no-mc_dropout** (*bool*) - Turns on Monte Carlo dropout during inference. For most cases, this should be set to `mc_dropout`.
 
-* **ini_run_num** - he number of the first run. i.e. the output csv files
-    are named as (inf_run_num+iteration_number).csv
+* **n_runs** (*int*) - The number of different models that will be generated using Monte Carlo dropout and used for infererence. 
 
-* **dropout_rate** - he dropout rate to use for all the layers in the
-    model. If this is set to None, then the default dropout rate
-    in the specific model is used. This option should only be
-    used when you have used a non-default dropout rate during
-    training and have set --mc_dropout to True. The rate should
-    be set equal to the rate used during training.
+* **ini_run_num** (*int*) - Specifies the starting run-number for `n_runs`. For example, if `n_runs` is set to 5 and `ini_run_num` is set to 10, then the output csv files will be named as `inf_10.csv`, `inf_11.csv`, `inf_12.csv`, `inf_13.csv`, `inf_14.csv`.
 
-* **transform/no-transform** - If True, the images are passed through a cropping transformation
-    to ensure proper cutout size.
+* **dropout_rate** - This should be set to the dropout rate used during training.
 
-* **errors/no-errors** - If True and if the model allows for it, aleatoric uncertainties are
-    written to the output file. Only set this to True if you trained the model
-    with aleatoric loss.
+* **transform/no-transform** - If `True`, the images are passed through a cropping transformation to ensure proper cutout size. This should be left on for most cases.
 
-* **cov_errors/no-cov_errors** - If True and if the model allows for it, aleatoric uncertainties are
-    written to the output file. Only set this to True if you trained the model
-    with aleatoric_cov loss. 
+* **errors/no-errors** - If True and if the model allows for it, aleatoric uncertainties are written to the output file. Only set this to True if you trained the model with `aleatoric` loss. 
+
+* **cov_errors/no-cov_errors** - If True and if the model allows for it, aleatoric uncertainties with full covariance conisdered are written to the output file. Only set this to True if you trained the model with `aleatoric_cov` loss. For our pre-trained models, this should be set to `cov_errors`.
+
+* **labels/no-labels** - If True, this means you have labels available for the dataset. If False, this means that you have no labels available and want to perform predictions on a dataset for which you don't know the ground truth labels.
+
+    This primarily used to control which files are used to perform scaling the prediction variables. If `--no-labels`, then you need to specify the data directory and slug that should be used to perform the scaling. If `--labels`, then the  `scaling_data_dir` and `scaling_slug` are automatically set to values for `data_dir` and `slug` provided before. 
+
+* **scaling_data_dir** - The data directory that should be used to perform unscaling of the prediction variables. You should only set this if using `--no-labels`. Refer to the [Predictions Tutorial](https://gampen.readthedocs.io/en/latest/Tutorials.html#making-predictions) for a demonstration. 
+
+* **scaling_slug** - This specifies which slug (balanced/unbalanced, xs, sm, lg, dev) corresponding to the scaling_data_dir is used to perform the data scaling on. You should only set this if using `--no-labels`. Refer to the [Predictions Tutorial](https://gampen.readthedocs.io/en/latest/Tutorials.html#making-predictions) for a demonstration.
+
 
 ### Returns
 ```
-csv files containing output information. 
+csv files containing predicted output
 ```
+
+## Result Aggregator
+
+```{eval-rst}
+:py:mod:`ggt.modules.result_aggregator`
+===============================
+
+.. py:module:: ggt.modules.result_aggregator
+
+Functions
+~~~~~~~~~~
+
+.. py:function:: main(data_dir,num,out_summary_df_path,out_pdfs_path, unscale,scaling_df_path, drop_old)
+
+```
+### Parameters
+
+* **data_dir**  - Full path to the directory that has the prediction csv files that need to be aggregated.
+
+* **num** - The number of prediction csv files that need to be aggregated.
+
+* **out_summary_df_path** - Full path to the output csv file that will contain the summary statistics. 
+
+* **out_pdfs_path** - Full path to the output directory that will contain the pdfs of the prediction distributions.
+
+* **unscale/no-unscale** - If True, the predictions are unscaled using the information `scaling_df_path`. This unscaling is for the inverse logit and logarithmic tansformations.
+cd
+* **scaling_df_path** - Full path to the `info.csv` file that contains the scaling information. This is only used if `unscale` is set to True. Refer to the [Predictions Tutorial](https://gampen.readthedocs.io/en/latest/Tutorials.html#making-predictions) for a demonstration.
+
+* **drop_old/no-drop_old** - If True, the unscaled prediction columns will be dropped.
+
+
