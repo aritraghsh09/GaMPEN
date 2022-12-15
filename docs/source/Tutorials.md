@@ -14,6 +14,9 @@ Coming Soon!
 
 ## Making Predictions
 
-Coming Soon!
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/aritraghsh09/GaMPEN/blob/master/tutorials/Making_predictions_tutorial.ipynb)
+[![Open In GitHub](https://img.shields.io/badge/|%20-Open%20in%20GitHub-informational?logo=github)](https://github.com/aritraghsh09/GaMPEN/blob/master/tutorials/Making_predictions_tutorial.ipynb)
+
+
 
 
