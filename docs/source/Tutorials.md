@@ -24,5 +24,9 @@ This tutorial demonstrates how to train GaMPEN when starting from a pre-trained 
 Coming Soon! 
 
 
+## Only Using the Auto-Cropping Module
 
+This tutorial demonstrates how to use the auto-cropping module of a trained GaMPEN model to only crop galaxy images (to be used for some task other than morphological parameter prediction).
+
+Coming Soon!
 
