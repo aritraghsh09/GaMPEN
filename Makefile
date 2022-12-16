@@ -31,6 +31,12 @@ sdss:
 	mkdir -p data/sdss/cutouts
 	curl http://amritrau.github.io/assets/data/info.csv > data/sdss/info.csv
 
+hsc_demo:
+	mkdir -p $(demodir)/cutouts
+	curl ftp://ftp.astro.yale.edu/pub/hsc_morph/gampen_tutorial_files/for_train/info.csv > $(demodir)/info.csv
+	wget -nH --cut-dirs 5 -r ftp://ftp.astro.yale.edu/pub/hsc_morph/gampen_tutorial_files/for_train/cutouts/ -P $(demodir)/cutouts/
+
+
 # Clear all MLFlow logs (use with care!)
 reset-mlflow: clean
 	rm -rf mlruns/
