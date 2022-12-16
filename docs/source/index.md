@@ -4,7 +4,6 @@
 % contain the root `toctree` directive.
 
 ```{toctree}
-:caption: 'Contents:'
 :maxdepth: 2
 :hidden:
 
@@ -16,13 +15,14 @@ Public_data
 ```
 
 ```{attention}
-Note that we are still actively working on the documentation and tutorials of GaMPEN; and the docs are not complete yet. We hope to have the docs fully completed by early Spring 2023. If you run into issues while trying to use GaMPEN before that, please contact us! We will be happy to help you.
+Note that we are still actively working on the documentation and tutorials of GaMPEN; and the docs are not complete yet. We hope to have the docs fully completed by early January 2023. If you run into issues while trying to use GaMPEN before that, please contact us! We will be happy to help you.
 ```
 
-![Introductory Image](/intro_image.png)
+# About GaMPEN
+
+![Introductory Image](./../assets/intro_image.png)
 
 ***
-
 The Galaxy Morphology Posterior Estimation Network (GaMPEN) is a novel machine learning framework that estimates Bayesian posteriors (i.e., values + uncertainties) of morphological parameters for arbitrarily large numbers of galaxies. GaMPEN also automatically crops input galaxy images to an optimal size before morphological parameter estimation.
 
 ## First Steps with GaMPEN
@@ -55,7 +55,7 @@ The uncertainties/posteriors produced by GaMPEN have been shown to be extremely 
 ### Predictional Stabiltily Against Rotational Transformations
 The video below shows the stability of predictions made by trained GaMPEN HSC models when an input galaxy image is rotated through various angles. GaMPEN's predictions of all three output parameters are stable against rotations.
 
-![Rotational Transformation]( http://www.astro.yale.edu/aghosh/images/research/real_data_gampen_video_high_res.gif)
+![Rotational Transformation](./../assets/real_data_gampen_video.gif "Rotational Transformation")
 
 
 ## Publication 
