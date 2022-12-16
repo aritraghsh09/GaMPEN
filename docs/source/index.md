@@ -19,69 +19,55 @@ Public_data
 Note that we are still actively working on the documentation and tutorials of GaMPEN; and the docs are not complete yet. We hope to have the docs fully completed by early Spring 2023. If you run into issues while trying to use GaMPEN before that, please contact us! We will be happy to help you.
 ```
 
-# About GaMPEN
+![Introductory Image](/intro_image.png)
 
-The **Ga**laxy **M**orphology **P**osterior **E**stimation **N**etwork (GaMPEN) is a novel machine learning framework for estimating the Bayesian posteriors of morphological parameters for arbitrarily large numbers of galaxies. GaMPEN estimates values and uncertainties for a galaxy’s bulge-to-total light
-ratio (*L_B/L_T*), effective radius (*R_e*), and flux (*F*). 
+***
 
-GaMPEN uses a CNN module to estimate the joint posterior probability distributions of these parameters. This is done by using the negative log-likelihood of the output parameters as the loss function combined with the Monte Carlo Dropout technique. GaMPEN also incorporates the full covariance matrix in the loss function, using a series of algebraic manipulations. GaMPEN also uses a Spatial Transformer Network (STN) to automatically crop input galaxy frames to an optimal size before determining their morphology which allows it to be applied to new data without prior knowledge of galaxy size.
+The Galaxy Morphology Posterior Estimation Network (GaMPEN) is a novel machine learning framework that estimates Bayesian posteriors (i.e., values + uncertainties) of morphological parameters for arbitrarily large numbers of galaxies. GaMPEN also automatically crops input galaxy images to an optimal size before morphological parameter estimation.
 
-### Why do we use STN?
+## First Steps with GaMPEN
+1. Follow the installation instructions and quick-start guide in [Getting Started](./Getting_Started.md).
+2. Go through the [Tutorials](./Tutorials.md) to learn how to use GaMPEN for a variety of different tasks.
+3. Review the [Using GaMPEN](./Using_GaMPEN.md) page to dive into the details about the various user-facing functions that GaMPEN provides.
 
-Most trained CNNs require input images of a fixed size—thus, most previous works have resorted to selecting a large cutout size for which “most galaxies” would remain in the frame. However, this
-means that for many galaxies in the dataset, especially smaller ones, typical cutouts contain other galaxies in the frame, often leading to less accurate results. This problem is aggravated when designing a CNN applicable over an extensive range in redshift, which corresponds to a large range of galaxy sizes. Lastly, most previous work has used computations of Re from previous catalogs to estimate the correct cutout size to choose. This is, of course, not possible when one is trying to use a CNN on a new, unlabeled dataset. 
+We also recommend going through the publications referred to at the bottom of this page. However, for a quick blog-esque introduction to the most important features of GaMPEN, please check out [this page](http://www.astro.yale.edu/aghosh/gampen.html).
 
-To address these challenges, GaMPEN automatically crops the input image frames using a Spatial Transformer Network (STN) module upstream of the CNN. The inclusion of the STN in the framework greatly reduces the amount of time spent on data preprocessing as it trains simultaneously with the downstream CNN
-without additional supervision. 
+Note that if you want to access the publicly released trained models + morphological parameters for the Hyper Suprime-Cam (HSC) survey, please refer to the [Public Data Release Handbook](./Public_data.md) page.
 
-### Architecture of GaMPEN
 
-The backbone of GaMPEN is a Convolutional Neural Network. CNNs learn to identify thousands of
-local patterns in their input images that are translation invariant. Additionally, CNNs learn the spatial hierarchies of these patterns, allowing them to process increasingly complex and abstract visual concepts. These two key features have allowed deep CNNs to revolutionize the field of image processing in the last decade. 
+## What Parameters and Surveys can GaMPEN be Used for?
 
+The publicly released GaMPEN models can be used to estimate the bulge-to-total light ratio, effective radius, and flux of galaxies in the Hyper Suprime-Cam (HSC) survey till $z < 0.75$.
+
+**However, GaMPEN models can be trained from scratch to determine any combination of morphological parameters** (even different from the ones mentioned above -- e.g. Sersic Index) **for any space or ground-based imaging survey**. Please check out our [FAQs](./FAQs.md) page for our recommendations if you want to train a GaMPEN model tuned to a specific survey. Also, don't hesitate to contact us if you want our help/advice in training a GaMPEN model for your survey/parameters.
+
+## More Details About GaMPEN
+
+### GaMPEN's Architecture
+GaMPEN consists of a two sequential neural networks, a Spatial Transformer Network (STN) followed by a Convolutional Neural Network (CNN). The STN automatically crops input galaxy images to an optimal size before morphological parameter estimation. The CNN then estimates the joint posterior probability distributions of the morphological parameters 
 ![GaMPEN architecture](../assets/GaMPEN_architecture.png "Architecture of GaMPEN")
 
-The architecture of GaMPEN is shown in the above figure. It consists of a Spatial Transformer Network module followed by a downstream CNN module. y. The design of GaMPEN is based on our previously successful classification CNN, GaMorNet (Ghosh et al. 2020), as well as different variants of the VGG networks (Simonyan & Zisserman 2014), which are highly effective at large-scale visual recognition. 
+### GaMPEN's Posteriors/Uncertainties
+To predict posteriors, GaMMPEN takes into account both aleatoric and epistemic uncertainties. It uses the negative log-likelihood of the output parameters as the loss function combined with the Monte Carlo Dropout technique. GaMPEN also incorporates the full covariance matrix in the loss function, using a series of algebraic manipulations.
 
-As shown in the above figure, the STN is upstream of the CNN, where it applies a two-dimensional affine transformation to the input image, and the transformed image is then passed to the CNN. Each input image is transformed differently by the STN, which learns the appropriate cropping during the training of the downstream CNN without additional supervision.
+The uncertainties/posteriors produced by GaMPEN have been shown to be extremely well-calibrated ($\lesssim 5\%$ deviation)
 
-![STN](../assets/STN.png "Examples of the transformation applied by the STN to six randomly selected input galaxy images.")
-In the above figure, the top row shows the input galaxy images, and the bottom row shows the corresponding output from the STN. The numbers in the top-left
-yellow boxes help correspond the output images to the input images. As can be seen, the STN learns to apply an optimal amount of cropping for each input galaxy. The STN correctly learns to apply the most aggressive crops to smallest galaxies in our dataset, and the least aggressive crops to the largest galaxies. 
+### Predictional Stabiltily Against Rotational Transformations
+The video below shows the stability of predictions made by trained GaMPEN HSC models when an input galaxy image is rotated through various angles. GaMPEN's predictions of all three output parameters are stable against rotations.
 
-For more details about GaMPEN’s design, how it was trained, etc., please refer to [Publication & Other Data](##Publication%20&%20Other%20Data).
+![Rotational Transformation]( http://www.astro.yale.edu/aghosh/images/research/real_data_gampen_video_high_res.gif)
 
-## First contact with GaMPEN
-
-GaMPEN's user-faced functions have been written in a way so that it’s easy to start using them even if you have not dealt with STNs or convolutional neural networks before. For eg. to perform predictions on an array of SDSS images using our trained models, the following line of code is all you need.
-
-```bash
-python ggt/train/train.py \
-  --experiment_name='ggt-quickstart' \
-  --data_dir='data/sdss/' \
-  --split_slug='balanced-lg' \
-  --expand_data=1 \
-  --batch_size=64 \
-  --epochs=40 \
-  --lr=0.005 \
-  --normalize \
-  --transform
-```
-
-In order to start using GaMPEN, please first look at the Getting Started section for instructions on how to install GaMPEN. Thereafter, we recommend trying out the Tutorials in order to get a handle on how to use GaMPEN.
-
-Finally, you should have a look at the Public Data Release Handbook for our recommendations on how to use different elements of GaMPEN’s public data release for your own work and the API Documentation for detailed documentation of the different functions in the module.
 
 ## Publication 
 
-GaMPEN was initially introduced in this [ApJ paper](https://iopscience.iop.org/article/10.3847/1538-4357/ac7f9e) 
+GaMPEN was initially introduced in this [ApJ paper](https://iopscience.iop.org/article/10.3847/1538-4357/ac7f9e). 
 
-An updated record of GaMPEN's trained models and catalogs produced are maintained [here](http://gampen.ghosharitra.com/)
+Since then, GaMPEN has been used in a number of other publications. We always try to maintain an updated record of GaMPEN's trained models and catalogs produced [on this page](http://gampen.ghosharitra.com/)
 
 
 ## Attribution Info.
 
-Please cite the above mentioned publication if you make use of this software module or some code herein.
+Please cite the below mentioned publication if you make use of this software module or some code herein.
 
 
 ```tex
@@ -99,11 +85,7 @@ Please cite the above mentioned publication if you make use of this software mod
    }
 ```
 
-Additionally, if you want, please include the following text in the Software/Acknowledgment section.
-
-```tex
-This work uses trained models/software made available as a part of the Galaxy Morphology Posterior Estimation Network public data release.
-```
+Additionally, if you are using publicly released GaMPEN models or catalogs for a specific survey, please cite the relevant publication(s) in which the data was released. For example, if you are using the GaMPEN HSC models, please cite [this article](https://arxiv.org/abs/2212.00051).
 
 ## License
 
@@ -114,7 +96,7 @@ Made available under a [GNU GPL v3.0](https://github.com/aritraghsh09/GaMPEN/blo
 
 ## Getting Help/Contributing
 
-If you have a question, please send me an e-mail at this ``aritraghsh09@xxxxx.com`` GMail address.
+We always welcome contributions to GaMPEN!! If you have any questions about using GaMPEN, please feel free to send me an e-mail at this ``aritraghsh09@xxxxx.com`` GMail address.
 
 If you have spotted a bug in the code/documentation or you want to propose a new feature, please feel free to open an issue/a pull request on [GitHub](https://github.com/aritraghsh09/GaMPEN).
 
