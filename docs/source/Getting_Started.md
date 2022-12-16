@@ -72,7 +72,7 @@ make demodir=./../hsc hsc_demo
 
 This should create a directory called `hsc` at the specified `demodir` path with the following components
 
-```
+```text
 - hsc
   - info.csv -- file names of the trianing images with labels
   - cutouts/ -- 67 images to be used for this demo
