@@ -287,6 +287,7 @@ def train(**kwargs):
             f"{mlflow.active_run().info.run_id}"
         )
         model_path = save_trained_model(model, slug)
+        logging.info("Saved model to {}".format(model_path))
 
         # Log model as an artifact
         mlflow.log_artifact(model_path)
