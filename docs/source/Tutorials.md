@@ -25,9 +25,11 @@ This tutorial demonstrates how to train GaMPEN when starting from a pre-trained 
 Coming Soon! 
 
 
-## Only Using the Auto-Cropping Module
+## Using the Auto-Cropping Module Separately
 
-This tutorial demonstrates how to use the auto-cropping module of a trained GaMPEN model to only crop galaxy images (to be used for some task other than morphological parameter prediction).
+This tutorial demonstrates how to use the auto-cropping module of a trained GaMPEN model to only crop galaxy images (to be used for any task -- not necessarily morphological analysis).
 
-Coming Soon!
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/aritraghsh09/GaMPEN/blob/master/tutorials/Autocropping.ipynb)
+[![Open In GitHub](https://img.shields.io/badge/|%20-Open%20in%20GitHub-informational?logo=github)](https://github.com/aritraghsh09/GaMPEN/blob/master/tutorials/Autocropping.ipynb)
+
 
