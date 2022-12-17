@@ -10,7 +10,7 @@ Public_data
 ```
 
 ```{attention}
-Note that we are still actively working on the documentation and tutorials of GaMPEN; and the docs are not complete yet. We hope to have the docs fully completed by early spring 2023. If you run into issues while trying to use GaMPEN before that, please contact us! We will be happy to help you.
+Note that although GaMPEN's current documentation is fairly substantative, we are still working on some parts of the documentation and some Tutorials. If you run into issues while trying to use GaMPEN, please contact us! We will be more than happy to help you!
 ```
 
 # About GaMPEN
