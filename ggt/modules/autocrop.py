@@ -33,7 +33,7 @@ from astropy.io import fits
 @click.option("--out_dir", type=click.Path(exists=True), required=True)
 @click.option("--normalize/--no-normalize", default=True)
 @click.option("--transform/--no-transform", default=True)
-@click.opttion("repeat_dims/--no-repeat_dims", default=True)
+@click.option("repeat_dims/--no-repeat_dims", default=True)
 @click.option("--parallel/--no-parallel", default=True)
 @click.option("--cov_errors/--no-cov_errors", default=False)
 @click.option("--errors/--no-errors", default=False)
