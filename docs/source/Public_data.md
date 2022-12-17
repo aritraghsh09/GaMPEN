@@ -1,7 +1,7 @@
 # Public Data Release Handbook
 
 ```{note}
-We are still rolling out the full data release of HSC PDR2 morphological parameters. This page will be updated continuously through the Fall of 2022. Please check back for updates and contact us if you have any questions.
+We are still rolling out the full data release of HSC PDR2 morphological parameters. This page will be updated continuously through the Spring of 2023. If you can't find the portion of the data-release that you need, please drop us a line!
 ```
 
 ## FTP Server
@@ -106,6 +106,41 @@ The trained GaMPEN models are available as  ``.pt`` PyTorch files. The models ar
 
 * i-band HSC-Wide 0.50 < z < 0.75 galaxies &rarr; ``/pub/hsc_morph/i_050_075/trained_model/i_050_075_model.pt``
 
+
+#### Trained Model Parameters
+
+We mention some of the finally tuned hyper-parameters that we used for the above models. Note that while performing inference using the above models, you will need to use some of these parameters.
+
+
+| Parameter Name | Low-z Real Data | Mid-z Real Data | High-z Real Data |
+|----------------|-----------------|-----------------|------------------|
+| `model_type` | `vgg16_w_stn_oc_drp`| `vgg16_w_stn_oc_drp` | `vgg16_w_stn_oc_drp` |
+| `cutout_size` | 239 | 143 | 96 |
+| `droput_rate` | 0.0004 | 0.0002 | 0.0002 |
+| `label_scaling` | `std` | `std` | `std` |
+| `loss` | `aleatoric_cov` | `aleatoric_cov` | `aleatoric_cov` |
+| `lr` | 5e-8 | 5e-8 | 5e-06 |
+| `momentum` | 0.99 | 0.99 | 0.99 |
+| `nesterov` | False | False | False |
+| `weight_decay` | 0.0001 | 0.0001 | 0.0001 |
+| `parallel` | True | True | True |
+| `target_metrics` | `custom_logit_bt`, `ln_R_e_asec`, `ln_total_flux_adus` | `custom_logit_bt`, `ln_R_e_asec`, `ln_total_flux_adus` | `custom_logit_bt`, `ln_R_e_asec`, `ln_total_flux_adus` |
+| `split_slug` | `balanced-dev2` | `balanced-dev2` | `balanced-dev2` |
+
+
+#### Scaling Data
+
+Note that as mentioned in the [Predictions Tutorial](Tutorials.md#making-predictions), in order to unscale the predictions made using the above models, you need access to the training files. 
+
+You can access these files at the following locations using `wget`:
+
+`ftp://ftp.astro.yale.edu/pub/hsc_morph/xxxx/scaling_data_dir/info.csv`
+
+and 
+
+`ftp://ftp.astro.yale.edu/pub/hsc_morph/xxxx/scaling_data_dir/splits/`
+
+where `xxxx` is `g_0_025`, `r_025_050`, or `i_050_075` for low-, mid-, and high-z models respectively.
 
 
 
