@@ -68,7 +68,7 @@ def main(
 
     # Calculating the number of outputs
     if errors:
-        n_out = int(len(n_pred) * 2)
+        n_out = int(n_pred * 2)
     elif cov_errors:
         n_out = int((3 * n_pred + n_pred ** 2) / 2)
     else:
