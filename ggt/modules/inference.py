@@ -104,13 +104,13 @@ def predict(
         ],
         case_sensitive=False,
     ),
-    default="ggt",
+    default="vgg16_w_stn_oc_drp",
 )
 @click.option("--model_path", type=click.Path(exists=True), required=True)
 @click.option("--output_path", type=click.Path(writable=True), required=True)
 @click.option("--data_dir", type=click.Path(exists=True), required=True)
 @click.option("--cutout_size", type=int, default=167)
-@click.option("--channels", type=int, default=1)
+@click.option("--channels", type=int, default=3)
 @click.option(
     "--slug",
     type=str,
@@ -128,7 +128,7 @@ def predict(
 @click.option(
     "--label_scaling",
     type=str,
-    default=None,
+    default="std",
     help="""The label scaling option controls whether to
 standardize the labels or not. Set this to std for sklearn's
 StandardScaling() and minmax for sklearn's MinMaxScaler().
@@ -141,13 +141,13 @@ model being used for inference).""",
 @click.option(
     "--n_workers",
     type=int,
-    default=16,
+    default=4,
     help="""The number of workers to be used during the
               data loading process.""",
 )
 @click.option(
     "--parallel/--no-parallel",
-    default=False,
+    default=True,
     help="""The parallel argument controls whether or not
               to use multiple GPUs when they are available""",
 )
@@ -162,13 +162,13 @@ model being used for inference).""",
 )
 @click.option(
     "--repeat_dims/--no-repeat_dims",
-    default=False,
+    default=True,
     help="""In case of multi-channel data, whether to repeat a two
               dimensional image as many times as the number of channels""",
 )
 @click.option(
     "--mc_dropout/--no-mc_dropout",
-    default=False,
+    default=True,
     help="""Turn on Monte Carlo dropout during inference.""",
 )
 @click.option(
