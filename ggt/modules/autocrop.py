@@ -20,10 +20,18 @@ from astropy.io import fits
 @click.option(
     "--model_type",
     type=click.Choice(
-        ["ggt", "vgg16", "ggt_no_gconv", "vgg16_w_stn", "vgg16_w_stn_drp"],
+        [
+            "ggt",
+            "vgg16",
+            "ggt_no_gconv",
+            "vgg16_w_stn",
+            "vgg16_w_stn_drp",
+            "vgg16_w_stn_at_drp",
+            "vgg16_w_stn_oc_drp",
+        ],
         case_sensitive=False,
     ),
-    default="ggt",
+    default="vgg16_w_stn_oc_drp",
 )
 @click.option("--model_path", type=click.Path(exists=True), required=True)
 @click.option("--cutout_size", type=int, default=167)
@@ -128,7 +136,7 @@ def main(
             hdul.writeto(out_path, overwrite=True)
 
         # Save the cropped image to disk
-        Xt = Xt[0,0,:,:]
+        Xt = Xt[0, 0, :, :]
         save_fits_image(Xt.cpu().numpy(), out_path)
 
 
