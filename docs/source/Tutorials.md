@@ -15,7 +15,8 @@ This tutorial demonstrates how to use trained GaMPEN models on galaxy images to 
 
 This tutorial demonstrates how to train GaMPEN from scratch using your own data. 
 
-Coming Soon! 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/aritraghsh09/GaMPEN/blob/master/tutorials/Training_and_Inference_tutorial.ipynb)
+[![Open In GitHub](https://img.shields.io/badge/|%20-Open%20in%20GitHub-informational?logo=github)](https://github.com/aritraghsh09/GaMPEN/blob/master/tutorials/Training_and_Inference_tutorial.ipynb)
 
 ## Transfer Learning with GaMPEN 
 
