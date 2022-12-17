@@ -128,6 +128,7 @@ def main(
             hdul.writeto(out_path, overwrite=True)
 
         # Save the cropped image to disk
+        Xt = Xt[0,0,:,:]
         save_fits_image(Xt.cpu().numpy(), out_path)
 
 
