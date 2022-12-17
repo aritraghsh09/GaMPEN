@@ -133,7 +133,7 @@ data loading process. You should set this to the number of CPU threads you have 
 * **parallel/ no-parallel** (*bool*; default=`True`) - The parallel argument controls whether or not to use multiple GPUs during training when they are available. 
 
    ```{note}
-   The above notation (which is used for other arugments as well) implies that if you pass is `--parallel` then the `parallel` argument is set to `True`. If you pass `--no-parallel` then the `parallel` argument is set to `False`. 
+   The above notation (which is used for other arugments as well) implies that if you pass `--parallel` then the `parallel` argument is set to `True`. If you pass `--no-parallel` then the `parallel` argument is set to `False`. 
     ```
 
 * **normalize/no-normalize** (*bool*; default=`True`) - The normalize argument controls whether or not, the loaded images will be normalized using the `arsinh` function. 
@@ -298,7 +298,7 @@ Functions
 
 * **scaling_df_path** (*str*; default=`None`) - Full path to the `info.csv` file that contains the scaling information. This is only used if `unscale` is set to True. 
 
-This is needed to perform the inverse logit transforamtion. As the logit transformation goes to infinty at the edges of the variable space and we need to perform an approximation. To perform this approximation, we need access to the `info.csv` file that was used during training. We make the `info.csv` files for all our pre-trained models available. Refer to the [Predictions Tutorial](https://gampen.readthedocs.io/en/latest/Tutorials.html#making-predictions) for a demonstration.
+    This is needed to perform the inverse logit transforamtion. As the logit transformation goes to infinty at the edges of the variable space and we need to perform an approximation. To perform this approximation, we need access to the `info.csv` file that was used during training. We make the `info.csv` files for all our pre-trained models available. Refer to the [Predictions Tutorial](https://gampen.readthedocs.io/en/latest/Tutorials.html#making-predictions) for a demonstration.
 
 * **drop_old/no-drop_old** (*bool*; default=`True`)- If `True`, the unscaled prediction columns will be dropped.
 
