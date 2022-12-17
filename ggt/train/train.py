@@ -52,7 +52,7 @@ So this variable should be specified accordingly""",
         ],
         case_sensitive=False,
     ),
-    default="ggt",
+    default="vgg16_w_stn_oc_drp",
 )
 @click.option("--model_state", type=click.Path(exists=True), default=None)
 @click.option("--data_dir", type=click.Path(exists=True), required=True)
@@ -76,7 +76,7 @@ to what fraction is picked for train/devel/test.""",
     type=click.Choice(
         ["mse", "aleatoric", "aleatoric_cov", ], case_sensitive=False,
     ),
-    default="mse",
+    default="aleatoric_cov",
     help="""The loss function to use""",
 )
 @click.option(
@@ -91,13 +91,13 @@ data is augmented""",
 @click.option(
     "--n_workers",
     type=int,
-    default=16,
+    default=4,
     help="""The number of workers to be used during the
 data loading process.""",
 )
-@click.option("--batch_size", type=int, default=32)
+@click.option("--batch_size", type=int, default=16)
 @click.option("--epochs", type=int, default=40)
-@click.option("--lr", type=float, default=0.005)
+@click.option("--lr", type=float, default=5e-7)
 @click.option("--momentum", type=float, default=0.9)
 @click.option("--weight_decay", type=float, default=0)
 @click.option(
@@ -110,7 +110,7 @@ to use multiple GPUs when they are available""",
     "--normalize/--no-normalize",
     default=True,
     help="""The normalize argument controls whether or not, the
-loaded images will be normalized using the arcsinh function""",
+loaded images will be normalized using the arsinh function""",
 )
 @click.option(
     "--label_scaling",
@@ -137,7 +137,7 @@ to the cutout_size parameter""",
 )
 @click.option(
     "--repeat_dims/--no-repeat_dims",
-    default=False,
+    default=True,
     help="""In case of multi-channel data, whether to repeat a two
 dimensional image as many times as the number of channels""",
 )

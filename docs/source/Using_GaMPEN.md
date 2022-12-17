@@ -1,43 +1,34 @@
 # Using GaMPEN
-We describe various user oriented functions and the information about various parameters needed to execute them. 
+On this page, we go over the most important user-facing functions that GaMPEN has and what each of these functions do. Read this page carefully to understand the various arguments/options that can be set while using these functions. 
 
 ## Running the trainer
 
-This section contains the information regarding various click options required to run the user oriented function `train.py`. 
+The backbone of GaMPEN's training feature is the `GaMPEN/ggt/train/train.py`. This script is meant to be invoked from the command line while passing in the appropriate arguments. 
+
 ```{eval-rst}  
+
 :py:mod:`ggt.train.train`
 =========================
 
-.. py:module:: ggt.train.train
-
-
 Functions
 ~~~~~~~~~
-
-.. autoapisummary::
-
-   ggt.train.train.train
-
 
 .. py:function:: train(**kwargs)
 
    Runs the training procedure using MLFlow.
 
 ```
-****kwargs** - Parameters passed into the `ggt.models.train.train` base function. 
-
 ### Parameters:
 
-* **experiment_name** (*str*) - An experiment name should be assigned which provides significant insight about the experiment. 
-* **run_id** (*str*) - This only needs to be used
-if you are resuming a previosuly run experiment.
+* **experiment_name** (*str*; default=`"demo"`) - MLFlow variable which controls the name of the experiment in MLFlow.
 
-* **run_name** (*str*) - A run is supposed to be a sub-class of an experiment.
-So this variable should be specified accordingly. 
+* **run_id** (*str*; default=`None`) - An MLFlow variable. This only needs to be used if you are resuming a previosuly run experiment, and want the information to be logged under the previous run.
 
-* **model_type** - One of the following models has to be chosen as the model type. For further information, please refer to the [source code](https://github.com/aritraghsh09/GaMReN/blob/trial_network/ggt/models).
-    * **ggt** - It stands for Galaxy Group-Equivariant Transformer model. 
-    * **vgg16** - It is a 16 layer deep convolutional neural network model that is pretrained on the imagenet database. For more information, visit [here](https://pytorch.org/vision/main/models/generated/torchvision.models.vgg16.html). 
+* **run_name** (*str*; default=`None`) - The name assigned to the MLFlow run. A run is supposed to be a sub-class of an experiment in MLFLow. Typically you will have multiple runs (e.g., using multiple hyper-parameters) within an experiment.
+
+* **model_type** (*str*; default=`"vgg16_w_stn_oc_drp"`) - The type of model you want to train. For most purposes, if you are trying to use GaMPEN as it was originally used, you should use `vgg16_w_stn_oc_drp`. We recommend referring to the source [source code](https://github.com/aritraghsh09/GaMReN/blob/trial_network/ggt/models) for information about the other options.
+    * **ggt** 
+    * **vgg16** 
     * **ggt_no_gconv**
     * **vgg16_w_stn**
     * **vgg16_w_stn_drp**
@@ -45,107 +36,90 @@ So this variable should be specified accordingly.
     * **vgg16_w_stn_at_drp**
     * **vgg16_w_stn_oc_drp**
 
-* **model_state**
+* **model_state** (*str*; default=`None`) - The path to a previosuly saved model file. This only needs to be set when you want to start training from a previously saved model.
 
-* **data_dir** - Add path to the data directory. The directory should be made as per the directions given in README.
+* **data_dir** (*str*; required variable)- The path to the data directory containing the `info.csv` file and the `cutouts/` folder.
 
-* **split_slug** - This specifies how the data is split into train/
-devel/test sets. *Balanced*/*Unbalanced* refer to whether selecting
-equal number of images from each class. *xs*, *sm*, *lg*, *dev* all refer
-to what fraction is picked for train/devel/test.
+* **split_slug** (*str*; required variable) - This specifies which data-split is used from the `splits` folder in `data_dir`. For split, the options are `balanced`, `unbalanced` and for slug the options are `xs`, `sm`, `md`, `lg`, `xl`, `dev`, and `dev2`. Refer to the [Make Splits](#make-splits) section for more information.
 
-* **target_metrics** - Enter the target metrics separated by commas.
+* **target_metrics** (*str*; default=`"bt_g"`) - Enter the column names of `info.csv` that you want the model to learn/predict separated by a comma. For example, if you want the model to predict the `R_e` and `bt` columns, then you should enter `R_e,bt`. 
 
-* **loss** - One of the following loss functions has to be chosen. For further information about the loss functions, please refer to the [source code](https://github.com/aritraghsh09/GaMReN/blob/trial_network/ggt/losses).
+* **loss** (*str*; default=`"aleatoric_cov"`) - This can be set to the following options:-
     * **mse**
     * **aleatoric**
     * **aleatoric_cov**  
 
-* **expand_data** - This controls the factor by which the training
-data is augmented.
+    For most purposes when you want full posterior distributions similar to the original GaMPEN results, you should use `aleatoric_cov`. The aleatoric covariance loss is the full loss function is given by 
 
-* **cutout_size** (*int*) - Size of the fits image that the model takes as input. Default 167x167 pixels. 
+    $$ - \log \mathcal{L} \propto  \sum_{n} \frac{1}{2}\left[\boldsymbol{Y}_{n}-\boldsymbol{\hat{\mu}}_{n}\right]^{\top} \boldsymbol{\hat{\Sigma_n}}^{-1}\left[\boldsymbol{Y}_{n}-\boldsymbol{\hat{\mu}}_{n}\right] + \frac{1}{2} \log [\operatorname{det}(\boldsymbol{\hat{\Sigma_n}})] $$
 
-* **channels** - 
+    where $Y_n$ is the target variable (values passed in `info.csv`); $\boldsymbol{\hat{\mu}}_n$ and $\boldsymbol{\hat{\Sigma}}_n$ are the mean and covariance matrix of the multivariate Gaussian distribution predicted by GaMPEN for an image. For an extended derivation of the loss function, please refer to [Ghosh et. al. 2022](https://iopscience.iop.org/article/10.3847/1538-4357/ac7f9e). 
 
-* **n_workers** (*int*) - The number of workers to be used during the
-data loading process.
+    The `aleatoric_loss` option implements a similar loss function as above, but instead of using the full covariance matrix, it uses only the diagonal elements.
 
-* **batch_size** (*int*) - Mention the batch size to be used during training the model. This variable specifies how many images will be processed in a single batch. This is a hyperparameter. The default value is a good starting point.
-
-* **epochs** (*int*) - Mention the number of epochs to be used during training the model.
-
-* **lr** (*float*) - This is the learning rate to be used during the training process. This is a hyperparameter that should be tuned during the training process. The default value is a good starting point.
-
-* **momentum** (*float*) - The value of the momentum to be used in the gradient descent optimizer that is used to train the model. This must always be ≥0. This accelerates the gradient descent process. This is a hyperparameter. The default value is a good starting point.
-
-* **weight_decay** (*float*) - The amount of learning rate decay to be applied over each update.
-
-* **parallel/ no-parallel** (*bool*) - The parallel argument controls whether or not
-to use multiple GPUs when they are available. 
-
-* **normalize/no-normalize** (*bool*) - The normalize argument controls whether or not, the
-loaded images will be normalized using the `arcsinh` function. 
-
-* **label_scaling** - The label scaling option controls whether to
-standardize the labels or not. Set this to *std* for sklearn's
-`StandardScaling()` and *minmax* for sklearn's `MinMaxScaler()`.
-This is especially important when predicting multiple
-outputs. For more information, visit [here](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html).
-
-* **transform/no-transform** (*bool*) - If True, the training images are passed through a
-series of random transformations.
-
-* **crop/no-crop** (*bool*) - If True, all images are passed through a cropping
-operation before being fed into the network. Images are cropped
-to the cutout_size parameter.
-
-* **nesterov/no-nesterov** (*bool*) - Whether to use Nesterov momentum or not. 
-
-* **repeat_dims/no-repeat_dims** (*bool*) - In case of multi-channel data, whether to repeat a two
-dimensional image as many times as the number of channels. 
-
-* **dropout_rate** (*float*) - The dropout rate to use for all the layers in the
-    model. If this is set to None, then the default dropout rate
-    in the specific model is used.
-
-### Returns:
-    Trained GaMReN model.
+    The `mse` options implements a standard mean squared error loss function.
 
 
-### Return type: 
-    PyTorch `Model` class. 
+* **expand_data** (*int*; default=`1`) - This controls the factor by which the training data is augmented. For example, if you set this to 2, and you have 1000 images in the training set, then the training set will be expanded to 2000 images. This is useful when you want to train the model on a larger dataset. 
 
-## Aleatoric covariant loss
+    If you are using this option, then you should also set the `transform` option to `True`. This will ensure that the images are passed through a series of random transformations during training.
 
-```{eval-rst}  
-.. autoapisummary::
+* **cutout_size** (*int*; default=`167`) - This variable is used to set the size of the input layer of the GaMPEN model. This should be set to the size of the cutouts that you are using; otherwise you will get size-mismatch errors.
 
-   ggt.losses.aleatoric_cov_loss
+    If you have cutouts that vary in size, you must ensure that all the cutouts are bigger than this `cutout_size` value, and you could use the `crop` option to crop the cutouts to this `cutot_size` value before being fed into the model.
 
+* **channels** (*int*; default=`3`) - This variable is used to set the number of channels in the input layer of the GaMPEN model. Since GaMPEN's original based CNN is based on a VGG-16 pre-trained model, this variable is set to 3 by default.
 
+* **n_workers** (*int*; default=`4`) - The number of workers to be used during the
+data loading process. You should set this to the number of CPU threads you have available. 
 
-.. py:function:: aleatoric_cov_loss(outputs, targets, num_var=3, average=True)
+* **batch_size** (*int*; default=`16`) - The batch size to be used during training the model. This variable specifies how many images will be processed in a single batch. This is a hyperparameter and must be tuned. The default value is a good starting point. While tuning this value, we recommend changing this by a factor of 2 each time.
 
-   Computes the Aleatoric Loss while including the full
-   covariance matrix of the outputs.
+* **epochs** (*int*; default=`40`) - The number of epochs you want to train GaMPEN for. Each epoch refers to all the training images being processed through the network once. You will need to optimize this value based on how much the loss function is decreasing with the number of epochs. The default value is a good starting point.
 
-   If you are predicting for n output variables, then the
-   number of output neuros required for this loss is
-   (3n + n^2)/2.
+* **lr** (*float*; default=`5e-7`) - This is the learning rate to be used during the training process. This is a hyperparameter that should be tuned during the training process. The default value is a good starting point.  While tuning this value, we recommend changing this by an order of magnitude each time. 
 
-   Args:
-       outputs: (tensor) - predicted outputs from the model
-       targets: (tensor) - ground truth labels
-       size_average: (bool) - if True, the losses are
-              averaged over all elements of the batch
-   Returns:
-       aleatoric_cov_loss: (tensor) - aleatoric loss
+* **momentum** (*float*; default=`0.9`) - The value of the momentum to be used in the gradient descent optimizer that is used to train the model. This must always be $\geq0$. This accelerates the gradient descent process. This is a hyperparameter that should be tuned during the training process. The default value is a good starting point. For tuning, we recommend trying out values between 0.8 and 0.99.
 
-   Formula:
-       loss = 0.5 * [Y - Y_hat].T * cov_mat_inv
-               * [Y - Y_hat] + 0.5 * log(det(cov_mat))
-```
+* **weight_decay** (*float*; default=`0`) - This represents the value you want to set for the L2 regularization term. This is a hyperparameter that should be tuned during the training process. The default value is a good starting point. For tuning we recommend starting from `1e-5` and increasing/decreasing by an order of magnitude each time.
+
+    The `weight_decay` value is simply passed to the PyTorch [SGD optimizer](https://pytorch.org/docs/stable/generated/torch.optim.SGD.html) 
+
+* **parallel/ no-parallel** (*bool*; default=`True`) - The parallel argument controls whether or not to use multiple GPUs during training when they are available. 
+
+   ```{note}
+   The above notation (which is used for other arugments as well) implies that if you pass is `--parallel` then the `parallel` argument is set to `True`. If you pass `--no-parallel` then the `parallel` argument is set to `False`. 
+    ```
+
+* **normalize/no-normalize** (*bool*; default=`True`) - The normalize argument controls whether or not, the loaded images will be normalized using the `arsinh` function. 
+
+* **label_scaling** (*str*; default=`"std"`) - The label scaling option controls whether to standardize the training labels or not. Set this to `std` for [sklearn's `StandardScaling()`](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html) and `minmax` for [sklearn's `MinMaxScaler()`](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html). This should usually always be set to `std` especially when using multiple target variables.
+
+* **transform/no-transform** (*bool*; default=`True`) - If True, the training images are passed through a series of sequential random transformations:-
+
+    * First the images are cropped to the `cutout_size` value.
+    * Then the images are flipped horizontally with a $50\%$ probability.
+    * The the images are vertically flipped with a $50\%$ probability.
+    * Finally a random rotation is applied to the image with any value between 0 and 360 degrees.
+
+    All the above transformations are performed using the [kornia library](https://kornia.readthedocs.io/en/latest/index.html). 
+
+* **crop/no-crop** (*bool*; default=`True`) - If True, all images are passed through a cropping operation before being fed into the network. Images are cropped
+to the `cutout_size` parameter.
+
+* **nesterov/no-nesterov** (*bool*; default=`False`) - Whether to use Nesterov momentum or not. This variable is simply passsed to the PyTorch [SGD optimizer](https://pytorch.org/docs/stable/generated/torch.optim.SGD.html). This is a hyperparameter that should be tuned during the training process.
+
+* **repeat_dims/no-repeat_dims** (*bool*; default=`True`) - When you have a multichannel network and you are feeding in images with only one channel, you should set this parameter to `True`. This automatically repeats the image as many times as the number of channels in the network, while data-loading. 
+
+* **dropout_rate** (*float*; default=`None`) - The dropout rate to use for all the layers in the model. If this is set to None, then the default dropout rate in the specific model is used.
+
+    ```{caution}
+    The `dropout_rate` is an important hyperparameter that among other things, also controls the predicted epistemic uncertainity when using Monte Carlo Dropout. This hyperparameter should be tuned in order to achieve callibrated coverage probabilities.
+
+    We recommend tuning the `dropout_rate` once you have tuned all other hyperparameters. Refer to [Ghosh et. al. 2022](https://iopscience.iop.org/article/10.3847/1538-4357/ac7f9e) and [Ghosh et. al. 2022b](https://arxiv.org/abs/2212.00051) for more details on how we tuned this hyperparameter. 
+
+    ```
+
 
 ## Make Splits
 
