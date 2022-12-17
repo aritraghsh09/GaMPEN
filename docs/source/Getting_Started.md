@@ -58,10 +58,11 @@ The core parts of the GaMPEN ecosystem are :-
 * Using the `GaMPEN/ggt/modules/inference.py` script to perform predictions using the trained model.
 * Using the `GaMPEN/ggt/modules/result_aggregator.py` script to aggregate the predictions into an easy-to-read pandas data-frame.
 
-**We highly recommend going through all our [Tutorials](Tutorials.md) to get an in-depth understanding of how to use GaMPEN, and an overview of all the steps above.**
+```{attention}
+We highly recommend going through all our [Tutorials](Tutorials.md) to get an in-depth understanding of how to use GaMPEN, and an overview of all the steps above.
 
-Here, we provide a quick-and-dirty demo to just get you started training your 1st GaMPEN model! (**This is intentionally short without much explanation**)
-
+Here, we provide a quick-and-dirty demo to just get you started training your 1st GaMPEN model! This section is intentionally short without much explanation.
+```
 
 ### Data preparation
 Let's download some simulated Hyper Suprime-Cam (HSC) images from the Yale servers. To do this run from the root directory of this repository:
