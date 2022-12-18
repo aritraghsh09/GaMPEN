@@ -209,7 +209,7 @@ The `GaMPEN/ggt/modules/inference.py` script provides users the functionality to
 
     If you are performing predictions on a dataset for which you don't have access to the ground truth labels (and thus you haven't run `make_splits`), this should be set to `None` as shown in the [Predictions Tutorial](https://gampen.readthedocs.io/en/latest/Tutorials.html#making-predictions).
 
-* **normalize/no-normalize** (*bool*; default=`True`) - The normalize argument controls whether or not, the loaded images will be normalized using the `arsinh` function. 
+* **normalize/no-normalize** (*bool*; default=`True`) - The normalize argument controls whether or not, the loaded images will be normalized using the `arsinh` function. This should be set to the same value as what was used during training the model.
 
 * **label_scaling** (*str*; default=`"std"`) - The label scaling option controls whether to perform an inverse-transformation on the predicted values. Set this to `std` for [sklearn's `StandardScaling()`](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html) and `minmax` for [sklearn's `MinMaxScaler()`](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html). This should usually always be set to `std` especially when using multiple target variables.
     
@@ -316,5 +316,54 @@ Functions
 * **drop_old/no-drop_old** (*bool*; default=`True`)- If `True`, the unscaled prediction columns will be dropped.
 
 
+
+## AutoCrop
+
+```{eval-rst}
+:py:mod:`ggt.modules.autocrop`
+===============================
+
+.. py:module:: ggt.modules.autocrop
+
+Functions
+~~~~~~~~~~
+
+.. py:function:: main(model_type, model_path, cutout_size, channels, n_pred,image_dir, out_dir, normalize, transform, repeat_dims, parallel, cov_errors,errors,)
+
+```
+The `GaMPEN/ggt/modules/autocrop.py` script provides users the functionality to perform cropping using a trained GaMPEN model and then save these cropped images as fits files for further analysis.
+
+### Parameters
+
+* **model_type** (*str*; default=`"vgg16_w_stn_oc_drp"`) - Same as the model types mentioned in [Running the Trainer](#running-the-trainer) section previously. If using our pre-trained models, this should be set to `vgg16_w_stn_oc_drp`.
+
+* **model_path** (*str*; required variable)- The full path to the trained `.pt` model file which you want to use for performing prediction.
+
+    ```{attention}
+    The model path should be enclosed in single quotes `'/path/to/model/xxxxx.pt'` and NOT within double quotes `"/path/to/model/xxxxx.pt"`. If you encluse it within double quotes, then the script will throw up an error.
+    ```
+* **cutout_size** (*int*; default=`167`) - Size of the input image that the model takes as input. For our pre-trained models, this should be set to `239`, `143`, `96` for the low, mid, and high redshift models respectively.
+
+* **channels** (*int*; default=`3`) - Number of channels in the input image. For our pre-trained models, this should be set to `3`.
+
+* **n_pred** (*int*; default=`1`) - Number of output variables that were used while training the model.
+
+* **image_dir** (*str*; required variable) - Full path to the directory that contains the images that need to be cropped.
+
+* **out_dir** (*str*; required variable) - Full path to the directory where the cropped images will be saved.
+
+* **normalize/no-normalize** (*bool*; default=`True`) - The normalize argument controls whether or not, the loaded images will be normalized using the `arsinh` function. This should be set to the same value as what was used during training the model.
+
+* **transform/no-transform** (*bool*; default=`True`) - The transform argument controls whether or not, the loaded images will be cropped to the mentioned `cutout_size` while being loaded. This should be set to `True` for most cases.
+
+* **repeat_dims/no-repeat_dims** (*bool*; default=`True`) - In case of multi-channel data, whether to repeat a two dimensional image as many times as the number of channels. Note that you should pass the exactly same argument for `repeat_dims` as was used during the training phase (of the model being used for inference). For all our pre-trained models, this should be set to `repeat_dims`
+
+* **parallel/ no-parallel** (*bool*; default=`True`) - The parallel argument controls whether or not to use multiple GPUs when they are available. 
+
+    Note that this variable needs to be set to whatever value was used during the training phase (of the model being used for inference). For all our pre-trained models, this should be set to `parallel`
+
+* **errors/no-errors** (*bool*, default=`False`) - If True and if the model allows for it, aleatoric uncertainties are written to the output file. Only set this to True if you trained the model with `aleatoric` loss. 
+
+* **cov_errors/no-cov_errors** (*bool*, default=`False`) - If True and if the model allows for it, aleatoric uncertainties with full covariance conisdered are written to the output file. Only set this to True if you trained the model with `aleatoric_cov` loss. For our pre-trained models, this should be set to `cov_errors`.
 
 
