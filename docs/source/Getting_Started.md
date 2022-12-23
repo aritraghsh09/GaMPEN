@@ -31,6 +31,8 @@ make check
 ```
 It is okay if there are some warnings or some tests are skipped. The only thing you should look out for is errors produced by the `make check` command.
 
+If you get an error about specific `libcudas` libraries being absent while running `make check`, this has probably to do with the fact that you don't have the appropriate CUDA and cuDNN versions installed for the PyTorch version being used by GaMPEN. See below for more details about GPU support.
+
 ## GPU Support
 
 GaMPEN can make use of multiple GPUs while training if you pass in the appropriate arguments to the `train.py` script.
@@ -40,11 +42,16 @@ To check whether the GaMPEN is able to detect GPUs, type `python` into the comma
 from ggt.utils.device_utils import discover_devices
 discover_devices()
 ```
-The output should be *cuda*.
+The output should be `cuda`if GaMPEN can detect a GPU.
 
-Note that if you are using an NVIDIA GPU, then you would need to make sure that the appropriate CUDA and cuDNN versions are installed. See [this link](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch) for more details.
+If the output is `cpu` then GaMPEN couldn't find a GPU. This could be because you don't have a GPU, or because you haven't installed the appropriate CUDA and cuDNN versions.
 
-If you get an error about specific `libcudas` libraries being absent while running `make check`, this has probably to do with the fact that you don't have the appropriate CUDA and cuDNN versions installed for the PyTorch version being used by GaMPEN. 
+ If you are using an NVIDIA GPU, then you can use [this link](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch) for more details about specific CUDA and cuDNN versions that are compatible with different PyTorch versions. To check the version of PyTorch you are using, type `python` into the command line and then run the following code-block:
+
+```python
+import torch
+print(torch.__version__)
+```
 
 
 ## Quickstart
