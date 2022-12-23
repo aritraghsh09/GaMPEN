@@ -98,13 +98,21 @@ You can load the `.npy` files using the `np.load` function in `Numpy`. The array
 
 ### Trained GaMPEN Models
 
-The trained GaMPEN models are available as  ``.pt`` PyTorch files. The models are at the following locations
+The trained GaMPEN models are available as  ``.pt`` PyTorch files. The models are at the following locations:-
 
+**Real Data Models**
 * g-band HSC-Wide z < 0.25 galaxies &rarr; ``/pub/hsc_morph/g_0_025/trained_model/g_0_025_model.pt``
 
 * r-band HSC-Wide 0.25 < z < 0.50 galaxies &rarr; ``/pub/hsc_morph/r_025_050/trained_model/r_025_050_model.pt``
 
 * i-band HSC-Wide 0.50 < z < 0.75 galaxies &rarr; ``/pub/hsc_morph/i_050_075/trained_model/i_050_075_model.pt``
+
+**Simulated Data Models**
+* Simulated g-band HSC-Wide z < 0.25 galaxies &rarr; ``/pub/hsc_morph/sim_g_0_025/trained_model/sim_g_0_025.pt`` 
+
+* Simulated r-band HSC-Wide 0.25 < z < 0.50 galaxies &rarr; ``/pub/hsc_morph/sim_r_025_050/trained_model/sim_r_025_050.pt``
+
+* Simulated i-band HSC-Wide 0.50 < z < 0.75 galaxies &rarr; ``/pub/hsc_morph/sim_i_050_075/trained_model/sim_i_050_075.pt``
 
 
 #### Trained Model Parameters
@@ -160,7 +168,7 @@ and
 
 `ftp://ftp.astro.yale.edu/pub/hsc_morph/xxxx/scaling_data_dir/splits/`
 
-where `xxxx` is `g_0_025`, `r_025_050`, or `i_050_075` for low-, mid-, and high-z models respectively.
+where `xxxx` is `g_0_025`, `r_025_050`, or `i_050_075` for low-, mid-, and high-z real data models respectively; and `sim_g_0_025`, `sim_r_025_050`, or `sim_i_050_075` for low-, mid-, and high-z simulated data models respectively.
 
 
 #### Custom Scaling Function
