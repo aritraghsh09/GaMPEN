@@ -112,6 +112,8 @@ The trained GaMPEN models are available as  ``.pt`` PyTorch files. The models ar
 We mention some of the finally tuned hyper-parameters that we used for the above models. Note that while performing inference using the above models, you will need to use some of these parameters.
 
 
+##### Real Data Models
+
 | Parameter Name | Low-z Real Data | Mid-z Real Data | High-z Real Data |
 |----------------|-----------------|-----------------|------------------|
 | `model_type` | `vgg16_w_stn_oc_drp`| `vgg16_w_stn_oc_drp` | `vgg16_w_stn_oc_drp` |
@@ -119,13 +121,31 @@ We mention some of the finally tuned hyper-parameters that we used for the above
 | `droput_rate` | 0.0004 | 0.0002 | 0.0002 |
 | `label_scaling` | `std` | `std` | `std` |
 | `loss` | `aleatoric_cov` | `aleatoric_cov` | `aleatoric_cov` |
-| `lr` | 5e-8 | 5e-8 | 5e-06 |
+| `lr` | 5e-8 | 5e-8 | 5e-6 |
 | `momentum` | 0.99 | 0.99 | 0.99 |
 | `nesterov` | False | False | False |
 | `weight_decay` | 0.0001 | 0.0001 | 0.0001 |
 | `parallel` | True | True | True |
 | `target_metrics` | `custom_logit_bt`, `ln_R_e_asec`, `ln_total_flux_adus` | `custom_logit_bt`, `ln_R_e_asec`, `ln_total_flux_adus` | `custom_logit_bt`, `ln_R_e_asec`, `ln_total_flux_adus` |
 | `split_slug` | `balanced-dev2` | `balanced-dev2` | `balanced-dev2` |
+
+
+##### Simulated Data Models
+
+| Parameter Name | Low-z Sims. | Mid-z Sims. | High-z Sims. |
+|----------------|-----------------|-----------------|------------------|
+| `model_type` | `vgg16_w_stn_oc_drp`| `vgg16_w_stn_oc_drp` | `vgg16_w_stn_oc_drp` |
+| `cutout_size` | 239 | 143 | 96 |
+| `droput_rate` | 0.0007 | 0.0007 | 0.0004 |
+| `label_scaling` | `std` | `std` | `std` |
+| `loss` | `aleatoric_cov` | `aleatoric_cov` | `aleatoric_cov` |
+| `lr` | 5e-7 | 5e-7 | 5e-7 |
+| `momentum` | 0.99 | 0.99 | 0.99 |
+| `nesterov` | False | False | False |
+| `weight_decay` | 0.0001 | 0.0001 | 0.0001 |
+| `parallel` | True | True | True |
+| `target_metrics` | `custom_logit_bt`, `ln_R_e_asec`, `ln_total_flux_adus` | `custom_logit_bt`, `ln_R_e_asec`, `ln_total_flux_adus` | `custom_logit_bt`, `ln_R_e_asec`, `ln_total_flux_adus` |
+| `split_slug` | `balanced-dev` | `balanced-dev` | `balanced-dev` |
 
 
 #### Scaling Data
