@@ -143,5 +143,42 @@ and
 where `xxxx` is `g_0_025`, `r_025_050`, or `i_050_075` for low-, mid-, and high-z models respectively.
 
 
+#### Custom Scaling Function
+
+As mentioned in the [Tutorials](Tutorials.md), all the trained GaMPEN models first make predictions in the `logit(bulge-to-total light ratio)` space. The predictions are then scaled to the `bulge-to-total light ratio` space using the custom inverse-scaling function defined in [`/GaMPEN/ggt/modules/result_aggregator.py`](./../../ggt/modules/result_aggregator.py). 
+
+Here, for completeness, we provide the custom scaling function that we used for the **forward** logit transformation while creating our `info.csv` files. The only way this is different from the standard logit transformation is that we prevent the function from blowing up for values of `bulge-to-total_light_ratio` that are very close to 0 or 1. 
+
+```python
+from scipy.special import logit 
+
+def logit_custom(x_input):
+    
+    '''Handling for 0s and 1s while doing a
+       logit transformation
+       
+       x_input should be the entire column/array
+       in info.csv over which you are applying 
+       the transformation'''
+    
+    x = np.array(x_input)
+    
+    if np.min(x) < 0 or np.max(x) > 1:
+        raise ValueError("x must be between 0 and 1")
+
+    if np.min(x) == 0:
+        min_x = np.min(x[x != 0])
+        add_epsilon = min_x/2.0
+        x[np.where(x==0)[0]] = add_epsilon
+        
+    if np.max(x) == 1:
+        max_x = np.max(x[x != 1])
+        sub_epsilon = (1-max_x)/2.0
+        x[np.where(x==1)[0]] = 1.0 - sub_epsilon
+        
+    return logit(x)
+```
+
+
 
 
