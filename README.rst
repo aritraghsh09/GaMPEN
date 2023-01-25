@@ -14,6 +14,9 @@
    :alt: GitHub license
    :target: https://github.com/aritraghsh09/GaMPEN/blob/master/LICENSE
 
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :target: https://github.com/psf/black
+
 .. image:: https://zenodo.org/badge/299731956.svg
    :target: https://zenodo.org/badge/latestdoi/299731956
    :alt: Code DOI
