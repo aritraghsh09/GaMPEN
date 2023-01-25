@@ -13,10 +13,14 @@
 .. image:: https://img.shields.io/github/license/aritraghsh09/GaMPEN
    :alt: GitHub license
    :target: https://github.com/aritraghsh09/GaMPEN/blob/master/LICENSE
+
+.. image:: https://zenodo.org/badge/299731956.svg
+   :target: https://zenodo.org/badge/latestdoi/299731956
+   :alt: Code DOI
     
-.. image:: https://img.shields.io/badge/doi-10.3847%2F1538--4357%2Fac7f9e-blue
+.. image:: https://img.shields.io/badge/publication%20doi-10.3847%2F1538--4357%2Fac7f9e-blue
     :target: https://doi.org/10.3847/1538-4357/ac7f9e
-    :alt: DOI Link
+    :alt: Publication DOI
     
 .. image:: https://img.shields.io/badge/arXiv-2207.05107-blue
     :target: https://arxiv.org/abs/2207.05107
