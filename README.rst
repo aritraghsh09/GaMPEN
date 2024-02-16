@@ -105,6 +105,18 @@ The initial documentation was developed by `Aayush Mishra <https://github.com/aa
 
 For an updated list of all current contributors, please see `here <https://github.com/aritraghsh09/GaMPEN/graphs/contributors>`_
 
+Contributors
+-------------
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
 
 Getting Help/Contributing
 --------------------------
