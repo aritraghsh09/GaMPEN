@@ -11,25 +11,40 @@ All components of the public data release are hosted on the Yale Astronomy FTP s
 
 ### Using Unix Command Line
 
+First, using the Unix terminal, navigate to the location where you want to download the files. Thereafter, connect to the FTP server using the following command
+
 ```bash
 ftp ftp.astro.yale.edu
-cd pub/hsc_morph/<appropriate_subdirectory>
 ```
+If prompted for a username, try `anonymous` and keep the password field blank. 
 
-If prompted for a username, try `anonymous` and keep the password field blank. After connecting, you can download files using the ``get`` command. 
+After connecting, navigate to the appropriate subdirectory (scroll down for locations) and download the relevant files using the ``get`` command. For example, to get the prediction tables for g-band HSC-Wide z < 0.25 galaxies, you should issue the following commands after connecting
+
+```bash
+cd /pub/hsc_morph/g_0_025/
+get g_0_025_preds_summary.csv
+```
+This should download `g_0_025_preds_summary.csv` into the directory from which you initiated the FTP connection.
+To terminate the FTP connection, simply type `quit`. 
+
+*Tip: Mac terminals don't come pre-installed with the `ftp` command. But, if you use [Homebrew](https://brew.sh/), you can install FTP using `brew install inetutils`*
 
 ### Using a Browser
 
-Navigate to ``ftp://ftp.astro.yale.edu/pub/<appropriate_subdirectory>``
+On a browser, navigate to ``ftp://ftp.astro.yale.edu/pub/hsc_morph/``
 
-### Using Finder on OSX
+Now, download the relevant files by navigating to the relevant subdirectory (see below).
+
+*Tip: If you are using Google Chrome, make sure that you are not selecting the default Google Search option from the suggested links in the dropdown*
+
+### Using Finder on MacOS
 
 Open Finder, and then choose Go &rarr; Connect to Server (or command + K) and enter ``ftp://ftp.astro.yale.edu/pub/hsc_morph/``. Choose to connect as 
 ``Guest`` when prompted. 
 
-Thereafter, navigate to the appropriate subdirectory. 
+Thereafter, navigate to the appropriate subdirectory to download the relevant files. 
 
-## Hyper Suprime-Cam Wide PDR2 Morphology
+## Hyper Suprime-Cam Wide PDR2 Morphology Directories
 
 ### Prediction Tables
 
