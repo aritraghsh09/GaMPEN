@@ -25,6 +25,7 @@ cd /pub/hsc_morph/g_0_025/
 get g_0_025_preds_summary.csv
 ```
 This should download `g_0_025_preds_summary.csv` into the directory from which you initiated the FTP connection.
+To terminate the FTP connection, simply type `quit`. 
 
 *Tip: Mac terminals don't come pre-installed with the `ftp` command. But, if you use [Homebrew](https://brew.sh/), you can install FTP using `brew install inetutils`*
 
