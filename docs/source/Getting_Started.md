@@ -106,7 +106,7 @@ python ggt/train/train.py \
   --momentum=0.99 \
   --crop \
   --cutout_size=239 \
-  --target_metrics='custom_logit_bt,log_R_e,log_total_flux' \
+  --target_metrics='custom_logit_bt,ln_R_e_asec,ln_total_flux_adus' \
   --repeat_dims \
   --no-nesterov \
   --label_scaling='std' \
