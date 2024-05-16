@@ -90,7 +90,7 @@ def main(
     model = model.to(device)
 
     # Load the model from a saved state if provided
-    model.load_state_dict(torch.load(model_path))
+    model.load_state_dict(torch.load(model_path,map_location=torch.device(device)))
 
     # Collect all images, then iterate
     images = glob.glob(str(Path(image_dir) / "*.fits"))
