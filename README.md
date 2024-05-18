@@ -5,6 +5,7 @@
 [![image](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Code DOI](https://zenodo.org/badge/299731956.svg)](https://zenodo.org/badge/latestdoi/299731956)
 [![Publication DOI](https://img.shields.io/badge/publication%20doi-10.3847%2F1538--4357%2Fac7f9e-blue)](https://doi.org/10.3847/1538-4357/ac7f9e)
+[![arXiv](https://img.shields.io/badge/arXiv-2207.05107-blue)](https://arxiv.org/abs/2207.05107)
 
 <hr>
 
@@ -18,7 +19,9 @@ values + uncertainties) of morphological parameters for arbitrarily
 large numbers of galaxies. GaMPEN also automatically crops input galaxy
 images to an optimal size before morphological parameter estimation.
 
-GaMPEN can be adapted to work on both ground and space-based imaging;
+GaMPEN's predicted uncertainties have been shown to be upto ~60%
+more accurate compared to traditional light-profile fitting codes. GaMPEN 
+can be adapted to work on both ground and space-based imaging;
 and to predict both parametric and non-parametric estimates of
 morphology.
 
@@ -29,15 +32,14 @@ large imaging surveys, such as Rubin-LSST, Euclid, and NGRST.
 
 **For a quick read-through of why GaMPEN was developed, what challenges
 it addresses, and how it works** see this
-[link](http://www.astro.yale.edu/aghosh/gampen.html)
+[link](http://gampen.ghosharitra.com/)
 
 # Documentation
 
-We are actively developing extensive documentation and tutorials for
-GaMPEN. You can find the current state of our documentation and
-tutorials at [this link](https://gampen.readthedocs.io/) . We hope to
-have this fully completed by early Spring 2023. If you are trying to use
-GaMPEN before that and run into issues, please get in touch!
+GaMPEN's documentation is available in this repository and also hosted 
+on [readthedocs.io](https://gampen.readthedocs.io/) . Although the documentation
+is fairly complete; if you are trying to use  GaMPEN and run into issues, 
+please get in touch with us!
 
 # Publication
 
@@ -47,8 +49,9 @@ paper](https://iopscience.iop.org/article/10.3847/1538-4357/ac7f9e)
 An updated record of GaMPEN's trained models and catalogs produced are
 maintained [here](http://gampen.ghosharitra.com/)
 
-Attribution Info. ------------Please cite the above mentioned
-publication if you make use of this software module or some code herein.
+## Attribution Info.
+Please cite the above-mentioned publication if you make use of this software
+module or some code herein.
 
 ``` tex
 @article{Ghosh2022,
@@ -63,13 +66,6 @@ title = {GaMPEN: A Machine-learning Framework for Estimating Bayesian Posteriors
 volume = {935},
 year = {2022},
 }
-```
-
-Additionally, if you want, please include the following text in the
-Software/Acknowledgment section.
-
-``` tex
-This work uses trained models/software made available as a part of the Galaxy Morphology Posterior Estimation Network public data release. 
 ```
 
 # License
