@@ -40,6 +40,7 @@ extensions = [
 myst_enable_extensions = [
     "dollarmath", 
     "amsmath",
+    "colon_fence",
 ]
 
 myst_heading_anchors = 3 #tells the myst_parser to add anchors to all headings
