@@ -10,7 +10,7 @@ Public_data
 ```
 
 ```{attention}
-Note that although GaMPEN's current documentation is fairly substantative, we are still working on some parts of the documentation and some Tutorials. If you run into issues while trying to use GaMPEN, please contact us! We will be more than happy to help you!
+Note that although GaMPEN's current documentation is fairly substantive, we are still working on some parts of the documentation and some Tutorials. If you run into issues while trying to use GaMPEN, please contact us! We will be more than happy to help you!
 ```
 
 # About GaMPEN
