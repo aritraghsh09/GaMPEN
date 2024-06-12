@@ -23,6 +23,11 @@ We have taken care to ensure that all parts of this data release is easily acces
 trouble accessing what you need, please send us an email!
 ```
 
+:::{warning}
+Before using this catalog, we recommend that you thoroughly review [Ghosh et. al. 2023](https://doi.org/10.3847/1538-4357/acd546),
+especially Section 6.
+:::
+
 ### Connecting to the Data Release Server
 All components of this public data release are hosted on the Yale Astronomy FTP server ``ftp.astro.yale.edu``. There are multiple ways you can access the FTP server, and we summarize some of the methods below.
 
