@@ -55,8 +55,8 @@ On a browser, navigate to ``ftp://ftp.astro.yale.edu/pub/hsc_morph/``
 
 Now, download the relevant files by navigating to the relevant subdirectory (see below).
 
-:::{note}
-Tip: If you are using Google Chrome, make sure that you are not selecting the default Google Search option from the suggested links in the dropdown
+:::{attention}
+If you are using Google Chrome, make sure that you are not selecting the default Google Search option from the suggested links in the dropdown
 :::
 
 #### Using Finder on MacOS
@@ -64,13 +64,13 @@ Tip: If you are using Google Chrome, make sure that you are not selecting the de
 Open Finder, and then choose Go &rarr; Connect to Server (or command + K) and enter ``ftp://ftp.astro.yale.edu/pub/hsc_morph/``. Choose to connect as 
 ``Guest`` when prompted. 
 
-Thereafter, navigate to the appropriate subdirectory to download the relevant files. 
+Thereafter, navigate to the [appropriate subdirectory](#data-release-components--sub-directories) to download the relevant files. 
 
 
 
 ### Data Release Components & Sub-directories
 After connecting to the data-release server, you will need to navigate to the relevant sub-directory. 
-Below we mention the sub-directories for different components of the data-release. We also mention
+Below we mention the sub-directories for different components of the data-release along with the
 pertinent details for each component. 
 
 
@@ -98,7 +98,7 @@ The various columns in the prediction tables are described below:
 
 There are multiple columns for each of the three morphological parmaeters: effective radius (``R_e``) (in arcsec), bulge-to-total_light_ratio (``bt``), total flux (``total_flux``) (in ADUs), and mangitude (``total_mag``). In all the columns below `xx` refers to the column names mentioned in brackets.
 
-* ``preds_xx_mode``: The mode of the posterior distribution for the morphological parameter. (**Recommended**)
+* ``preds_xx_mode``: The mode of the posterior distribution for the morphological parameter. 
 
 * ``preds_xx_mean``: The mean of the posterior distribution of the morphological parameter.
 
@@ -117,9 +117,15 @@ There are multiple columns for each of the three morphological parmaeters: effec
 * ``preds_xx_threesig_ci``: The 3-sigma confidence interval of the posterior distribution of the morphological parameter.
 
 
+:::{tip}
+If you are looking to use a point-estimate instead of the full distribution, we recommend 
+that you use the mode along with the one-sigma confidence interval as the uncertainty.
+:::
+
+
 #### Posterior Distribution Files for Individual Galaxies
 
-The predicted posterior distributions for individual galaxies are available as ``.npy`` files. The files are named as ``zz.npy`` where zz is the ``object_id`` mentioned in the prediction tables. The files located at the following subdirectories on the FTP server:
+The predicted posterior distributions for individual galaxies are available as Numpy (``.npy``) files. The files are named as ``zz.npy`` where zz is the ``object_id`` mentioned in the prediction tables. The files are located at the following subdirectories on the FTP server:
 
 * g-band HSC-Wide z < 0.25 galaxies &rarr; ``/pub/hsc_morph/g_0_025/posterior_arrays/``
 
@@ -127,7 +133,9 @@ The predicted posterior distributions for individual galaxies are available as `
 
 * i-band HSC-Wide 0.50 < z < 0.75 galaxies &rarr; ``/pub/hsc_morph/i_050_075/posterior_arrays/``
 
-You can load the `.npy` files using the `np.load` function in `Numpy`. The array dimensions are as follows:
+You can load each `.npy` file using the `np.load` function of `numpy`. Each file contains an 8-dimensional Numpy array. 
+Each dimension of the array corresponds to either the `x` or `y` of a parameter's predicted posterior distribution. 
+The array dimensions are ordered identically in all files and are listed below :-
 
 * 0 &rarr; x of radius (in arcsec)
 * 4 &rarr; y of radius (in arcsec)
@@ -137,6 +145,16 @@ You can load the `.npy` files using the `np.load` function in `Numpy`. The array
 * 6 &rarr; y of bulge-to-total_light_ratio
 * 3 &rarr; x of magnitude
 * 7 &rarr; y of magnitude
+
+:::{warning}
+There are millions of files in each `posterior_arrays` folder. If you issue an `ls` (or any other similar) command, 
+you might end up terminating your connection to the server. Simply use `get` followed by the appropriate filename.
+:::
+
+:::{tip}
+If you want to access posterior distributions for almost the entire sample, please reach out to us. We can provide you
+with a tarball instead.
+:::
 
 
 #### Trained GaMPEN Models
@@ -160,7 +178,7 @@ The trained GaMPEN models are available as  ``.pt`` PyTorch files. The models ar
 
 ##### Trained Model Parameters
 
-We mention some of the finally tuned hyper-parameters that we used for the above models. Note that while performing inference using the above models, you will need to use some of these parameters.
+Below, we outline some of the hyper-parameters that were used for the above models. Note that while performing inference using the above models, you will need to use some of these parameters.
 
 
 ###### Real Data Models
@@ -203,13 +221,13 @@ We mention some of the finally tuned hyper-parameters that we used for the above
 
 Note that as mentioned in the [Predictions Tutorial](Tutorials.md#making-predictions), in order to unscale the predictions made using the above models, you need access to the training files. 
 
-You can access these files at the following locations using `wget`:
+You can access these files at the following locations:
 
-`ftp://ftp.astro.yale.edu/pub/hsc_morph/xxxx/scaling_data_dir/info.csv`
+`/pub/hsc_morph/xxxx/scaling_data_dir/info.csv`
 
 and 
 
-`ftp://ftp.astro.yale.edu/pub/hsc_morph/xxxx/scaling_data_dir/splits/`
+`/pub/hsc_morph/xxxx/scaling_data_dir/splits/`
 
 where `xxxx` is `g_0_025`, `r_025_050`, or `i_050_075` for low-, mid-, and high-z real data models respectively; and `sim_g_0_025`, `sim_r_025_050`, or `sim_i_050_075` for low-, mid-, and high-z simulated data models respectively.
 
