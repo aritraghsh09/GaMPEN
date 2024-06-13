@@ -1,7 +1,3 @@
 button.copybtn {
-    opacity: 1;
+    opacity: 0.75;
  }
-
- html {
-    scroll-behavior: smooth;
-  }
