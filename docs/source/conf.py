@@ -35,6 +35,7 @@ extensions = [
     "myst_parser",
     "autoapi.extension",
     "sphinx.ext.mathjax",
+    "sphinx_copybutton",
 ]
 
 myst_enable_extensions = [
@@ -45,6 +46,8 @@ myst_enable_extensions = [
 
 myst_heading_anchors = 3 #tells the myst_parser to add anchors to all headings
                          #of level 3 and above
+
+copybutton_exclude = '.linenos, .gp' #exclude line numbers and the prompt from the copied code
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
