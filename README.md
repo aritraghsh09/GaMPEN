@@ -9,7 +9,7 @@
 
 <hr>
 
-![image](./intro_image.png)
+![image](./gampen_intro.png)
 
 <hr>
 
