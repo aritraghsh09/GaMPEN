@@ -13,9 +13,7 @@ In order to address these above challenges, we developed GaMPEN:-
 
 1. GaMPEN estimates posterior distributions for (user-selected) structural parameters of galaxies.
 
-    * GaMPEN's predicted posteriors are **extremely well-calibrated and accurate ($\lesssim 5\%$ derivation)**. 
-
-    * They have been shown to be **upto $\sim60\%$ more accurate compared to uncertainties predicted by light-profile fitting algorithms.**
+    * GaMPEN's predicted posteriors are **extremely well-calibrated and accurate ($\lesssim 5\%$ derivation)**. They have been shown to be **upto $\sim60\%$ more accurate compared to uncertainties predicted by light-profile fitting algorithms.**
 
     * GaMPEN takes into account both aleatoric & epistemic uncertainties.
 
