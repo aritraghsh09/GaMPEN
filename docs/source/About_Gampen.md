@@ -1,16 +1,44 @@
 # About GaMPEN
 
+## Why was GaMEPN developed?
+Although Convolutional Neural Networks (CNNs) have been used for galaxy morphology determination for quite some time now, a few challenges had persisted. 
+
+Most previously developed CNNs provided broad morphological classifications; and there had been very limited work on estimating structural parameters of galaxies or associated uncertainties using CNN. Even popular non-machine learning tools like Galfit severely underestimate uncertainties by values as high as ∼75%. 
+
+The computation of full Bayesian posteriors for these structural parameters is crucial for drawing scientific inferences that account for uncertainty and are indispensable in the derivation of robust scaling relations or tests of theoretical models using morphology.
+
+One other challenge of using CNNs in astronomy, is the necessity to use fixed cutout sizes. Many practitioners choose to use a large cutout size for which "most galaxies" would remain in the frame. However, this means that typical cutouts contain other galaxies in the frame, often leading to less accurate results. Thus, this becomes a bottleneck when applying CNNs to galaxies over a wide magnitudes or redshifts.
+
+In order to address these above challenges, we developed GaMPEN:-
+
+1. GaMPEN estimates posterior distributions for (user-selected) structural parameters of galaxies.
+
+    * GaMPEN's predicted posteriors are **extremely well-calibrated and accurate ($\lesssim 5\%$ derivation)**. They have been shown to be **upto $\sim60\%$ more accurate compared to uncertainties predicted by light-profile fitting algorithms.**
+
+    * GaMPEN takes into account both aleatoric & epistemic uncertainties.
+
+    * GaMPEN incorporates the full covariance matrix in its loss function allowing it to achieve well-calibrated uncertainties for all output parameters.
+
+2. GaMPEN automatically crops input images to an optimal size before determining their morphology.
+    *  Due to GaMPEN's design this step requires no additional training step; except the training to predict structural parameters. 
+
+
 ## What Parameters and Surveys can GaMPEN be Used for?
+The publicly released GaMPEN models are turned to predict specific parameters for specific surveys. For example, our [Hyper Suprime-Cam (HSC) models](./Public_data.md#hsc-wide-pdr2-galaxies) can be used to estimate the bulge-to-total light ratio, effective radius, and flux of HSC galaxies till $z < 0.75$.
 
-The publicly released GaMPEN models are turned to predict specific parameters for specific surveys. For example, our Hyper Suprime-Cam (HSC) models can be used to estimate the bulge-to-total light ratio, effective radius, and flux of HSC galaxies till $z < 0.75$.
+However, GaMPEN models can be trained from scratch to determine **any combination of parametric and non-parametric structural parameters** (e.g., Sersic Index, Concentration, Asymmetry, etc.) for **any space or ground-based imaging survey**. The only catch is if you are trying to do predictions on a survey other than the ones for which we have released models; or you trying to predict other alternative parameters; you will need to train your GaMPEN model from scratch.
 
-**However, GaMPEN models can be trained from scratch to determine any combination of morphological parameters** (even different from the ones mentioned above -- e.g. Sersic Index) **for any space or ground-based imaging survey**. Please check out our [FAQs](./FAQs.md) page for our recommendations if you want to train a GaMPEN model tuned to a specific survey. Also, don't hesitate to contact us if you want our help/advice in training a GaMPEN model for your survey/parameters.
+ Don't hesitate to contact us if you want our help/advice in training a GaMPEN model for your survey/parameters! 
 
 ## More Details About GaMPEN
 
 ### GaMPEN's Architecture
-GaMPEN consists of a two sequential neural network modules -- a Spatial Transformer Network (STN) and a Convolutional Neural Network (CNN). The image below shows the detailed architecture of both these networks. Note that both the networks are trained simulataneously using the same loss function and optimizer. For further details about the architecture, please refer to [Ghosh et. al. 2022](https://iopscience.iop.org/article/10.3847/1538-4357/ac7f9e) or the `vgg16_w_stn_oc_drp.py` file in the `GaMPEN/ggt/models/` directory.
 
+GaMPEN's architecture consists of two separate entities:-
+ * an upstream Spatial Transformer Network (STN) which enables GaMPEN to automatically crop galaxies to an optimal size;
+ * a downstream Convolutional Neural Network (CNN) which enables GaMPEN to predict posterior distributions for various morphological parameters.
+
+GaMPEN's design is based on our previously successful classification CNN, [GaMorNet](https://gamornet.readthedocs.io/en/latest/), as well as as different variants of the Oxford Visual Geometry Group networks. We tried a variety of different architectures before finally converging on this design.
 
 ![GaMPEN architecture](../assets/GaMPEN_architecture.png "Architecture of GaMPEN")
 
