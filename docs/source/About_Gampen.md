@@ -13,7 +13,9 @@ In order to address these above challenges, we developed GaMPEN:-
 
 1. GaMPEN estimates posterior distributions for (user-selected) structural parameters of galaxies.
 
-    * GaMPEN's predicted posteriors are **extremely well-calibrated and accurate ($\lesssim 5\%$ derivation)**. They have been shown to be **upto $\sim60\%$ more accurate compared to uncertainties predicted by light-profile fitting algorithms.**
+    * GaMPEN's predicted posteriors are **extremely well-calibrated and accurate ($\lesssim 5\%$ derivation)**. 
+
+    * They have been shown to be **upto $\sim60\%$ more accurate compared to uncertainties predicted by light-profile fitting algorithms.**
 
     * GaMPEN takes into account both aleatoric & epistemic uncertainties.
 
@@ -34,13 +36,13 @@ However, GaMPEN models can be trained from scratch to determine **any combinatio
 
 ### GaMPEN's Architecture
 
+![GaMPEN architecture](../assets/GaMPEN_architecture.png "Architecture of GaMPEN")
+
 GaMPEN's architecture consists of two separate entities:-
  * an upstream Spatial Transformer Network (STN) which enables GaMPEN to automatically crop galaxies to an optimal size;
  * a downstream Convolutional Neural Network (CNN) which enables GaMPEN to predict posterior distributions for various morphological parameters.
 
 GaMPEN's design is based on our previously successful classification CNN, [GaMorNet](https://gamornet.readthedocs.io/en/latest/), as well as as different variants of the Oxford Visual Geometry Group networks. We tried a variety of different architectures before finally converging on this design.
-
-![GaMPEN architecture](../assets/GaMPEN_architecture.png "Architecture of GaMPEN")
 
 ### GaMPEN's Posteriors/Uncertainties
 To predict posteriors, GaMMPEN takes into account both aleatoric and epistemic uncertainties. It uses the negative log-likelihood of the output parameters as the loss function combined with the Monte Carlo Dropout technique. GaMPEN also incorporates the full covariance matrix in the loss function, using a series of algebraic manipulations.
