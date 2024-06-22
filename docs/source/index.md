@@ -1,6 +1,5 @@
 ```{toctree}
 :maxdepth: 2
-:hidden:
 
 index
 Getting_Started
