@@ -23,12 +23,18 @@ Note that although GaMPEN's current documentation is fairly substantive, we are 
 The Galaxy Morphology Posterior Estimation Network (GaMPEN) is a Bayesian machine learning framework that can estimate robust posteriors (i.e., values + uncertainties) for structural parameters of galaxies. As the above image shows, GaMPEN also automatically crops input images to an optimal size before structural parameter estimation.
 
 :::{admonition} Feature Highlight
-:class:tip
+:class: tip
 
 GaMPEN's predicted posteriors are extremely well-calibrated ($<5\%$ deviation) and have been shown to be up to $\sim 60\%$ more accurate compared to the uncertainties predicted by many
 light-profile fitting algorithms. 
 
 Once trained, it takes GaMPEN less than a millisecond to perform a single model evaluation on a CPU. Thus, GaMPEN's posterior prediction capabilities are ready for large galaxy samples expected from upcoming large imaging surveys, such as Rubin-LSST, Euclid, and NGRST.
+:::
+
+:::{admonition} My custom title with *Markdown*!
+:class: tip
+
+This is a custom title for a tip admonition.
 :::
 
 
