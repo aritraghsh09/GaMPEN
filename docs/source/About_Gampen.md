@@ -38,11 +38,11 @@ However, GaMPEN models can be trained from scratch to determine **any combinatio
 
 The only catch is that if your data or desired prediction-parameters are different from what we used to train the models, you might have to either fine-tune one of the publicly-released models or train a new model from scratch. We provide a couple of example scenarios below:-
 
-* **Predicting on HSC Data but with Fainter/Higher Redshift Galaxies or Data in a Different Band** -- Start with a publicly-released model that is the closest to your dataset; then fine-tune this model using $\sim \mathcal{O} (10^3)$ galaxies with available ground-truth values.
+* **Predicting on HSC Data but with Fainter/Higher Redshift Galaxies or Data in a Different Band:** Start with a publicly-released model that is the closest to your dataset; then fine-tune this model using $\sim \mathcal{O} (10^3)$ galaxies with available ground-truth values.
 
-* **Predicting Structural Parameters on HSC Data Not Included in Our Public Release** -- Start with our publicly-released models on real HSC data; discard the last few layers; re-train with ground-truth values for the new structural parameters you want to predict (e.g., Sérsic Index, Concentration, etc.) for  $\sim \mathcal{O} (10^3-10^4)$ galaxies.
+* **Predicting Structural Parameters on HSC Data Not Included in Our Public Release:** Start with our publicly-released models on real HSC data; discard the last few layers; re-train with ground-truth values for the new structural parameters you want to predict (e.g., Sérsic Index, Concentration, etc.) for  $\sim \mathcal{O} (10^3-10^4)$ galaxies.
 
-* **Predicting on Dark Energy Survey Data** -- Start with our publicly-released models on real HSC data (as this will be better than starting from a random initialization); retrain with $\sim \mathcal{O} (10^3-10^4)$ real DES galaxies with ``ground-truth" values.
+* **Predicting on Dark Energy Survey Data:** Start with our publicly-released models on real HSC data (as this will be better than starting from a random initialization); retrain with $\sim \mathcal{O} (10^3-10^4)$ real DES galaxies with ground-truth values.
 
 Don't hesitate to contact us if you want our help/advice in training a GaMPEN model for your survey/parameters! 
 
