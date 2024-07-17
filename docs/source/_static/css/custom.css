@@ -1,0 +1,6 @@
+/* Put custom CSS here */
+
+/* This controls the spacing between list items*/
+li{
+    margin: 6px 0;
+}

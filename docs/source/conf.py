@@ -35,12 +35,19 @@ extensions = [
     "myst_parser",
     "autoapi.extension",
     "sphinx.ext.mathjax",
+    "sphinx_copybutton",
 ]
 
 myst_enable_extensions = [
     "dollarmath", 
     "amsmath",
+    "colon_fence",
 ]
+
+myst_heading_anchors = 3 #tells the myst_parser to add anchors to all headings
+                         #of level 3 and above
+
+copybutton_exclude = '.linenos, .gp' #exclude line numbers and the prompt from the copied code
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -63,3 +70,9 @@ html_theme = "sphinx_rtd_theme"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+
+# These paths are either relative to html_static_path
+# or fully qualified paths (eg. https://...)
+html_css_files = [
+    'css/custom.css',
+]
