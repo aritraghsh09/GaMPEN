@@ -38,11 +38,11 @@ However, GaMPEN models can be trained from scratch to determine **any combinatio
 
 The only catch is that if your data or desired prediction-parameters are different from what we used to train the models, you might have to either fine-tune one of the publicly-released models or train a new model from scratch. We provide a couple of example scenarios below:-
 
-* **Predicting on HSC Data but with Fainter/Higher Redshift Galaxies or Data in a Different Band** -- Start with a publicly-released model that is the closest to your dataset; then fine-tune this model using $\sim \mathcal{O} 10^3$ galaxies with available ground-truth values.
+* **Predicting on HSC Data but with Fainter/Higher Redshift Galaxies or Data in a Different Band** -- Start with a publicly-released model that is the closest to your dataset; then fine-tune this model using $\sim \mathcal{O} (10^3)$ galaxies with available ground-truth values.
 
-* **Predicting Structural Parameters on HSC Data Not Included in Our Public Release** -- Start with our publicly-released models on real HSC data; discard the last few layers; re-train with ground-truth values for the new structural parameters you want to predict (e.g., Sérsic Index, Concentration, etc.) for  $\sim \mathcal{O} 10^3-10^4$ galaxies.
+* **Predicting Structural Parameters on HSC Data Not Included in Our Public Release** -- Start with our publicly-released models on real HSC data; discard the last few layers; re-train with ground-truth values for the new structural parameters you want to predict (e.g., Sérsic Index, Concentration, etc.) for  $\sim \mathcal{O} (10^3-10^4)$ galaxies.
 
-* **Predicting on Dark Energy Survey Data** -- Start with our publicly-released models on real HSC data (as this will be better than starting from a random initialization); retrain with $\sim \mathcal{O} 10^3-10^4$ real DES galaxies with ``ground-truth" values.
+* **Predicting on Dark Energy Survey Data** -- Start with our publicly-released models on real HSC data (as this will be better than starting from a random initialization); retrain with $\sim \mathcal{O} (10^3-10^4)$ real DES galaxies with ``ground-truth" values.
 
 Don't hesitate to contact us if you want our help/advice in training a GaMPEN model for your survey/parameters! 
 
@@ -63,7 +63,7 @@ GaMPEN's design is based on our previously successful classification CNN, [GaMor
 
 To predict posteriors, GaMMPEN takes into account both aleatoric and epistemic uncertainties. It uses the negative log-likelihood of the output parameters as the loss function combined with the Monte Carlo Dropout technique. GaMPEN also incorporates the full covariance matrix in the loss function, using a series of algebraic manipulations.
 
-The uncertainties/posteriors produced by GaMPEN have been shown to be extremely well-calibrated ( $\lesssim 5\%$ deviation. As shown in [Ghosh et al. 2023](https://arxiv.org/abs/2212.00051) ) this represents a significant improvement over state-of-the-art light profile fitting tools which underestimate uncertainties by $\sim15\%-60\%$ depending on the brightness of the source. 
+The uncertainties/posteriors produced by GaMPEN have been shown to be extremely well-calibrated ( $\lesssim 5\%$ deviation). As shown in [Ghosh et al. 2023](https://arxiv.org/abs/2212.00051), this represents a significant improvement over state-of-the-art light profile fitting tools which underestimate uncertainties by $\sim15\%-60\%$ depending on the brightness of the source. 
 
 For a more detailed overview of GaMPEN's uncertainty prediction, we refer to the interested reader to Section 4 and Appendix B of [Ghosh et al. 2022](https://arxiv.org/abs/2207.05107).
 
