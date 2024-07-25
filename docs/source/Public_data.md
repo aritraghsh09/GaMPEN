@@ -155,8 +155,9 @@ you might end up terminating your connection to the server. Simply use `get` fol
 :::
 
 :::{tip}
-If you want to access posterior distributions for almost the entire sample, please reach out to us. We can provide you
-with a tarball instead.
+If you want to access posterior distributions for almost the entire sample, please use [this link](https://epyc.astro.washington.edu/~aritrag/). The link will lead you to `.tar.gz` files corresponding to each 
+redshift bin. Each tarball contains the predicted posterior distributions (`.npy` files) for all galaxies
+in that redshift bin.
 :::
 
 
