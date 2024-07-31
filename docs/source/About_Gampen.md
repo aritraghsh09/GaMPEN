@@ -116,7 +116,7 @@ and flux -- are fairly stable against rotations.
 
 
 ## Publications
-GaMPEN was initially introduced in [Ghosh et al. 2022](https://iopscience.iop.org/article/10.3847/1538-4357/ac7f9e) with a companion catalog of Hyper Suprime-Cam Galaxy Structural Parameters in [Ghosh et al. 2023](https://doi.org/10.3847/1538-4357/ac7f9e).
+GaMPEN was initially introduced in [Ghosh et al. 2022](https://iopscience.iop.org/article/10.3847/1538-4357/ac7f9e) with a companion catalog of Hyper Suprime-Cam Galaxy Structural Parameters in [Ghosh et al. 2023](https://iopscience.iop.org/article/10.3847/1538-4357/acd546).
 
 Since then, GaMPEN has been used in other publications. We always try to maintain an updated record of GaMPEN's trained models and associated catalogs [on this page](./Public_data.md).
 
