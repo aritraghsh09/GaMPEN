@@ -136,11 +136,6 @@ that you use the mode along with the one-sigma confidence interval as the uncert
 
 
 #### Posterior Distribution Files for Individual Galaxies
-:::{tip}
-If you need access to the posterior distributions for all the galaxies, take a look [here](#tarball-of-posterior-distribution-files)
-instead.
-:::
-
 The predicted posterior distributions for individual galaxies are available as Numpy (``.npy``) files. The files are named as ``zz.npy`` where zz is the ``object_id`` mentioned in the prediction tables. The files are located at the following subdirectories on the FTP server:
 
 * g-band HSC-Wide z < 0.25 galaxies &rarr; ``/pub/hsc_morph/g_0_025/posterior_arrays/``
@@ -161,6 +156,11 @@ The array dimensions are ordered identically in all files and are listed below :
 * 6 &rarr; y of bulge-to-total_light_ratio
 * 3 &rarr; x of magnitude
 * 7 &rarr; y of magnitude
+
+:::{tip}
+If you need access to the posterior distributions for all the galaxies, take a look [here](#tarball-of-posterior-distribution-files)
+instead.
+:::
 
 :::{warning}
 Individual posterior distribution files are only available on the Yale FTP Server. 
