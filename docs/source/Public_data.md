@@ -27,10 +27,19 @@ especially Section 6.
 :::
 
 ### Connecting to the Data Release Server
-All components of this public data release are hosted on the Yale Astronomy FTP server ``ftp.astro.yale.edu``. There are multiple ways you can access the FTP server, and we summarize some of the methods below.
+There are two servers on which the public data is hosted:-
+* UW Astro HTTP Server: [https://epyc.astro.washington.edu/~aritrag/](https://epyc.astro.washington.edu/~aritrag/)
+* Yale Astro FTP Server: ``ftp.astro.yale.edu``
 
+Most of the data release is available on both servers. Simply choose the one that is more convenient for you to use!
 
-#### Using Unix Command Line
+#### Connecting to the UW HTTP Server
+Simply navigate to [https://epyc.astro.washington.edu/~aritrag/](https://epyc.astro.washington.edu/~aritrag/) on any browser
+
+#### Connecting to the Yale FTP Server
+There are multiple ways you can access the FTP server, and we summarize some of the methods below:
+
+##### Using Unix Command Line
 
 First, using a Unix terminal, navigate to the location where you want to download the files. Thereafter, connect to the FTP server using the following command
 
@@ -52,7 +61,7 @@ To terminate the FTP connection, simply type `quit`.
 Mac terminals don't come pre-installed with the `ftp` command. But, if you use [Homebrew](https://brew.sh/), you can install FTP using `brew install inetutils`
 :::
 
-#### Using a Browser
+##### Using a Browser
 
 On a browser, navigate to ``ftp://ftp.astro.yale.edu/pub/hsc_morph/``
 
@@ -62,7 +71,7 @@ Now, download the relevant files by navigating to the relevant subdirectory (see
 If you are using Google Chrome, make sure that you are not selecting the default Google Search option from the suggested links in the dropdown
 :::
 
-#### Using Finder on MacOS
+##### Using Finder on MacOS
 
 Open Finder, and then choose Go &rarr; Connect to Server (or command + K) and enter ``ftp://ftp.astro.yale.edu/pub/hsc_morph/``. Choose to connect as 
 ``Guest`` when prompted. 
@@ -127,7 +136,6 @@ that you use the mode along with the one-sigma confidence interval as the uncert
 
 
 #### Posterior Distribution Files for Individual Galaxies
-
 The predicted posterior distributions for individual galaxies are available as Numpy (``.npy``) files. The files are named as ``zz.npy`` where zz is the ``object_id`` mentioned in the prediction tables. The files are located at the following subdirectories on the FTP server:
 
 * g-band HSC-Wide z < 0.25 galaxies &rarr; ``/pub/hsc_morph/g_0_025/posterior_arrays/``
@@ -149,17 +157,30 @@ The array dimensions are ordered identically in all files and are listed below :
 * 3 &rarr; x of magnitude
 * 7 &rarr; y of magnitude
 
+:::{tip}
+If you need access to the posterior distributions for all the galaxies, take a look [here](#tarball-of-posterior-distribution-files)
+instead.
+:::
+
 :::{warning}
+Individual posterior distribution files are only available on the Yale FTP Server. 
 There are millions of files in each `posterior_arrays` folder. If you issue an `ls` (or any other similar) command, 
 you might end up terminating your connection to the server. Simply use `get` followed by the appropriate filename.
 :::
 
-:::{tip}
-If you want to access posterior distributions for almost the entire sample, please use [this link](https://epyc.astro.washington.edu/~aritrag/). The link will lead you to `.tar.gz` files corresponding to each 
-redshift bin. Each tarball contains the predicted posterior distributions (`.npy` files) for all galaxies
-in that redshift bin.
-:::
+#### Tarball of Posterior Distribution Files
+If you want to access posterior distributions for almost the entire sample, tarballs are available on the UW server.
+When you unzip each tarball, you get files with the same array structure as outlined [here](#posterior-distribution-files-for-individual-galaxies)
 
+* g-band HSC-Wide z < 0.25 galaxies &rarr; ``/pub/hsc_morph_posteriors/pred_pdfs_g_0_025.tar.gz``
+
+* r-band HSC-Wide 0.25 < z < 0.50 galaxies &rarr; ``/pub/hsc_morph_posteriors/pred_pdfs_r_025_050.tar.gz``
+
+* i-band HSC-Wide 0.50 < z < 0.75 galaxies &rarr; ``/pub/hsc_morph_posteriors/pred_pdfs_i_050_075.tar.gz``
+
+:::{warning}
+Tarballs of the posterior distribution files are only available on the UW Server.
+:::
 
 #### Trained GaMPEN Models
 

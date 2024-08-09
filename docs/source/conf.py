@@ -44,8 +44,8 @@ myst_enable_extensions = [
     "colon_fence",
 ]
 
-myst_heading_anchors = 3 #tells the myst_parser to add anchors to all headings
-                         #of level 3 and above
+myst_heading_anchors = 5 #tells the myst_parser to add anchors to all headings
+                         #of level 5 and above
 
 copybutton_exclude = '.linenos, .gp' #exclude line numbers and the prompt from the copied code
 
