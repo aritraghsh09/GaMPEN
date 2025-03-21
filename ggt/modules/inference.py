@@ -301,7 +301,7 @@ def main(
         n_out = int(len(label_cols_arr) * 2)
     elif cov_errors:
         n_var = len(label_cols_arr)
-        n_out = int((3 * n_var + n_var ** 2) / 2)
+        n_out = int((3 * n_var + n_var**2) / 2)
     else:
         n_out = len(label_cols_arr)
 

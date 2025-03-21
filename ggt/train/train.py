@@ -176,7 +176,7 @@ def train(**kwargs):
     if args["loss"] == "aleatoric":
         n_out = int(n_out * 2)
     elif args["loss"] == "aleatoric_cov":
-        n_out = int((3 * n_out + n_out ** 2) / 2)
+        n_out = int((3 * n_out + n_out**2) / 2)
 
     # Create the model given model_type
     cls = model_factory(args["model_type"])

@@ -14,7 +14,7 @@ def tensor_to_numpy(x):
 
 def arsinh_normalize(X):
     """Normalize a Torch tensor with arsinh."""
-    return torch.log(X + (X ** 2 + 1) ** 0.5)
+    return torch.log(X + (X**2 + 1) ** 0.5)
 
 
 def load_tensor(filename, tensors_path, as_numpy=True):
