@@ -42,6 +42,7 @@ myst_enable_extensions = [
     "dollarmath",
     "amsmath",
     "colon_fence",
+    "strikethrough",
 ]
 
 myst_heading_anchors = (

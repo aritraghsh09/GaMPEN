@@ -72,14 +72,18 @@ Functions
 * **run_name** (*str*; default=`None`) - The name assigned to the MLFlow run. A run is supposed to be a sub-class of an experiment in MLFLow. Typically you will have multiple runs (e.g., using multiple hyper-parameters) within an experiment.
 
 * **model_type** (*str*; default=`"vgg16_w_stn_oc_drp"`) - The type of model you want to train. For most purposes, if you are trying to use GaMPEN as it was originally used, you should use `vgg16_w_stn_oc_drp`. We recommend referring to the source [source code](https://github.com/aritraghsh09/GaMReN/blob/trial_network/ggt/models) for information about the other options.
-    * **ggt** 
+    * ~~ggt~~
     * **vgg16** 
-    * **ggt_no_gconv**
+    * ~~ggt_no_gconv~~
     * **vgg16_w_stn**
     * **vgg16_w_stn_drp**
     * **vgg16_w_stn_drp_2**
     * **vgg16_w_stn_at_drp**
     * **vgg16_w_stn_oc_drp**
+
+    ```{note}
+    Although included in its initial release, the `ggt` and `ggt_no_gconv` models have been removed in recent versions of GaMPEN
+    ```
 
 * **model_state** (*str*; default=`None`) - The path to a previosuly saved model file. This only needs to be set when you want to start training from a previously saved model.
 
