@@ -33,8 +33,8 @@ sdss:
 
 hsc_demo:
 	mkdir -p $(demodir)/cutouts
-	curl ftp://ftp.astro.yale.edu/pub/hsc_morph/gampen_tutorial_files/for_train/info.csv > $(demodir)/info.csv
-	wget -nH --cut-dirs 5 -r ftp://ftp.astro.yale.edu/pub/hsc_morph/gampen_tutorial_files/for_train/cutouts/ -P $(demodir)/cutouts/
+	curl https://epyc.astro.washington.edu/~aritrag/pub/hsc_morph/gampen_tutorial_files/for_train/info.csv > $(demodir)/info.csv
+	wget -r -nd -A fits https://epyc.astro.washington.edu/~aritrag/pub/hsc_morph/gampen_tutorial_files/for_train/cutouts/ -P $(demodir)/cutouts/
 
 
 # Clear all MLFlow logs (use with care!)
