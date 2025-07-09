@@ -24,5 +24,6 @@ flake8
 pytest
 black
 pytorch-ignite
+sphinx-autoapi
 sphinx_rtd_theme
 sphinx-copybutton
