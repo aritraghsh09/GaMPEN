@@ -25,7 +25,7 @@ def aleatoric_cov_loss(outputs, targets, num_var=3, average=True):
 
     # Checking that all dimensions match up properly
     num_out = outputs.shape[len(outputs.shape) - 1]
-    if num_out != (3 * num_var + num_var ** 2) / 2:
+    if num_out != (3 * num_var + num_var**2) / 2:
         raise ValueError(
             "The number of predicted variables should be equal to "
             "3n + n^2/2 for calculation of aleatoric loss"

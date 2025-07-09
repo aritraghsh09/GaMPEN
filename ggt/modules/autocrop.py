@@ -60,7 +60,7 @@ def main(
     cov_errors,
     errors,
 ):
-    """Using the spatial transformer layer of the model defined in `model_path`,
+    """Using the spatial transformer layer of the model defined in `model_path`
     write cropped versions of each image in `image_dir` back to disk."""
 
     # Select the target device
@@ -70,7 +70,7 @@ def main(
     if errors:
         n_out = int(n_pred * 2)
     elif cov_errors:
-        n_out = int((3 * n_pred + n_pred ** 2) / 2)
+        n_out = int((3 * n_pred + n_pred**2) / 2)
     else:
         n_out = n_pred
 
@@ -90,8 +90,9 @@ def main(
     model = model.to(device)
 
     # Load the model from a saved state if provided
-    model.load_state_dict(torch.load(model_path,
-                                     map_location=torch.device(device)))
+    model.load_state_dict(
+        torch.load(model_path, map_location=torch.device(device))
+    )
 
     # Collect all images, then iterate
     images = glob.glob(str(Path(image_dir) / "*.fits"))

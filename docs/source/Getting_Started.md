@@ -3,11 +3,11 @@
 GaMPEN is written in Python and relies on the [PyTorch](https://pytorch.org/) deep learning library to perform all of its tensor operations.
 
 ## Installation
-Training and inference for GaMPEN requires Python 3.7 or 3.8. Trained GaMPEN models can be run on a CPU to perform inference, but training a model requires access to a CUDA-enabled GPU for reasonable training times.
+Training and inference for GaMPEN requires Python 3.10+. Trained GaMPEN models can be run on a CPU to perform inference, but training a model requires access to a CUDA-enabled GPU for reasonable training times.
 
-1. Create a new conda environment with Python 3.7 or 3.8. Extensive instructions on how to create a conda enviornment can be found [here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands). Of course, you could use any other method of creating a virtual environment, but we will assume you are using conda for the rest of this guide.
+1. Create a new conda environment with Python 3.10. Extensive instructions on how to create a conda enviornment can be found [here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands). Of course, you could use any other method of creating a virtual environment, but we will assume you are using conda for the rest of this guide.
 ```bash
-conda create -n gampen python=3.7
+conda create -n gampen python=3.10
 ```
 2. Activate the new environment
 ```bash

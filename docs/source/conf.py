@@ -39,15 +39,20 @@ extensions = [
 ]
 
 myst_enable_extensions = [
-    "dollarmath", 
+    "dollarmath",
     "amsmath",
     "colon_fence",
+    "strikethrough",
 ]
 
-myst_heading_anchors = 5 #tells the myst_parser to add anchors to all headings
-                         #of level 5 and above
+myst_heading_anchors = (
+    5  # tells the myst_parser to add anchors to all headings
+)
+# of level 5 and above
 
-copybutton_exclude = '.linenos, .gp' #exclude line numbers and the prompt from the copied code
+copybutton_exclude = (
+    ".linenos, .gp"  # exclude line numbers and the prompt from the copied code
+)
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -74,5 +79,5 @@ html_static_path = ["_static"]
 # These paths are either relative to html_static_path
 # or fully qualified paths (eg. https://...)
 html_css_files = [
-    'css/custom.css',
+    "css/custom.css",
 ]
