@@ -1,6 +1,6 @@
 [![Status of Build and Tests Workflow](https://github.com/aritraghsh09/GaMPEN/actions/workflows/main.yml/badge.svg)](https://github.com/aritraghsh09/GaMPEN/actions/workflows/main.yml)
 [![Documentation Status](https://readthedocs.org/projects/gampen/badge/?version=latest)](https://gampen.readthedocs.io/en/latest/?badge=latest)
-[![Python Version 3.8](https://img.shields.io/badge/Python-3.8-blue)](https://www.python.org/downloads/)
+[![Python Version 3.10](https://img.shields.io/badge/Python-3.10-blue)](https://www.python.org/downloads/)
 [![GitHub license](https://img.shields.io/github/license/aritraghsh09/GaMPEN)](https://github.com/aritraghsh09/GaMPEN/blob/master/LICENSE)
 [![image](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Code DOI](https://zenodo.org/badge/299731956.svg)](https://zenodo.org/badge/latestdoi/299731956)
