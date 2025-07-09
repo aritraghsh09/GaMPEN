@@ -8,6 +8,7 @@ ignite
 kornia
 matplotlib
 mlflow
+myst_parser
 numpy
 pandas
 pytest
