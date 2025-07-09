@@ -4,7 +4,7 @@
 # PyPI packages
 astropy
 click
-ignite
+# Line intentionally removed to avoid confusion with pytorch-ignite
 kornia
 matplotlib
 mlflow
@@ -21,7 +21,6 @@ torchvision
 tqdm
 xarray
 flake8
-pytest
 black
 pytorch-ignite
 sphinx-autoapi
