@@ -4,7 +4,6 @@
 # PyPI packages
 astropy
 click
-# Line intentionally removed to avoid confusion with pytorch-ignite
 kornia
 matplotlib
 mlflow
