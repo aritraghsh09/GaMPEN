@@ -8,6 +8,7 @@ Getting_Started
 Tutorials
 Using_GaMPEN
 Public_data
+FAQs
 ```
 
 # Home
